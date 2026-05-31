@@ -6,10 +6,12 @@ import ProductPageCrossSells from "@/components/ProductPageCrossSells";
 import ScrollToOrderCTA from "@/components/ScrollToOrderCTA";
 import ProductHero, { GuaranteeBanner } from "@/components/ProductHero";
 import ProductSectionImage from "@/components/ProductSectionImage";
+import AnimatedGuaranteeBanner from "@/components/AnimatedGuaranteeBanner";
 
 export default function ProductLanding({ product }: { product: Product }) {
   return (
     <>
+      <AnimatedGuaranteeBanner />
       <ProductHero product={product} />
 
       {/* Problem hook */}
