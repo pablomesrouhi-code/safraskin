@@ -39,13 +39,7 @@ export default function ProductLanding({ product }: { product: Product }) {
                 slug={product.slug}
                 src={section.image}
                 alt={section.title}
-                label={
-                  product.slug === "cyclecalm"
-                    ? i === 0
-                      ? "قبل · بعد"
-                      : "روتين يومي"
-                    : undefined
-                }
+                label={product.slug === "cyclecalm" && i === 1 ? "روتين يومي" : undefined}
               />
             </div>
           </div>
