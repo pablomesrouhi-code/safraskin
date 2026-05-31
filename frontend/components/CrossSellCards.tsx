@@ -8,14 +8,22 @@ type Props = {
   products: Product[];
   onAdd: (slug: ProductSlug) => void;
   title?: string;
+  subtitle?: string;
 };
 
-export default function CrossSellCards({ products, onAdd, title = "قد يعجبك أيضاً" }: Props) {
+export default function CrossSellCards({
+  products,
+  onAdd,
+  title = "قد يعجبك أيضاً",
+  subtitle,
+}: Props) {
   if (products.length === 0) return null;
 
   return (
     <div>
-      <h2 className="font-bold text-lg mb-4">{title}</h2>
+      <h2 className="font-bold text-lg mb-1">{title}</h2>
+      {subtitle && <p className="text-sm text-gray-500 mb-4">{subtitle}</p>}
+      {!subtitle && <div className="mb-4" />}
       <div className="grid sm:grid-cols-2 gap-4">
         {products.map((p) => (
           <button

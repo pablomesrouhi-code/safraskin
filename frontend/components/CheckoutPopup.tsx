@@ -52,19 +52,24 @@ export default function CheckoutPopup() {
         </div>
 
         <div className="p-5 space-y-5">
-          <div className="bg-cream rounded-xl p-4 space-y-2">
+          <div className="bg-cream rounded-xl p-4 space-y-3">
             {state.items.map((item) => {
               const product = getProductOrThrow(item.slug);
               return (
-                <div key={item.slug} className="flex justify-between text-sm gap-3">
-                  <span className="text-gray-500 shrink-0">{item.qty}×</span>
-                  <span className="flex-1 text-right">{product.nameAr}</span>
+                <div key={item.slug} className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0 text-right">
+                    <p className="font-medium text-sm text-gray-900">{product.nameAr}</p>
+                    <p className="text-xs text-gray-500">{item.qty} {item.qty === 1 ? "قطعة" : "قطع"}</p>
+                  </div>
                 </div>
               );
             })}
-            <div className="border-t border-border/60 pt-3 flex justify-between font-bold text-lg">
-              <span className="text-sage">{total} ر.س</span>
-              <span>المجموع · الدفع عند الاستلام</span>
+            <div className="border-t border-border/60 pt-3 flex justify-between items-center">
+              <span className="text-xl font-bold text-sage tabular-nums">{total} ر.س</span>
+              <div className="text-right">
+                <p className="font-bold text-gray-900">المجموع</p>
+                <p className="text-xs text-gray-500">الدفع عند الاستلام</p>
+              </div>
             </div>
           </div>
 
