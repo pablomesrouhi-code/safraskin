@@ -1,0 +1,58 @@
+# Safra Skin — Next.js 14 (standalone)
+FROM node:20-alpine AS base
+RUN apk add --no-cache libc6-compat
+
+FROM base AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build-time public env (Easypanel: set as build args or env)
+ARG NEXT_PUBLIC_SITE_URL=https://safraskin.online
+ARG NEXT_PUBLIC_API_URL=https://api.safraskin.online
+ARG NEXT_PUBLIC_UPSELL_TIMER_SECONDS=12
+ARG NEXT_PUBLIC_META_PIXEL_ID=
+ARG NEXT_PUBLIC_TIKTOK_PIXEL_ID=
+ARG NEXT_PUBLIC_SNAP_PIXEL_ID=
+ARG NEXT_PUBLIC_WHATSAPP_NUMBER=
+ARG NEXT_PUBLIC_GA4_ID=
+
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_UPSELL_TIMER_SECONDS=$NEXT_PUBLIC_UPSELL_TIMER_SECONDS
+ENV NEXT_PUBLIC_META_PIXEL_ID=$NEXT_PUBLIC_META_PIXEL_ID
+ENV NEXT_PUBLIC_TIKTOK_PIXEL_ID=$NEXT_PUBLIC_TIKTOK_PIXEL_ID
+ENV NEXT_PUBLIC_SNAP_PIXEL_ID=$NEXT_PUBLIC_SNAP_PIXEL_ID
+ENV NEXT_PUBLIC_WHATSAPP_NUMBER=$NEXT_PUBLIC_WHATSAPP_NUMBER
+ENV NEXT_PUBLIC_GA4_ID=$NEXT_PUBLIC_GA4_ID
+
+ARG API_URL=https://api.safraskin.online
+ENV API_URL=$API_URL
+
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+# Runtime: override API_URL in Easypanel to reach backend service
+ARG API_URL=https://api.safraskin.online
+ENV API_URL=$API_URL
+
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]
