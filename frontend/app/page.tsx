@@ -5,7 +5,9 @@ import { AUTHORITY_PILLARS, SCIENCE_POINTS, BRAND_NAME_AR, BRAND_NAME_EN } from 
 import ProductCard from "@/components/ProductCard";
 import TrustBadges from "@/components/TrustBadges";
 import ReviewCard from "@/components/ReviewCard";
-import ProductImage from "@/components/ProductImage";
+import HeroImageShowcase from "@/components/HeroImageShowcase";
+import HeroCertificationBadges from "@/components/HeroCertificationBadges";
+import AnimatedGuaranteeBanner from "@/components/AnimatedGuaranteeBanner";
 
 const HERO_TRUST = [
   { icon: FlaskConical, label: "مكونات مُعلنة" },
@@ -18,23 +20,14 @@ const HERO_TRUST = [
 export default function HomePage() {
   return (
     <>
+      <AnimatedGuaranteeBanner />
+
       {/* ── HERO ── */}
       <section className="relative bg-cream hero-glow">
         <div className="max-w-container mx-auto px-4 py-12 md:py-20 w-full">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 xl:gap-24 items-center">
-            <div className="order-1 lg:order-2 flex flex-col items-center lg:items-start w-full lg:pl-4">
-              <div className="relative w-[min(100%,22rem)] aspect-square sm:w-96 lg:w-[26rem] xl:w-[28rem] rounded-3xl overflow-hidden bg-white border border-border shadow-xl shadow-sage/10">
-                <ProductImage
-                  src="/placeholders/hero-home.svg"
-                  alt="سفرا جلد — مكملات gummies"
-                  fill
-                  priority
-                  className="object-contain p-6"
-                />
-              </div>
-              <p className="text-center lg:text-start text-sm text-gray-500 mt-5 max-w-xs leading-relaxed">
-                3 gummies · 60 حبة · شهر كامل لكل مشكلة
-              </p>
+            <div className="order-1 lg:order-2">
+              <HeroImageShowcase />
             </div>
 
             <div className="order-2 lg:order-1 lg:pr-4">
@@ -58,17 +51,21 @@ export default function HomePage() {
                 طبية.
               </p>
 
-              <div className="grid grid-cols-2 gap-3 mb-8">
+              <div className="grid grid-cols-2 gap-2 mb-6">
                 {HERO_TRUST.map(({ icon: Icon, label }) => (
                   <div
                     key={label}
-                    className="flex items-center gap-2.5 bg-white/80 border border-border/80 rounded-xl px-3 py-3"
+                    className="flex items-center gap-2 rounded-xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50/80 px-3 py-2.5 shadow-sm"
                   >
-                    <Icon size={18} className="text-sage shrink-0" />
-                    <span className="text-sm text-gray-700 font-medium">{label}</span>
+                    <div className="shrink-0 w-8 h-8 rounded-lg bg-sage/8 border border-sage/10 flex items-center justify-center">
+                      <Icon size={15} className="text-sage" />
+                    </div>
+                    <span className="text-xs text-gray-700 font-semibold leading-tight">{label}</span>
                   </div>
                 ))}
               </div>
+
+              <HeroCertificationBadges />
 
               <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 <Link
@@ -85,6 +82,24 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRODUCTS (أولاً بعد الهيرو) ── */}
+      <section className="py-16 md:py-20 bg-white border-b border-border">
+        <div className="max-w-container mx-auto px-4">
+          <div className="text-center mb-10 max-w-2xl mx-auto">
+            <p className="text-sage text-sm font-bold tracking-widest mb-3">مجموعة مختارة</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">ثلاثة gummies — مشكلة واحدة لكل علبة</h2>
+            <p className="text-gray-500 leading-relaxed">
+              هدوء الدورة · فلورا الفم · توازن البشرة
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {PRODUCTS.map((p) => (
+              <ProductCard key={p.slug} product={p} />
+            ))}
           </div>
         </div>
       </section>
@@ -122,24 +137,6 @@ export default function HomePage() {
                   <ArrowLeft size={14} />
                 </span>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PRODUCTS ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-container mx-auto px-4">
-          <div className="text-center mb-14 max-w-2xl mx-auto">
-            <p className="text-sage text-sm font-bold tracking-widest mb-3">مجموعة مختارة</p>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">ثلاثة gummies — مشكلة واحدة لكل علبة</h2>
-            <p className="text-gray-500 text-lg leading-relaxed">
-              هدوء الدورة · فلورا الفم · توازن البشرة — sugar-free · halal-aligned.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {PRODUCTS.map((p) => (
-              <ProductCard key={p.slug} product={p} />
             ))}
           </div>
         </div>

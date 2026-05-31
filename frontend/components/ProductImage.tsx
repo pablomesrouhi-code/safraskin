@@ -6,9 +6,19 @@ type Props = {
   className?: string;
   priority?: boolean;
   fill?: boolean;
+  quality?: number;
+  sizes?: string;
 };
 
-export default function ProductImage({ src, alt, className = "", priority, fill }: Props) {
+export default function ProductImage({
+  src,
+  alt,
+  className = "",
+  priority,
+  fill,
+  quality,
+  sizes,
+}: Props) {
   if (src.endsWith(".svg")) {
     const svgClass = fill
       ? `absolute inset-0 h-full w-full object-contain p-8 ${className}`
@@ -25,6 +35,8 @@ export default function ProductImage({ src, alt, className = "", priority, fill 
       alt={alt}
       fill={fill}
       priority={priority}
+      quality={quality}
+      sizes={sizes}
       className={className}
     />
   );

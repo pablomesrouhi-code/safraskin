@@ -40,12 +40,12 @@ export default function ProductPageCrossSells({ product }: { product: Product })
               className="group bg-white rounded-3xl border border-border overflow-hidden hover:shadow-xl hover:shadow-sage/10 transition-all hover:-translate-y-1"
             >
               <Link href={`/products/${p.slug}`} className="block">
-                <div className="relative aspect-[16/10] bg-cream overflow-hidden">
+                <div className="relative aspect-square bg-white overflow-hidden">
                   <ProductImage
                     src={p.image}
                     alt={p.nameAr}
                     fill
-                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-500"
                   />
                 </div>
               </Link>
