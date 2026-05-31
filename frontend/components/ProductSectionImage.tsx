@@ -33,19 +33,27 @@ export default function ProductSectionImage({ slug, src, alt, label }: Props) {
   const accent = ACCENT[slug];
 
   return (
-    <div className="relative w-full max-w-md mx-auto lg:max-w-none">
+    <div className="group relative w-full max-w-md mx-auto lg:max-w-none">
       <div
         aria-hidden
-        className={`absolute -inset-2 rounded-3xl bg-gradient-to-br ${accent.glow} opacity-90`}
+        className={`absolute -inset-2 rounded-3xl bg-gradient-to-br ${accent.glow} opacity-90 transition-opacity duration-300 group-hover:opacity-100`}
       />
       <div
-        className={`relative aspect-square rounded-3xl overflow-hidden bg-white border-2 ${accent.frame} shadow-xl`}
+        className={`relative aspect-square rounded-3xl overflow-hidden bg-white p-2 border-[5px] border-white shadow-xl ring-1 ring-slate-100/60 transition-shadow duration-300 group-hover:shadow-2xl ${accent.frame}`}
       >
-        <ProductImage src={src} alt={alt} fill className="object-cover object-center" quality={90} />
+        <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border/40">
+          <ProductImage
+            src={src}
+            alt={alt}
+            fill
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            quality={90}
+          />
+        </div>
       </div>
       {label && (
         <span
-          className={`absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full border border-white shadow-sm ${accent.badge}`}
+          className={`absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full border border-white shadow-md whitespace-nowrap ${accent.badge}`}
         >
           {label}
         </span>

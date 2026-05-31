@@ -8,6 +8,8 @@ export type ProductSection = {
   title: string;
   body: string;
   image: string;
+  /** Badge under section image */
+  label?: string;
 };
 
 export type Ingredient = { name: string; benefit: string };
@@ -32,6 +34,8 @@ export type Product = {
   image: string;
   /** PDP hero (square lifestyle); falls back to image */
   heroImage?: string;
+  /** Micro-label on PDP hero image */
+  heroLabel?: string;
   rating: number;
   reviewCount: number;
   problemTag: string;
@@ -88,6 +92,7 @@ export const PRODUCTS: Product[] = [
     upsellAffinity: "clearbalance",
     image: "/products/cyclecalm.png",
     heroImage: "/products/cyclecalm/hero.png",
+    heroLabel: "ثقة من الداخل",
     rating: 4.9,
     reviewCount: 634,
     problemTag: "دورة",
@@ -130,6 +135,7 @@ export const PRODUCTS: Product[] = [
         title: "جرعتكِ اليومية",
         body: "2 gummies · صباحاً · 60 يوم. مكونات مُعلنة — بدون حديد يسبب غثيان الدورة.",
         image: "/products/cyclecalm/routine.png",
+        label: "روتين يومي",
       },
     ],
   },
@@ -150,6 +156,8 @@ export const PRODUCTS: Product[] = [
     crossSellSlugs: ["cyclecalm", "clearbalance"],
     upsellAffinity: "cyclecalm",
     image: "/products/oralflora.png",
+    heroImage: "/products/oralflora/hero.png",
+    heroLabel: "ثقة من الداخل",
     rating: 4.8,
     reviewCount: 521,
     problemTag: "فم",
@@ -186,12 +194,13 @@ export const PRODUCTS: Product[] = [
       {
         title: "الإحراج اللي ما يُقال",
         body: "تبتسمين من بعيد · تتجنبين القرب — لأن الرائحة ترجع. فلورا الفم: دعم علمي للفم · مو تغطية 20 دقيقة.",
-        image: "/placeholders/mechanism-oral.svg",
+        image: "/products/oralflora/feeling.png",
       },
       {
-        title: "بروتوكول الصباح",
+        title: "ثقة في المجلس",
         body: "2 gummies · K12 · Reuteri · Zinc — للمرأة والرجل في السعودية اللي يبغون ثقة اجتماعية.",
-        image: "/products/oralflora.png",
+        image: "/products/oralflora/routine.png",
+        label: "بروتوكول صباحي",
       },
     ],
   },
@@ -212,6 +221,8 @@ export const PRODUCTS: Product[] = [
     crossSellSlugs: ["cyclecalm", "oralflora"],
     upsellAffinity: "oralflora",
     image: "/products/clearbalance.png",
+    heroImage: "/products/clearbalance/hero.png",
+    heroLabel: "ثقة من الداخل",
     rating: 4.8,
     reviewCount: 712,
     problemTag: "بشرة",
@@ -246,14 +257,15 @@ export const PRODUCTS: Product[] = [
     ],
     sections: [
       {
-        title: "بشرة التوتر حقيقية",
-        body: "امتحان · شغل · دورة — البثور تطلع. توازن البشرة: يدعم جسدكِ من الداخل · باحترام · بلا إحراج تبييض.",
-        image: "/placeholders/mechanism-skin.svg",
+        title: "تركيبة مدروسة",
+        body: "Zinc · Probiotic · Algae DHA — 60 gummy · sugar-free · halal-aligned. مكونات واضحة · بدون وعود تبييض.",
+        image: "/products/clearbalance/feeling.png",
       },
       {
-        title: "تركيبة مدروسة",
-        body: "Zinc · Probiotic · Algae DHA — 60 gummy · sugar-free · halal-aligned.",
-        image: "/products/clearbalance.png",
+        title: "بشرة التوتر حقيقية",
+        body: "امتحان · شغل · دورة — البثور تطلع. توازن البشرة: يدعم جسدكِ من الداخل · باحترام · بلا إحراج.",
+        image: "/products/clearbalance/routine.png",
+        label: "8 أسابيع التزام",
       },
     ],
   },

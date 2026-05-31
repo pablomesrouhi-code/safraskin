@@ -34,23 +34,51 @@ export default function ProductHero({ product }: { product: Product }) {
         <div className="max-w-container mx-auto px-4 py-10 md:py-14">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div id="hero-image" className="pb-6 scroll-mt-header">
-              <div
-                className={`relative aspect-square rounded-3xl overflow-hidden bg-white border-2 shadow-xl ${
-                  product.slug === "cyclecalm"
-                    ? "border-scarcity/30 shadow-scarcity/15"
-                    : product.slug === "oralflora"
-                      ? "border-sage/30 shadow-sage/15"
-                      : "border-violet-200 shadow-violet-100"
-                }`}
-              >
-                <ProductImage
-                  src={product.heroImage ?? product.image}
-                  alt={product.nameAr}
-                  fill
-                  priority
-                  quality={92}
-                  className="object-cover object-center"
-                />
+              <div className="relative w-full max-w-md mx-auto lg:max-w-none">
+                {product.heroLabel && (
+                  <div className="absolute -top-2 left-2 sm:left-4 z-10 rounded-xl bg-white border border-sage/15 shadow-md px-2 py-1.5 max-w-[4.5rem]">
+                    <p className="text-[8px] font-extrabold text-gold text-center leading-none mb-0.5">✦</p>
+                    <p className="text-[9px] sm:text-[10px] font-bold text-sage leading-[1.25] text-center">
+                      {product.heroLabel.split(" ").length > 2 ? (
+                        <>
+                          {product.heroLabel.split(" ").slice(0, 2).join(" ")}
+                          <br />
+                          {product.heroLabel.split(" ").slice(2).join(" ")}
+                        </>
+                      ) : (
+                        product.heroLabel
+                      )}
+                    </p>
+                  </div>
+                )}
+                <div
+                  className={`relative aspect-square rounded-3xl overflow-hidden bg-white p-2 border-[6px] border-white shadow-xl ring-1 ring-slate-100/70 ${
+                    product.slug === "cyclecalm"
+                      ? "shadow-scarcity/15"
+                      : product.slug === "oralflora"
+                        ? "shadow-sage/15"
+                        : "shadow-violet-100"
+                  }`}
+                >
+                  <div
+                    className={`relative w-full h-full rounded-2xl overflow-hidden border-2 ${
+                      product.slug === "cyclecalm"
+                        ? "border-scarcity/30"
+                        : product.slug === "oralflora"
+                          ? "border-sage/30"
+                          : "border-violet-200"
+                    }`}
+                  >
+                    <ProductImage
+                      src={product.heroImage ?? product.image}
+                      alt={product.nameAr}
+                      fill
+                      priority
+                      quality={92}
+                      className="object-cover object-center transition-transform duration-500 hover:scale-[1.03]"
+                    />
+                  </div>
+                </div>
               </div>
               <p className="text-center text-sm text-gray-500 mt-4">
                 ⭐ {product.rating} · {product.reviewCount}+ تقييم
