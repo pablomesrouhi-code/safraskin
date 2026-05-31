@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
-import { BRAND_NAME_AR, BRAND_NAME_EN } from "@/data/brand";
+import { BRAND_NAME_AR, BRAND_NAME_EN, BRAND_SLOGAN } from "@/data/brand";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function Footer() {
   return (
     <footer className="bg-sage-dark text-white mt-16">
       <div className="max-w-container mx-auto px-4 py-12">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center text-white font-bold">
-            S
-          </div>
+          <BrandLogo variant="footer" />
           <div>
             <div className="font-semibold text-lg">{BRAND_NAME_AR}</div>
             <div className="font-english text-[10px] tracking-widest opacity-70 uppercase">
@@ -20,7 +19,7 @@ export default function Footer() {
         <p className="text-white/80 mb-2 leading-relaxed max-w-md">
           مكملات gummies سعودية — دورة · فم · بشرة. ثقة من الداخل · مكونات واضحة · COD.
         </p>
-        <p className="text-gold-light/90 text-sm mb-8 italic">اتزانكِ يبدأ من الداخل</p>
+        <p className="text-gold-light/90 text-sm mb-8 italic">{BRAND_SLOGAN}</p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-10 text-sm">
           <div>

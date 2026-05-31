@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { BRAND_NAME_AR, BRAND_TAGLINE } from "@/data/brand";
+import BrandLogo from "@/components/BrandLogo";
 
 const NAV = [
   { label: "الرئيسية", href: "/" },
@@ -50,16 +50,8 @@ export default function Header() {
           ))}
         </nav>
 
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="text-right">
-            <div className="font-semibold text-lg text-gray-900 leading-tight">{BRAND_NAME_AR}</div>
-            <div className="text-[10px] text-gray-500 leading-tight max-w-[140px]">
-              {BRAND_TAGLINE}
-            </div>
-          </div>
-          <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center text-white font-bold text-lg group-hover:bg-sage-dark transition-colors">
-            S
-          </div>
+        <Link href="/" className="shrink-0 hover:opacity-90 transition-opacity">
+          <BrandLogo variant="header" priority />
         </Link>
       </div>
 

@@ -3,6 +3,14 @@
 export const BRAND_NAME_AR = "سفرا جلد";
 export const BRAND_NAME_EN = "Safra Skin";
 export const BRAND_TAGLINE = "مكملات gummies · للمرأة السعودية";
+export const BRAND_SLOGAN = "ثقة من الداخل";
+
+export const BRAND_ASSETS = {
+  icon: "/brand/icon.png",
+  favicon: "/brand/favicon.png",
+  appIcon: "/brand/app-icon.png",
+  appleTouchIcon: "/brand/apple-touch-icon.png",
+} as const;
 
 export const AUTHORITY_PILLARS = [
   {

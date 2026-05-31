@@ -21,9 +21,21 @@ const english = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://safraskin.online"),
   title: "سفرا جلد | Safra Skin — مكملات gummies للمرأة السعودية",
   description:
     "سفرا جلد — gummies: هدوء الدورة · فلورا الفم · توازن البشرة. مكونات مُعلنة · halal · vegan · دفع عند الاستلام.",
+  icons: {
+    icon: [
+      { url: "/brand/favicon.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/brand/apple-touch-icon.png",
+  },
+  openGraph: {
+    siteName: "سفرا جلد",
+    locale: "ar_SA",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
