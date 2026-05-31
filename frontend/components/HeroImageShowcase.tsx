@@ -20,8 +20,8 @@ export default function HeroImageShowcase() {
             alt="سفرا جلد — مكملات gummies"
             fill
             priority
-            quality={100}
-            sizes="(max-width: 640px) 416px, (max-width: 1024px) 576px, 736px"
+            quality={85}
+            sizes="(max-width: 1024px) 90vw, 640px"
             className="object-contain object-center"
           />
         </div>

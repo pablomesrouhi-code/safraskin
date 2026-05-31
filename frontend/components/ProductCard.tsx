@@ -7,16 +7,16 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group bg-white rounded-3xl border border-border overflow-hidden hover:shadow-2xl hover:shadow-sage/10 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+      className="group bg-white rounded-2xl border border-border overflow-hidden hover:shadow-lg hover:shadow-sage/10 transition-all duration-300 flex flex-col"
     >
       <div className="relative aspect-square bg-white overflow-hidden">
         <ProductImage
           src={product.image}
           alt={product.nameAr}
           fill
-          className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          className="object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
       <div className="p-6 flex-1 flex flex-col">

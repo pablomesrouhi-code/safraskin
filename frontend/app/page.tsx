@@ -24,7 +24,7 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section className="relative bg-cream hero-glow">
-        <div className="max-w-container mx-auto px-4 py-12 md:py-20 w-full">
+        <div className="max-w-container mx-auto px-4 py-10 md:py-16 w-full">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 xl:gap-24 items-center">
             <div className="order-1 lg:order-2">
               <HeroImageShowcase />
@@ -87,7 +87,7 @@ export default function HomePage() {
       </section>
 
       {/* ── PRODUCTS (أولاً بعد الهيرو) ── */}
-      <section className="py-16 md:py-20 bg-white border-b border-border">
+      <section className="py-12 md:py-16 bg-white border-b border-border">
         <div className="max-w-container mx-auto px-4">
           <div className="text-center mb-10 max-w-2xl mx-auto">
             <p className="text-sage text-sm font-bold tracking-widest mb-3">مجموعة مختارة</p>
@@ -107,9 +107,9 @@ export default function HomePage() {
       <TrustBadges className="py-6 bg-white border-y border-border" />
 
       {/* ── EMPATHY + LOGIC ── */}
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-16">
+          <div className="max-w-2xl mx-auto text-center mb-12">
             <p className="text-sage text-sm font-bold tracking-widest mb-3">نفهمكِ</p>
             <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-4">
               المشاعر حقيقية — والحل مدروس
@@ -143,9 +143,9 @@ export default function HomePage() {
       </section>
 
       {/* ── SCIENCE ── */}
-      <section className="py-24 bg-cream border-y border-border">
+      <section className="py-16 md:py-20 bg-cream border-y border-border">
         <div className="max-w-container mx-auto px-4">
-          <div className="text-center mb-14">
+          <div className="text-center mb-10">
             <p className="text-sage text-sm font-bold tracking-widest mb-3">منطق · مكونات · خبرة</p>
             <h2 className="text-3xl md:text-4xl font-bold">لماذا نثق في ما نقدّمه</h2>
           </div>
@@ -161,9 +161,9 @@ export default function HomePage() {
       </section>
 
       {/* ── AUTHORITY ── */}
-      <section className="py-24 bg-sage-dark text-white">
+      <section className="py-16 md:py-20 bg-sage-dark text-white">
         <div className="max-w-container mx-auto px-4">
-          <div className="text-center mb-14 max-w-2xl mx-auto">
+          <div className="text-center mb-10 max-w-2xl mx-auto">
             <p className="text-gold-light text-sm font-bold tracking-widest mb-3">ثقة · أمان · تخصص</p>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">علامة تستحقين أن تثقيها</h2>
             <p className="text-white/70 leading-relaxed">
@@ -186,9 +186,9 @@ export default function HomePage() {
       </section>
 
       {/* ── SOCIAL PROOF ── */}
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-container mx-auto px-4">
-          <div className="text-center mb-12 max-w-2xl mx-auto">
+          <div className="text-center mb-10 max-w-2xl mx-auto">
             <p className="text-sage text-sm font-bold tracking-widest mb-3">إثبات اجتماعي</p>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">سعوديات يتكلمن بصراحة</h2>
             <p className="text-gray-500">
@@ -204,7 +204,7 @@ export default function HomePage() {
       </section>
 
       {/* ── MANIFESTO ── */}
-      <section className="py-28 bg-cream border-y border-border">
+      <section className="py-16 md:py-20 bg-cream border-y border-border">
         <div className="max-w-container mx-auto px-4 text-center max-w-3xl">
           <p className="text-sage text-sm font-bold tracking-widest mb-6">فلسفتنا</p>
           <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight text-gray-900">
@@ -228,9 +228,9 @@ export default function HomePage() {
       </section>
 
       {/* ── BUNDLE ── */}
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-container mx-auto px-4">
-          <div className="max-w-3xl mx-auto bg-gradient-to-br from-sage/5 to-gold/5 border border-sage/20 rounded-3xl p-10 md:p-14 text-center">
+          <div className="max-w-3xl mx-auto bg-sage/5 border border-sage/15 rounded-2xl p-8 md:p-12 text-center">
             <p className="text-sage text-sm font-bold mb-3">النظام الكامل</p>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">طقم الاتزان — الثلاثة معاً</h2>
             <p className="text-gray-600 mb-2">هدوء الدورة + فلورا الفم + توازن البشرة</p>
@@ -247,7 +247,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-24 bg-cream">
+      <section className="py-16 md:py-20 bg-cream">
         <div className="max-w-container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-2">أسئلة تهمكِ</h2>
@@ -270,7 +270,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="py-20 bg-sage text-white text-center">
+      <section className="py-14 md:py-16 bg-sage text-white text-center">
         <div className="max-w-container mx-auto px-4 max-w-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">ابدئي بالمنتج اللي يناسبكِ</h2>
           <p className="text-white/75 mb-8 leading-relaxed">

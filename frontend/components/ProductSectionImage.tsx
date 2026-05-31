@@ -46,8 +46,8 @@ export default function ProductSectionImage({ slug, src, alt, label }: Props) {
             src={src}
             alt={alt}
             fill
-            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-            quality={90}
+            className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
+            quality={80}
           />
         </div>
       </div>

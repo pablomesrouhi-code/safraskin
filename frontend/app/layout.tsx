@@ -5,19 +5,22 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DeferredPixels from "@/components/DeferredPixels";
+import StoreIntro from "@/components/StoreIntro";
 
 const arabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   variable: "--font-arabic",
   display: "swap",
   fallback: ["Tahoma", "Arial", "sans-serif"],
+  adjustFontFallback: true,
 });
 
 const english = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "600"],
   variable: "--font-english",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -47,8 +50,9 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`${arabic.variable} ${english.variable}`}>
         <CartProvider>
+          <StoreIntro />
           <Header />
-          <main>{children}</main>
+          <main className="animate-page-in">{children}</main>
           <Footer />
           <DeferredPixels />
         </CartProvider>

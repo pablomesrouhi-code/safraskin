@@ -16,8 +16,8 @@ export default function ProductImage({
   className = "",
   priority,
   fill,
-  quality,
-  sizes,
+  quality = 80,
+  sizes = "(max-width: 768px) 100vw, 50vw",
 }: Props) {
   if (src.endsWith(".svg")) {
     const svgClass = fill
@@ -25,7 +25,7 @@ export default function ProductImage({
       : className;
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={alt} className={svgClass} />
+      <img src={src} alt={alt} className={svgClass} loading="lazy" />
     );
   }
 

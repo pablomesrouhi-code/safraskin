@@ -74,8 +74,8 @@ export default function ProductHero({ product }: { product: Product }) {
                       alt={product.nameAr}
                       fill
                       priority
-                      quality={92}
-                      className="object-cover object-center transition-transform duration-500 hover:scale-[1.03]"
+                      quality={85}
+                      className="object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
                     />
                   </div>
                 </div>
