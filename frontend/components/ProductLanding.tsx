@@ -1,4 +1,3 @@
-import ProductImage from "@/components/ProductImage";
 import { Product } from "@/data/products";
 import IngredientsList from "@/components/IngredientsList";
 import ProductFAQ from "@/components/ProductFAQ";
@@ -6,6 +5,7 @@ import ProductReviews from "@/components/ProductReviews";
 import ProductPageCrossSells from "@/components/ProductPageCrossSells";
 import ScrollToOrderCTA from "@/components/ScrollToOrderCTA";
 import ProductHero, { GuaranteeBanner } from "@/components/ProductHero";
+import ProductSectionImage from "@/components/ProductSectionImage";
 
 export default function ProductLanding({ product }: { product: Product }) {
   return (
@@ -34,10 +34,19 @@ export default function ProductLanding({ product }: { product: Product }) {
               <h2 className="text-2xl md:text-3xl font-bold mb-5 leading-snug">{section.title}</h2>
               <p className="text-gray-600 text-lg leading-relaxed">{section.body}</p>
             </div>
-            <div
-              className={`relative aspect-[4/3] rounded-3xl overflow-hidden bg-white border border-border shadow-lg ${i % 2 === 0 ? "md:order-1" : "md:order-2"}`}
-            >
-              <ProductImage src={section.image} alt={section.title} fill className="object-cover" />
+            <div className={i % 2 === 0 ? "md:order-1" : "md:order-2"}>
+              <ProductSectionImage
+                slug={product.slug}
+                src={section.image}
+                alt={section.title}
+                label={
+                  product.slug === "cyclecalm"
+                    ? i === 0
+                      ? "قبل · بعد"
+                      : "روتين يومي"
+                    : undefined
+                }
+              />
             </div>
           </div>
         </section>

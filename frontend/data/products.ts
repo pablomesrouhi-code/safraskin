@@ -30,6 +30,8 @@ export type Product = {
   crossSellSlugs: ProductSlug[];
   upsellAffinity: ProductSlug;
   image: string;
+  /** PDP hero (square lifestyle); falls back to image */
+  heroImage?: string;
   rating: number;
   reviewCount: number;
   problemTag: string;
@@ -85,6 +87,7 @@ export const PRODUCTS: Product[] = [
     crossSellSlugs: ["oralflora", "clearbalance"],
     upsellAffinity: "clearbalance",
     image: "/products/cyclecalm.png",
+    heroImage: "/products/cyclecalm/hero.png",
     rating: 4.9,
     reviewCount: 634,
     problemTag: "دورة",
@@ -121,12 +124,12 @@ export const PRODUCTS: Product[] = [
       {
         title: "تعرفين هذا الشعور؟",
         body: "تبغين تبكين بلا سبب · بطن ممتلئ · تعب — وتخبّين الناس ما يفهمون. هدوء الدورة: روتين يدعمكِ في هذه الأيام.",
-        image: "/placeholders/mechanism-cycle.svg",
+        image: "/products/cyclecalm/feeling.png",
       },
       {
         title: "جرعتكِ اليومية",
         body: "2 gummies · صباحاً · 60 يوم. مكونات مُعلنة — بدون حديد يسبب غثيان الدورة.",
-        image: "/products/cyclecalm.png",
+        image: "/products/cyclecalm/routine.png",
       },
     ],
   },

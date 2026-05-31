@@ -34,12 +34,21 @@ export default function ProductHero({ product }: { product: Product }) {
         <div className="max-w-container mx-auto px-4 py-10 md:py-14">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div id="hero-image" className="pb-6 scroll-mt-header">
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-white border border-border">
+              <div
+                className={`relative aspect-square rounded-3xl overflow-hidden bg-white border-2 shadow-xl ${
+                  product.slug === "cyclecalm"
+                    ? "border-scarcity/30 shadow-scarcity/15"
+                    : product.slug === "oralflora"
+                      ? "border-sage/30 shadow-sage/15"
+                      : "border-violet-200 shadow-violet-100"
+                }`}
+              >
                 <ProductImage
-                  src={product.image}
+                  src={product.heroImage ?? product.image}
                   alt={product.nameAr}
                   fill
                   priority
+                  quality={92}
                   className="object-cover object-center"
                 />
               </div>
