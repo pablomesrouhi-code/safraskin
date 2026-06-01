@@ -48,12 +48,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        <link rel="preload" href="/brand/icon.png" as="image" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              "html.store-intro-pending #site-shell{visibility:hidden}html.store-intro-pending{overflow:hidden;background:#FAF7F2}html.store-intro-skip .store-intro-overlay{display:none!important}",
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var k='safra-intro-seen';if(sessionStorage.getItem(k)==='1'){document.documentElement.classList.add('store-intro-skip');}else{document.documentElement.classList.add('store-intro-pending');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${arabic.variable} ${english.variable}`}>
         <CartProvider>
           <StoreIntro />
-          <Header />
-          <main className="animate-page-in">{children}</main>
-          <Footer />
+          <div id="site-shell">
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </div>
           <DeferredPixels />
         </CartProvider>
       </body>

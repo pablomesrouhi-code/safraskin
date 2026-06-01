@@ -4,6 +4,13 @@ export const CROSSSELL_PRICE_SAR = 199;
 
 export type ProductSlug = "cyclecalm" | "oralflora" | "clearbalance";
 
+/** Stable SKUs synced with backend — sent to Google Sheets */
+export const PRODUCT_SKUS = {
+  cyclecalm: "SK847291CY",
+  oralflora: "SK295103OR",
+  clearbalance: "SK716408CB",
+} as const satisfies Record<ProductSlug, string>;
+
 export type ProductSection = {
   title: string;
   body: string;
@@ -76,7 +83,7 @@ export const WELLNESS_ZONES = [
 export const PRODUCTS: Product[] = [
   {
     slug: "cyclecalm",
-    sku: "BL-CYCLE-01",
+    sku: PRODUCT_SKUS.cyclecalm,
     nameAr: "هدوء الدورة",
     taglineAr: "دعم أيام الدورة · 60 gummy · شهر كامل",
     shortDescriptionAr: "2 gummies يومياً · B6 · Mag Glycinate · Vitex · sugar-free",
@@ -141,7 +148,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "oralflora",
-    sku: "BL-ORAL-02",
+    sku: PRODUCT_SKUS.oralflora,
     nameAr: "فلورا الفم",
     taglineAr: "بروبيوتيك فموي · 60 gummy · ثقة من الداخل",
     shortDescriptionAr: "K12 + L. reuteri + Zinc + D3 · xylitol · 2 gummies يومياً",
@@ -206,7 +213,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "clearbalance",
-    sku: "BL-SKIN-03",
+    sku: PRODUCT_SKUS.clearbalance,
     nameAr: "توازن البشرة",
     taglineAr: "بشرة تحت الضغط · 60 gummy · 8 أسابيع",
     shortDescriptionAr: "Zinc + Probiotic + Algae DHA · بلا تبييض · 2 gummies يومياً",

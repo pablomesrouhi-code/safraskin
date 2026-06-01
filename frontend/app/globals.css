@@ -11,6 +11,24 @@ body {
   @apply bg-cream text-gray-900 font-arabic antialiased overflow-x-hidden;
 }
 
+/* Intro blocks site until animation finishes — set by inline script before paint */
+html.store-intro-pending #site-shell {
+  visibility: hidden;
+}
+
+html.store-intro-pending {
+  @apply bg-cream;
+  overflow: hidden;
+}
+
+html.store-intro-skip .store-intro-overlay {
+  display: none !important;
+}
+
+html.store-intro-revealed #site-shell {
+  animation: page-in 0.55s ease-out forwards;
+}
+
 main {
   @apply min-h-[50vh];
 }
@@ -50,20 +68,48 @@ main {
 }
 
 @keyframes intro-logo {
-  from {
+  0% {
     opacity: 0;
-    transform: scale(0.88);
+    transform: scale(0.72);
+    filter: blur(6px);
   }
-  to {
+  70% {
+    opacity: 1;
+    transform: scale(1.04);
+    filter: blur(0);
+  }
+  100% {
     opacity: 1;
     transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes intro-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes intro-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 
 @keyframes intro-fade-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -74,9 +120,11 @@ main {
 @keyframes intro-bar {
   from {
     transform: scaleX(0);
+    opacity: 0.5;
   }
   to {
     transform: scaleX(1);
+    opacity: 1;
   }
 }
 
@@ -90,32 +138,54 @@ main {
 }
 
 .animate-intro-logo {
-  animation: intro-logo 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: intro-logo 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-intro-glow {
+  animation: intro-glow 2.4s ease-in-out infinite;
+}
+
+.animate-intro-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(45, 106, 90, 0.04) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: intro-shimmer 2.8s ease-in-out infinite;
 }
 
 .animate-intro-title {
-  animation: intro-fade-up 0.6s ease-out 0.15s both;
+  animation: intro-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.animate-intro-subtitle {
+  animation: intro-fade-up 0.55s ease-out 0.38s both;
 }
 
 .animate-intro-tagline {
-  animation: intro-fade-up 0.6s ease-out 0.3s both;
+  animation: intro-fade-up 0.6s ease-out 0.52s both;
 }
 
 .animate-intro-bar {
-  animation: intro-bar 1.4s ease-out 0.2s both;
-}
-
-.animate-page-in {
-  animation: page-in 0.4s ease-out;
+  animation: intro-bar 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-intro-logo,
+  .animate-intro-glow,
+  .animate-intro-shimmer,
   .animate-intro-title,
+  .animate-intro-subtitle,
   .animate-intro-tagline,
   .animate-intro-bar,
-  .animate-page-in,
-  .animate-fade-up {
+  .animate-fade-up,
+  html.store-intro-revealed #site-shell {
     animation: none;
+  }
+
+  html.store-intro-pending #site-shell {
+    visibility: visible;
   }
 }
