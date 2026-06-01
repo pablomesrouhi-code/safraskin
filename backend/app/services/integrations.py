@@ -60,7 +60,12 @@ def _parse_sheets_http_response(resp: httpx.Response, orderid: str) -> tuple[boo
         err = result.get("error") or result
         return False, str(err)[:300]
 
-    logger.info("Google Sheets OK orderid=%s", orderid)
+    logger.info(
+        "Google Sheets OK orderid=%s row=%s sheet=%s",
+        orderid,
+        result.get("row"),
+        result.get("spreadsheet_name"),
+    )
     return True, None
 
 

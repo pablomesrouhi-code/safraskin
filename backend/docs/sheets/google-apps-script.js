@@ -1,18 +1,23 @@
 /**
- * SAFRA SKIN - Orders to Google Sheet
- * 1. Delete ALL code in Apps Script editor
- * 2. Paste this entire file
- * 3. Save
- * 4. Run testAppendRow once (authorize)
- * 5. Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone
- * 6. Copy URL ending in /exec -> GOOGLE_SHEETS_WEBHOOK_URL in Easypanel
+ * SAFRA SKIN - Orders webhook
+ * Sheet: https://docs.google.com/spreadsheets/d/12UOny_tW2vOVclTSe-jLoMeI_KqYZPGZ3TyfjyxBWWw/edit
+ *
+ * 1. Open THAT sheet > Extensions > Apps Script
+ * 2. Delete ALL old code > paste this file > Save
+ * 3. Run testAppendRow > authorize
+ * 4. Deploy > New deployment > Web app > Me > Anyone > copy /exec URL
+ * 5. Easypanel GOOGLE_SHEETS_WEBHOOK_URL = that URL (frontend + backend)
  */
 
 var SPREADSHEET_ID = '12UOny_tW2vOVclTSe-jLoMeI_KqYZPGZ3TyfjyxBWWw';
 var SHEET_NAME = 'Orders';
 
-function processOrder_(data) {
-  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+function getSpreadsheet_() {
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
+}
+
+function getOrCreateOrdersSheet_() {
+  var ss = getSpreadsheet_();
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
@@ -21,7 +26,13 @@ function processOrder_(data) {
       'sku', 'quantity', 'total_price', 'currency', 'status'
     ]);
     sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, 11).setFontWeight('bold');
   }
+  return sheet;
+}
+
+function processOrder_(data) {
+  var sheet = getOrCreateOrdersSheet_();
 
   var totalPrice = '';
   if (data.total_price !== undefined && data.total_price !== null) {
@@ -42,7 +53,17 @@ function processOrder_(data) {
     data.status || ''
   ]);
 
-  return data.orderid || '';
+  var row = sheet.getLastRow();
+  sheet.getRange(row, 1, 1, 11).setBackground('#d4edda');
+
+  var ss = getSpreadsheet_();
+  return {
+    orderid: data.orderid || '',
+    row: row,
+    sheet: SHEET_NAME,
+    spreadsheet_name: ss.getName(),
+    spreadsheet_id: ss.getId()
+  };
 }
 
 function readPayload_(e) {
@@ -62,11 +83,11 @@ function jsonOut_(obj) {
 }
 
 function testAppendRow() {
-  processOrder_({
+  var result = processOrder_({
     date: '01/06/2026',
-    orderid: 'nama-test-123',
+    orderid: 'nama-test-manual',
     country: 'KSA',
-    name: 'اختبار',
+    name: 'اختبار يدوي',
     phone: '966501234567',
     product: 'هدوء الدورة',
     sku: 'SK847291CY',
@@ -75,18 +96,25 @@ function testAppendRow() {
     currency: 'SAR',
     status: ''
   });
+  Logger.log(JSON.stringify(result));
 }
 
 function doGet(e) {
   try {
     if (e && e.parameter && e.parameter.payload) {
       var data = readPayload_(e);
-      var id = processOrder_(data);
-      return jsonOut_({ success: true, orderid: id });
+      var result = processOrder_(data);
+      return jsonOut_({ success: true, orderid: result.orderid, row: result.row, spreadsheet_name: result.spreadsheet_name });
     }
-    SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME) ||
-      SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet(SHEET_NAME);
-    return jsonOut_({ status: 'ok', sheet: SHEET_NAME });
+    var sheet = getOrCreateOrdersSheet_();
+    var ss = getSpreadsheet_();
+    return jsonOut_({
+      status: 'ok',
+      sheet: SHEET_NAME,
+      spreadsheet_name: ss.getName(),
+      spreadsheet_id: ss.getId(),
+      last_row: sheet.getLastRow()
+    });
   } catch (err) {
     return jsonOut_({ success: false, error: String(err.message || err) });
   }
@@ -95,8 +123,8 @@ function doGet(e) {
 function doPost(e) {
   try {
     var data = readPayload_(e);
-    var id = processOrder_(data);
-    return jsonOut_({ success: true, orderid: id });
+    var result = processOrder_(data);
+    return jsonOut_({ success: true, orderid: result.orderid, row: result.row, spreadsheet_name: result.spreadsheet_name });
   } catch (err) {
     return jsonOut_({ success: false, error: String(err.message || err) });
   }
