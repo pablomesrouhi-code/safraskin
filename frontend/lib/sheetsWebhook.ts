@@ -1,67 +1,71 @@
-/** POST order row to Google Apps Script (same format as backend). */
+/** POST order row to Google Apps Script (GET fallback avoids Google 405 on POST redirect). */
+
+function normalizeExecUrl(url: string): string {
+  const u = url.trim();
+  if (u.includes("/macros/s/") && u.replace(/\/$/, "").endsWith("/dev")) {
+    return u.replace(/\/dev\/?$/, "/exec");
+  }
+  return u;
+}
+
+function parseSheetsResponse(text: string): { ok: boolean; error?: string } {
+  const trimmed = text.trim();
+  if (!trimmed) {
+    return { ok: false, error: "Empty response from Google Apps Script" };
+  }
+  if (trimmed.startsWith("<")) {
+    return {
+      ok: false,
+      error: "Got HTML — redeploy Apps Script (Anyone) and use /exec URL",
+    };
+  }
+  try {
+    const result = JSON.parse(trimmed) as { success?: boolean; error?: string };
+    if (!result.success) {
+      return { ok: false, error: result.error || JSON.stringify(result) };
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false, error: `Invalid JSON: ${trimmed.slice(0, 200)}` };
+  }
+}
 
 export async function syncOrderToSheets(
   payload: Record<string, string | number>
 ): Promise<{ ok: boolean; error?: string }> {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL?.trim();
   if (!url) {
-    return { ok: false, error: "GOOGLE_SHEETS_WEBHOOK_URL not set on frontend" };
+    return { ok: false, error: "GOOGLE_SHEETS_WEBHOOK_URL not set" };
   }
 
-  const execUrl = url.replace(/\/dev\/?$/, "/exec");
+  const execUrl = normalizeExecUrl(url);
   const body = JSON.stringify(payload);
-
-  const attempts: Array<() => Promise<Response>> = [
-    () =>
-      fetch(execUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ payload: body }).toString(),
-        redirect: "follow",
-      }),
-    () =>
-      fetch(execUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body,
-        redirect: "follow",
-      }),
-  ];
-
   let lastError = "Unknown error";
 
-  for (const attempt of attempts) {
-    try {
-      const res = await attempt();
-      const text = await res.text();
+  // 1) GET ?payload= — works when POST redirect returns 405 (common on Google Apps Script)
+  try {
+    const getUrl = `${execUrl}?payload=${encodeURIComponent(body)}`;
+    const res = await fetch(getUrl, { method: "GET", redirect: "follow" });
+    const parsed = parseSheetsResponse(await res.text());
+    if (parsed.ok) return { ok: true };
+    lastError = `GET: ${parsed.error}`;
+  } catch (e) {
+    lastError = `GET: ${e instanceof Error ? e.message : String(e)}`;
+  }
 
-      if (!res.ok) {
-        lastError = `HTTP ${res.status}: ${text.slice(0, 200)}`;
-        continue;
-      }
-
-      if (text.trim().startsWith("<")) {
-        lastError = "Got HTML — redeploy Apps Script as Anyone and use /exec URL";
-        continue;
-      }
-
-      let result: { success?: boolean; error?: string };
-      try {
-        result = JSON.parse(text);
-      } catch {
-        lastError = `Invalid JSON: ${text.slice(0, 200)}`;
-        continue;
-      }
-
-      if (!result.success) {
-        lastError = result.error || JSON.stringify(result);
-        continue;
-      }
-
-      return { ok: true };
-    } catch (e) {
-      lastError = e instanceof Error ? e.message : String(e);
-    }
+  // 2) POST form (no manual redirect — avoid 405 on googleusercontent.com)
+  try {
+    const res = await fetch(execUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ payload: body }).toString(),
+      redirect: "follow",
+    });
+    const parsed = parseSheetsResponse(await res.text());
+    if (parsed.ok) return { ok: true };
+    lastError = `POST: ${parsed.error}`;
+  } catch (e) {
+    lastError = `POST: ${e instanceof Error ? e.message : String(e)}`;
   }
 
   return { ok: false, error: lastError };
