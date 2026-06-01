@@ -23,6 +23,15 @@ NEXT_PUBLIC_API_URL=https://api.safraskin.online
 NEXT_PUBLIC_UPSELL_TIMER_SECONDS=12
 ```
 
+**Runtime (required for orders → Google Sheet):**
+
+```
+GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/YOUR_ID/exec
+ORDER_NUMBER_PREFIX=nama
+```
+
+Orders are sent **from the frontend server** to your Sheet (works even if `api.safraskin.online` is down).
+
 Optional: `NEXT_PUBLIC_META_PIXEL_ID`, `NEXT_PUBLIC_TIKTOK_PIXEL_ID`, `NEXT_PUBLIC_SNAP_PIXEL_ID`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_GA4_ID`
 
 ## Local dev
