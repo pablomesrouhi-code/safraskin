@@ -8,6 +8,18 @@ function normalizeExecUrl(url: string): string {
   return u;
 }
 
+function validateWebhookUrl(url: string): string | null {
+  const u = url.trim();
+  if (!u) return "GOOGLE_SHEETS_WEBHOOK_URL is empty";
+  if (u.includes("docs.google.com/spreadsheets") || u.includes("spreadsheets/d/")) {
+    return "Wrong URL: use Apps Script /exec URL, not the Sheet link";
+  }
+  if (!u.includes("script.google.com/macros")) {
+    return "Wrong URL: must be script.google.com/macros/s/.../exec";
+  }
+  return null;
+}
+
 function parseSheetsResponse(text: string): { ok: boolean; error?: string } {
   const trimmed = text.trim();
   if (!trimmed) {
@@ -35,7 +47,12 @@ export async function syncOrderToSheets(
 ): Promise<{ ok: boolean; error?: string }> {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL?.trim();
   if (!url) {
-    return { ok: false, error: "GOOGLE_SHEETS_WEBHOOK_URL not set" };
+    return { ok: false, error: "GOOGLE_SHEETS_WEBHOOK_URL not set on frontend Easypanel" };
+  }
+
+  const urlErr = validateWebhookUrl(url);
+  if (urlErr) {
+    return { ok: false, error: urlErr };
   }
 
   const execUrl = normalizeExecUrl(url);
@@ -66,6 +83,14 @@ export async function syncOrderToSheets(
     lastError = `POST: ${parsed.error}`;
   } catch (e) {
     lastError = `POST: ${e instanceof Error ? e.message : String(e)}`;
+  }
+
+  if (lastError.includes("404")) {
+    return {
+      ok: false,
+      error:
+        "Webhook 404 — Apps Script → Deploy → New deployment → copy /exec URL → Easypanel GOOGLE_SHEETS_WEBHOOK_URL",
+    };
   }
 
   return { ok: false, error: lastError };
