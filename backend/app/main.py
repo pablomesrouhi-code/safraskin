@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import health, orders, products
+from app.api.routes import admin, events, health, orders, products
 from app.core.config import settings
 from app.core.database import mask_database_url, normalized_database_url, try_init_db
 from app.services.geoip import init_geoip
@@ -33,6 +33,7 @@ async def _database_warmup_loop() -> None:
 async def lifespan(_app: FastAPI):
     logger.info("Safra Skin API starting")
     logger.info("DATABASE_URL (masked): %s", mask_database_url(normalized_database_url()))
+    logger.info("Admin dashboard: %s", "enabled" if settings.admin_enabled else "DISABLED — set ADMIN_PASSWORD")
     asyncio.create_task(_database_warmup_loop())
     try:
         init_geoip()
@@ -58,6 +59,8 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(products.router)
 app.include_router(orders.router)
+app.include_router(events.router)
+app.include_router(admin.router)
 
 
 @app.exception_handler(OrderValidationError)

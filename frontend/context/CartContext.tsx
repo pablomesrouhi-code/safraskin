@@ -10,6 +10,7 @@ import {
 } from "react";
 import { ProductSlug, getProductOrThrow } from "@/data/products";
 import { getTierTotal, getSavings } from "@/lib/pricing";
+import { trackEvent } from "@/lib/track";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutPopup from "@/components/CheckoutPopup";
 import UpsellModal from "@/components/UpsellModal";
@@ -129,10 +130,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addToCart = useCallback((slug: ProductSlug, qty: number) => {
     const product = getProductOrThrow(slug);
     dispatch({ type: "ADD", slug, qty, sku: product.sku });
+    trackEvent("add_to_cart", { product_slug: slug });
   }, []);
 
   const addSlug = useCallback((slug: ProductSlug) => {
     dispatch({ type: "ADD_SLUG", slug });
+    trackEvent("add_to_cart", { product_slug: slug });
   }, []);
 
   const removeFromCart = useCallback((slug: ProductSlug) => {

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.models.order import Order, OrderItem
 from app.schemas.order import CreateOrderRequest
-from app.services.geoip import lookup_ip
+from app.services.fraud import analyze_ip
 from app.services.integrations import fire_purchase_events, sync_order_to_sheets
 from app.services.phone import normalize_ksa_phone
 from app.services.pricing import (
@@ -91,8 +91,8 @@ async def create_order(
     *,
     client_ip: str | None = None,
 ) -> Order:
-    geo = lookup_ip(client_ip)
-    if settings.GEOIP_ENFORCE_KSA and client_ip and geo.get("country_code") not in (None, "SA"):
+    fraud = analyze_ip(client_ip)
+    if settings.GEOIP_ENFORCE_KSA and client_ip and fraud.get("country_code") not in (None, "SA"):
         raise OrderValidationError(
             "الطلبات متاحة داخل المملكة فقط",
             "GEO_NOT_KSA",
@@ -157,8 +157,8 @@ async def create_order(
             "grand_total_sar": order.grand_total_sar,
             "customer_phone": order.customer_phone,
             "client_ip": client_ip,
-            "country_code": geo.get("country_code"),
-            "country_name": geo.get("country_name"),
+            "country_code": fraud.get("country_code"),
+            "country_name": fraud.get("country_name"),
         }
     )
 

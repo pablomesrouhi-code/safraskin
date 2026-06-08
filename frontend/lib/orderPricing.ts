@@ -8,6 +8,10 @@ export type CreateOrderBody = {
   items: OrderItemInput[];
   upsell_sku?: string;
   upsell_price_sar?: number;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  session_id?: string;
 };
 
 const SKU_TO_SLUG: Record<string, ProductSlug> = {

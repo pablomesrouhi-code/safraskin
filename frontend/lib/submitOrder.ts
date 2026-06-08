@@ -1,3 +1,5 @@
+import { getSessionId, getUtmParams } from "@/lib/track";
+
 type OrderItem = { sku: string; qty: number };
 
 export type CreateOrderPayload = {
@@ -6,6 +8,10 @@ export type CreateOrderPayload = {
   items: OrderItem[];
   upsell_sku?: string;
   upsell_price_sar?: number;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  session_id?: string;
 };
 
 export class OrderSubmitError extends Error {
@@ -18,10 +24,19 @@ export class OrderSubmitError extends Error {
 }
 
 export async function submitOrder(payload: CreateOrderPayload): Promise<string> {
+  const utm = getUtmParams();
+  const body: CreateOrderPayload = {
+    ...payload,
+    session_id: payload.session_id ?? getSessionId(),
+    utm_source: payload.utm_source ?? utm.utm_source,
+    utm_medium: payload.utm_medium ?? utm.utm_medium,
+    utm_campaign: payload.utm_campaign ?? utm.utm_campaign,
+  };
+
   const res = await fetch("/api/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(body),
   });
 
   let data: Record<string, unknown> = {};

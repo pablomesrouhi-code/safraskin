@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { BRAND_NAME_AR, BRAND_NAME_EN, BRAND_SLOGAN } from "@/data/brand";
 
@@ -15,9 +16,16 @@ function markIntroDone() {
 }
 
 export default function StoreIntro() {
+  const pathname = usePathname();
   const [phase, setPhase] = useState<Phase>("enter");
 
   useEffect(() => {
+    if (pathname?.startsWith("/admin")) {
+      setPhase("done");
+      markIntroDone();
+      return;
+    }
+
     const alreadySeen = sessionStorage.getItem(STORAGE_KEY) === "1";
 
     if (alreadySeen) {
@@ -42,7 +50,7 @@ export default function StoreIntro() {
       clearTimeout(doneTimer);
       document.body.style.overflow = "";
     };
-  }, []);
+  }, [pathname]);
 
   if (phase === "done") return null;
 

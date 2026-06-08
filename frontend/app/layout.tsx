@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DeferredPixels from "@/components/DeferredPixels";
 import StoreIntro from "@/components/StoreIntro";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const arabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -30,14 +31,18 @@ export const metadata: Metadata = {
     "سفرا جلد — gummies: هدوء الدورة · فلورا الفم · توازن البشرة. مكونات مُعلنة · halal · vegan · دفع عند الاستلام.",
   icons: {
     icon: [
-      { url: "/brand/favicon.png", sizes: "512x512", type: "image/png" },
+      { url: "/brand/icon.png", sizes: "48x48", type: "image/png" },
+      { url: "/brand/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/brand/icon.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: "/brand/apple-touch-icon.png",
+    shortcut: "/brand/icon.png",
+    apple: [{ url: "/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     siteName: "سفرا جلد",
     locale: "ar_SA",
     type: "website",
+    images: [{ url: "/brand/icon.png", width: 512, height: 512, alt: "سفرا جلد" }],
   },
 };
 
@@ -49,6 +54,8 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <head>
+        <link rel="icon" href="/brand/icon.png" type="image/png" sizes="48x48" />
+        <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" sizes="180x180" />
         <link rel="preload" href="/brand/icon.png" as="image" />
         <style
           dangerouslySetInnerHTML={{
@@ -70,6 +77,7 @@ export default function RootLayout({
             <main>{children}</main>
             <Footer />
           </div>
+          <AnalyticsTracker />
           <DeferredPixels />
         </CartProvider>
       </body>

@@ -7,6 +7,7 @@ import { X, ShieldCheck, Package, Truck } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getProductOrThrow } from "@/data/products";
 import { isValidKsaPhone } from "@/lib/phone";
+import { trackEvent } from "@/lib/track";
 
 const schema = z.object({
   name: z.string().min(2, "الاسم مطلوب (حرفين على الأقل)"),
@@ -33,6 +34,7 @@ export default function CheckoutPopup() {
   if (!state.isCheckoutOpen) return null;
 
   const onSubmit = (data: FormData) => {
+    trackEvent("checkout_start");
     openUpsell(data.name, data.phone);
   };
 

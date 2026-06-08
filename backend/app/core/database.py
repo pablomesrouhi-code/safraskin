@@ -56,11 +56,14 @@ def is_db_ready() -> bool:
 
 def init_db() -> None:
     global _db_ready
-    from app.models import order  # noqa: F401
+    from app.models import order, tracking  # noqa: F401
 
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
     Base.metadata.create_all(bind=engine)
+    from app.core.migrations import apply_migrations
+
+    apply_migrations(engine)
     _db_ready = True
     logger.info("Database tables ready")
 

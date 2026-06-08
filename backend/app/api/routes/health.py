@@ -53,4 +53,5 @@ def health() -> dict:
         "sheets_webhook_reachable": sheets.get("reachable"),
         "sheets_webhook_hint": sheets.get("hint"),
         "order_number_prefix": settings.ORDER_NUMBER_PREFIX,
+        "admin_enabled": settings.admin_enabled,
     }

@@ -1,7 +1,7 @@
 from functools import lru_cache
+import hashlib
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -38,6 +38,34 @@ class Settings(BaseSettings):
     MAXMIND_LICENSE_KEY: str = ""
     MAXMIND_GEOIP_DB_PATH: str = "./data/GeoLite2-Country.mmdb"
     GEOIP_ENFORCE_KSA: bool = False
+
+    # IPQualityScore — VPN / proxy / datacenter detection
+    IPQUALITYSCORE_API_KEY: str = ""
+
+    # Admin dashboard (set strong values in production)
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = ""
+    ADMIN_JWT_SECRET: str = ""
+    ADMIN_JWT_EXPIRE_HOURS: int = 24
+
+    @property
+    def admin_jwt_secret(self) -> str:
+        """Explicit secret, or auto-derived from ADMIN_PASSWORD (username+password only)."""
+        explicit = self.ADMIN_JWT_SECRET.strip()
+        if explicit:
+            return explicit
+        pwd = self.ADMIN_PASSWORD.strip()
+        if pwd:
+            return hashlib.sha256(f"safra-skin-admin-v1:{pwd}".encode()).hexdigest()
+        return ""
+
+    @property
+    def admin_enabled(self) -> bool:
+        return bool(self.ADMIN_PASSWORD.strip())
+
+    @property
+    def ipqs_enabled(self) -> bool:
+        return bool(self.IPQUALITYSCORE_API_KEY.strip())
 
     @property
     def cors_origin_list(self) -> list[str]:

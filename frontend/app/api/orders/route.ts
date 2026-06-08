@@ -104,7 +104,7 @@ async function handleSheetsOrder(body: CreateOrderBody): Promise<NextResponse> {
   });
 }
 
-/** Orders: Google Sheets direct (works when backend is down) or backend proxy fallback */
+/** Orders: backend DB + Sheet first; Sheet-only fallback if backend down */
 export async function POST(request: NextRequest) {
   let body: CreateOrderBody;
   try {
@@ -118,15 +118,19 @@ export async function POST(request: NextRequest) {
     process.env.API_URL?.replace(/\/$/, "") ||
     process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 
-  if (sheetsUrl) {
-    return handleSheetsOrder(body);
-  }
-
+  // Backend first: saves to DB (admin dashboard) + syncs Google Sheet
   if (apiBase) {
     const backendRes = await proxyToBackend(body, apiBase);
     if (backendRes) {
       return backendRes;
     }
+  }
+
+  if (sheetsUrl) {
+    return handleSheetsOrder(body);
+  }
+
+  if (apiBase) {
     return NextResponse.json(
       {
         detail: "تعذر الاتصال بالخادم. أضيفي GOOGLE_SHEETS_WEBHOOK_URL في إعدادات الموقع.",

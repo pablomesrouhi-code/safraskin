@@ -30,6 +30,17 @@ class Order(Base):
     payment_method: Mapped[str] = mapped_column(String(20), default="COD")
     status: Mapped[str] = mapped_column(String(30), default="pending_confirmation")
     sheets_synced: Mapped[bool] = mapped_column(Boolean, default=False)
+    client_ip: Mapped[str | None] = mapped_column(String(45), nullable=True)
+    country_code: Mapped[str | None] = mapped_column(String(2), nullable=True)
+    country_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    is_vpn: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_proxy: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_hosting: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_valid_traffic: Mapped[bool] = mapped_column(Boolean, default=True)
+    utm_source: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    utm_medium: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    utm_campaign: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    admin_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow

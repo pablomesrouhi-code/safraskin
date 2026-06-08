@@ -12,6 +12,10 @@ class CreateOrderRequest(BaseModel):
     items: list[OrderItemInput] = Field(min_length=1)
     upsell_sku: str | None = None
     upsell_price_sar: int | None = None
+    utm_source: str | None = None
+    utm_medium: str | None = None
+    utm_campaign: str | None = None
+    session_id: str | None = None
 
 
 class CreateOrderResponse(BaseModel):
