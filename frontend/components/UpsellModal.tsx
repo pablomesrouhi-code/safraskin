@@ -198,8 +198,8 @@ export default function UpsellModal() {
               <span className="mb-1 inline-block rounded-full bg-saffron/20 px-2 py-0.5 text-[10px] font-bold text-saffron-dark">
                 هنا غير: {formatPrice(savings)} أقل من الثمن العادي
               </span>
-              <h3 className="font-bold leading-snug text-ink">{upsellProduct.headlineAr}</h3>
-              <p className="mt-0.5 line-clamp-2 text-xs text-muted">{upsellProduct.formulaLine}</p>
+              <h3 className="font-bold leading-snug text-ink">{upsellProduct.feelingTitle}</h3>
+              <p className="mt-0.5 line-clamp-2 text-xs text-muted">{upsellProduct.problemHook}</p>
             </div>
           </div>
 

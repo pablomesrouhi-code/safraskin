@@ -17,28 +17,28 @@ export default function HomePage() {
               {LAB_INTRO.kicker} · المغرب
             </p>
             <h1 className="mt-4 text-3xl font-bold leading-snug md:text-5xl">
-              عناية مكتوبة لمشكلتكِ — صيغ محدودة، وثمن صريح، والدفع عند الباب.
+              شنو هي اللي كتقلّقك قدام المرآة؟
             </h1>
             <p className="mt-5 max-w-lg text-[15px] leading-8 text-muted">
-              كريم الكلف والتصبغات، كريم القوام الأنثوي، سيروم الفروة ضد التساقط، وعناية الإشراق من الداخل.
-              كل علبة لمشكلة واحدة. كتخاري العرض، كتعمري الاسم والتيليفون، وكتخلّصي ملي توصّل الطلبيّة.
+              الكلف تحت الفوندو. الشعر فالمغسل. الوجه الباهت. أو جسمكِ اللي بغيتي تحسي بيه بهدوء.
+              أربع مشاكل. أربع صيغ. كتخلّصي ملي توصّل الطلبيّة.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/collection"
-                className="rounded-xl bg-rose px-6 py-3.5 text-sm font-bold text-white hover:bg-rose-dark"
-              >
-                شوفي الصيغ
-              </Link>
               <a
                 href="#problems"
-                className="rounded-xl border border-border bg-white px-6 py-3.5 text-sm font-bold text-ink"
+                className="rounded-xl bg-rose px-6 py-3.5 text-sm font-bold text-white hover:bg-rose-dark"
               >
                 اختاري مشكلتك
               </a>
+              <Link
+                href="/collection"
+                className="rounded-xl border border-border bg-white px-6 py-3.5 text-sm font-bold text-ink"
+              >
+                شوفي الصيغ
+              </Link>
             </div>
           </div>
-          <div className="relative aspect-[4/5] min-h-[280px] overflow-hidden rounded-3xl border border-border md:aspect-[5/4] md:min-h-[420px]">
+          <div className="relative aspect-[4/5] min-h-[240px] overflow-hidden rounded-3xl border border-border md:aspect-[5/4] md:min-h-[360px]">
             <EmptyFrame className="h-full w-full rounded-3xl" />
           </div>
         </div>
@@ -48,21 +48,21 @@ export default function HomePage() {
 
       <section id="problems" className="mx-auto max-w-container scroll-mt-header px-4 py-16">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
-          المشكلة
+          المشكلة · الإحساس
         </p>
-        <h2 className="mt-3 text-2xl font-bold md:text-3xl">شنو هي اللي كتقلّقك اليوم؟</h2>
+        <h2 className="mt-3 text-2xl font-bold md:text-3xl">دخلي من الباب اللي كيشبه ليكِ</h2>
         <p className="mt-3 max-w-xl text-sm leading-7 text-muted">
-          ما تدوريش فكتالوج عام. دخلي من الباب اللي كيشبه ليكِ — والصيغة مكتوبة لتما.
+          ما تدوريش فكتالوج عام. كل صيغة مكتوبة لإحساس واحد كتعرفيه فالدار، قدام المرآة، أو فالمغسل.
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {PROBLEM_ZONES.map((zone) => (
             <Link
               key={zone.id}
               href={`/products/${zone.slug}`}
-              className="rounded-3xl border border-border bg-white p-6 transition-shadow hover:border-rose/30 hover:shadow-sm md:p-8"
+              className="rounded-3xl border border-border bg-white p-6 transition-shadow hover:border-rose/30 hover:shadow-sm md:p-7"
             >
               <p className="text-xs font-semibold text-saffron-dark">المشكلة</p>
-              <h3 className="mt-2 text-xl font-bold md:text-2xl">{zone.name}</h3>
+              <h3 className="mt-2 text-xl font-bold">{zone.name}</h3>
               <p className="mt-3 text-sm leading-7 text-muted">{zone.feeling}</p>
               <span className="mt-4 inline-block text-sm font-bold text-rose">شوفي الصيغة ←</span>
             </Link>
@@ -77,13 +77,13 @@ export default function HomePage() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
                 الصيغ
               </p>
-              <h2 className="mt-2 text-2xl font-bold md:text-3xl">أربع علب. كل وحدة واضحة.</h2>
+              <h2 className="mt-2 text-2xl font-bold md:text-3xl">أربع مشاكل. أربع علب.</h2>
             </div>
             <Link href="/collection" className="text-sm font-semibold text-rose">
               الكل
             </Link>
           </div>
-          <div className="mt-10 grid gap-8 md:grid-cols-2">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {PRODUCTS.map((product) => (
               <CollectionProductCard key={product.slug} product={product} />
             ))}
@@ -95,7 +95,10 @@ export default function HomePage() {
       <CodSteps />
 
       <section className="mx-auto max-w-container px-4 py-16">
-        <h2 className="text-2xl font-bold md:text-3xl">كلام الزبونات</h2>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+          الإحساس بعد الالتزام
+        </p>
+        <h2 className="mt-3 text-2xl font-bold md:text-3xl">كلام الزبونات</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {HOME_REVIEWS.map((review) => (
             <article key={review.name + review.product} className="rounded-2xl border border-border bg-white p-5 md:p-6">

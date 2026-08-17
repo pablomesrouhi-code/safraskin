@@ -1,7 +1,10 @@
 export const BRAND_NAME_AR = "سفراسكين";
 export const BRAND_NAME_EN = "Safraskin";
 export const BRAND_TAGLINE = "عناية أنثوية · صيغ محدودة";
-export const BRAND_SLOGAN = "أربع صيغ مكتوبة لمشكلتكِ — والدفع عند الباب.";
+export const BRAND_SLOGAN = "أربع مشاكل واضحة. أربع صيغ. والدفع عند الباب.";
+
+/** Flip to true after dropping real product photos in /public */
+export const ASSETS_READY = false;
 
 /** Flip to true after dropping real product photos in /public */
 export const ASSETS_READY = false;
@@ -18,8 +21,8 @@ export const TRUST_BAR = [
 
 export const LAB_INTRO = {
   kicker: "سفراسكين",
-  title: "ما كنديروش كتالوج عام. كنديرو أربع صيغ، كل وحدة لمشكلة واضحة.",
-  body: "التركيب كيتكتب على مهل: مكوّن معلن، جرعة مفهومة، وروتين تقدري تلتزمي بيه فدارك. المختبر هنا هو الطريقة اللي كنختارو بيها شنو يدخل العلبة، وشنو كيخرج منها.",
+  title: "ما كنديروش كتالوج عام. كنديرو حل لمشكلتكِ قدام المرآة.",
+  body: "الكلف، التساقط، البهتان، أو القوام: كل علبة مكتوبة لإحساس واحد كتعرفيه. المختبر هنا هو الاختيار — شنو كيدخل التركيبة، وشنو كيخرج منها — باش تقدري تلتزمي فالدار بلا وعود خيالية.",
 } as const;
 
 export const AUTHORITY_PILLARS = [

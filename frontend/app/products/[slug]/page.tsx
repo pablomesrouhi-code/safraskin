@@ -2,8 +2,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PRODUCTS, getProduct } from "@/data/products";
 import ProductHero from "@/components/ProductHero";
+import ProductProblem from "@/components/ProductProblem";
+import ProductLanding from "@/components/ProductLanding";
 import IngredientsList from "@/components/IngredientsList";
 import HowToUse from "@/components/HowToUse";
+import ProductReviews from "@/components/ProductReviews";
 import ProductFAQ from "@/components/ProductFAQ";
 import ProductPageCrossSells from "@/components/ProductPageCrossSells";
 import ScrollToOrderCTA from "@/components/ScrollToOrderCTA";
@@ -19,7 +22,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const product = getProduct(params.slug);
   if (!product) return {};
   return {
-    title: `${product.headlineAr} | سفراسكين`,
+    title: `${product.feelingTitle} | سفراسكين`,
     description: product.taglineAr,
   };
 }
@@ -32,8 +35,11 @@ export default function ProductPage({ params }: Props) {
     <div className="pb-24 md:pb-0">
       <ProductHero product={product} />
       <TrustBar />
+      <ProductProblem product={product} />
+      <ProductLanding product={product} />
       <IngredientsList product={product} />
       <HowToUse product={product} />
+      <ProductReviews product={product} />
       <ProductFAQ product={product} />
       <ProductPageCrossSells currentSlug={product.slug} />
       <ScrollToOrderCTA productName={product.headlineAr} />
