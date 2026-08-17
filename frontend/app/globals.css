@@ -9,6 +9,7 @@ html {
 
 body {
   @apply bg-cream text-ink font-arabic antialiased overflow-x-hidden;
+  overflow-wrap: break-word;
 }
 
 main {
@@ -42,8 +43,23 @@ main {
   animation: fade-up 0.55s ease-out forwards;
 }
 
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
+  .animate-fade-up,
+  .animate-marquee {
     animation: none;
   }
 }

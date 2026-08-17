@@ -13,7 +13,7 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
         <p className="mt-2 text-sm leading-7 text-muted">
           صيغة أخرى لنفس الطلب — نفس التوصيل، ونفس الدفع عند الباب.
         </p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {others.map((p) => (
             <Link
               key={p.slug}
@@ -26,7 +26,7 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
               <div className="p-4">
                 <p className="text-xs text-saffron-dark">{p.problemTitle}</p>
                 <p className="mt-1 font-bold leading-snug">{p.feelingTitle}</p>
-                <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted">{p.problemHook}</p>
+                <p className="mt-2 text-xs leading-6 text-muted">{p.problemHook}</p>
                 <p className="mt-3 text-sm font-semibold text-rose">من {formatPrice(TIER_PRICES[1])}</p>
               </div>
             </Link>

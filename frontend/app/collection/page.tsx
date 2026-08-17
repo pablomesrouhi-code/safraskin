@@ -22,7 +22,7 @@ export default function CollectionPage() {
         </p>
       </div>
       <TrustBar />
-      <div className="mx-auto grid max-w-container gap-5 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-container gap-5 px-4 py-12 sm:grid-cols-2">
         {PRODUCTS.map((product) => (
           <CollectionProductCard key={product.slug} product={product} />
         ))}

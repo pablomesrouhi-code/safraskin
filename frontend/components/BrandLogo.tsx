@@ -10,7 +10,7 @@ export default function BrandLogo({ compact = false }: { compact?: boolean }) {
         alt={BRAND_NAME_AR}
         width={713}
         height={428}
-        className={compact ? "h-9 w-auto" : "h-12 w-auto md:h-[3.75rem]"}
+        className={compact ? "h-8 w-auto max-w-[130px] object-contain" : "h-9 w-auto max-w-[150px] object-contain md:h-12 md:max-w-[210px]"}
       />
     </Link>
   );
