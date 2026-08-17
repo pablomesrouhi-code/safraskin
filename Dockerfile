@@ -1,4 +1,4 @@
-# EasyPanel: Dockerfile path = Dockerfile.frontend  |  Context = /
+# EasyPanel default: this file is used when Dockerfile path = Dockerfile
 FROM node:20-alpine
 WORKDIR /app
 
