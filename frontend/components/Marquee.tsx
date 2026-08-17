@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 export default function Marquee({
   children,
-  duration = 28,
+  duration = 80,
   className = "",
 }: {
   children: ReactNode;

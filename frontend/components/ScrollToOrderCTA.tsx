@@ -1,10 +1,8 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
-import { TIER_PRICES } from "@/data/products";
-import { formatPrice } from "@/lib/money";
 
-export default function ScrollToOrderCTA({ productName }: { productName: string }) {
+export default function ScrollToOrderCTA() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-white/95 p-3 backdrop-blur md:hidden">
       <a
@@ -12,7 +10,7 @@ export default function ScrollToOrderCTA({ productName }: { productName: string 
         className="flex items-center justify-center gap-2 rounded-xl bg-rose py-3.5 font-bold text-white"
       >
         <ShoppingBag size={18} />
-        أضيفي {productName} — من {formatPrice(TIER_PRICES[1])}
+        أضيفي للسلة
       </a>
     </div>
   );

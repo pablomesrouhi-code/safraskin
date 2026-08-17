@@ -1,6 +1,5 @@
 "use client";
 
-import { formatPrice } from "@/lib/money";
 import { ProductSlug, TIER_PRICES } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import clsx from "clsx";
@@ -34,7 +33,6 @@ const OFFERS = [
 export default function OfferSelector({ slug }: { slug: ProductSlug }) {
   const [selected, setSelected] = useState<1 | 2 | 3>(1);
   const { addToCart } = useCart();
-  const active = OFFERS.find((o) => o.qty === selected)!;
 
   return (
     <div id="offer-selector" className="scroll-mt-header">
@@ -98,7 +96,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose py-3.5 text-base font-bold text-white shadow-md shadow-rose/25 transition-all hover:bg-rose-dark active:scale-[0.99]"
           >
             <ShoppingBag size={18} aria-hidden />
-            أضيفي للسلة — {formatPrice(active.price)}
+            أضيفي للسلة
           </button>
           <p className="text-center text-xs text-muted">
             ✓ خلّصي ملي توصّل · ✓ مكالمة تأكيد

@@ -21,7 +21,7 @@ export function TrustBar() {
 
   return (
     <div className="w-full bg-ink py-2.5 md:py-3">
-      <Marquee duration={26}>{row}</Marquee>
+      <Marquee duration={80}>{row}</Marquee>
     </div>
   );
 }

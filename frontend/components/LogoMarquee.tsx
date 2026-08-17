@@ -25,7 +25,7 @@ export default function LogoMarquee() {
 
   return (
     <div className="w-full border-y border-border bg-white py-3.5 md:py-4">
-      <Marquee duration={30}>{row}</Marquee>
+      <Marquee duration={90}>{row}</Marquee>
     </div>
   );
 }

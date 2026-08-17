@@ -5,7 +5,6 @@ import ProductHero from "@/components/ProductHero";
 import IngredientsList from "@/components/IngredientsList";
 import HowToUse from "@/components/HowToUse";
 import ProductFAQ from "@/components/ProductFAQ";
-import ProductPageCrossSells from "@/components/ProductPageCrossSells";
 import ScrollToOrderCTA from "@/components/ScrollToOrderCTA";
 
 type Props = { params: { slug: string } };
@@ -35,8 +34,7 @@ export default function ProductPage({ params }: Props) {
         <HowToUse product={product} />
         <ProductFAQ product={product} />
       </div>
-      <ProductPageCrossSells currentSlug={product.slug} />
-      <ScrollToOrderCTA productName={product.headlineAr} />
+      <ScrollToOrderCTA />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import ProductImage from "@/components/ProductImage";
 import Link from "next/link";
-import { formatPrice } from "@/lib/money";
 import type { Product } from "@/data/products";
-import { TIER_PRICES } from "@/data/products";
 
 export default function CollectionProductCard({ product }: { product: Product }) {
   return (
@@ -18,7 +16,9 @@ export default function CollectionProductCard({ product }: { product: Product })
         <h3 className="mt-1.5 text-lg font-bold leading-[1.45] md:text-xl">{product.feelingTitle}</h3>
         <p className="mt-2 text-sm leading-7 text-muted">{product.problemHook}</p>
         <p className="mt-3 text-xs leading-6 text-saffron-dark">{product.headlineAr}</p>
-        <p className="mt-4 text-sm font-bold text-rose">من {formatPrice(TIER_PRICES[1])}</p>
+        <p className="mt-4 rounded-xl bg-rose py-2.5 text-center text-sm font-bold text-white">
+          أضيفي للسلة
+        </p>
       </div>
     </Link>
   );
