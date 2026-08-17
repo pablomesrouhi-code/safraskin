@@ -86,16 +86,22 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
         </div>
 
         <div className="space-y-3 p-4 pt-0">
+          <a
+            href="#details"
+            className="flex w-full items-center justify-center rounded-xl border border-saffron/40 bg-gold-light/40 py-3 text-sm font-bold text-ink hover:bg-gold-light"
+          >
+            بغيتي تقراي التفاصيل؟
+          </a>
           <button
             type="button"
             onClick={() => addToCart(slug, selected)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose py-3.5 text-base font-bold text-white shadow-md shadow-rose/20 transition-all hover:bg-rose-dark active:scale-[0.99]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose py-3.5 text-base font-bold text-white shadow-md shadow-rose/25 transition-all hover:bg-rose-dark active:scale-[0.99]"
           >
             <ShoppingBag size={18} aria-hidden />
-            زيدِ للسلة — {formatPrice(active.price)}
+            أضيفي للسلة — {formatPrice(active.price)}
           </button>
           <p className="text-center text-xs text-muted">
-            ✓ خلّصي ملي توصّل · ✓ مكالمة تأكيد · ✓ تغليف محترم
+            ✓ خلّصي ملي توصّل · ✓ مكالمة تأكيد
           </p>
         </div>
       </div>

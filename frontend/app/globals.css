@@ -18,13 +18,13 @@ main {
 
 @layer utilities {
   .scroll-mt-header {
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: 7.5rem;
   }
 
   .hero-glow {
     background:
-      radial-gradient(ellipse 80% 60% at 80% 10%, rgba(196, 163, 90, 0.18), transparent),
-      radial-gradient(ellipse 50% 40% at 10% 90%, rgba(155, 77, 90, 0.08), transparent);
+      radial-gradient(ellipse 80% 60% at 80% 10%, rgba(212, 175, 55, 0.22), transparent),
+      radial-gradient(ellipse 50% 40% at 10% 90%, rgba(178, 58, 75, 0.10), transparent);
   }
 }
 
@@ -45,10 +45,10 @@ main {
 
 @keyframes marquee {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(-25%, 0, 0);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-75%, 0, 0);
   }
 }
 

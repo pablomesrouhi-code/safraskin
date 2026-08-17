@@ -12,7 +12,7 @@ export default function ScrollToOrderCTA({ productName }: { productName: string 
         className="flex items-center justify-center gap-2 rounded-xl bg-rose py-3.5 font-bold text-white"
       >
         <ShoppingBag size={18} />
-        اختاري عرض {productName} — من {formatPrice(TIER_PRICES[1])}
+        أضيفي {productName} — من {formatPrice(TIER_PRICES[1])}
       </a>
     </div>
   );

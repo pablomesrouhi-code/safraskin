@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import { TrustBar } from "@/components/TrustSections";
 import { useCart } from "@/context/CartContext";
 
 export default function Header() {
@@ -10,9 +11,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-cream/95 backdrop-blur">
-      <p className="bg-ink text-center text-[11px] text-cream py-1.5 px-3">
-        الدفع عند الاستلام · توصيل لجميع المدن
-      </p>
+      <TrustBar />
       <div className="mx-auto flex max-w-container items-center justify-between gap-3 px-4 py-3">
         <BrandLogo />
         <nav className="hidden items-center gap-6 text-sm font-medium text-muted md:flex">

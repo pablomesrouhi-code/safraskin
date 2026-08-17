@@ -8,7 +8,7 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-container px-4 py-16">
+      <div className="mx-auto max-w-container px-4 py-10 md:py-12">
         <h2 className="text-2xl font-bold">واش كاين إحساس آخر كيشبه ليكِ؟</h2>
         <p className="mt-2 text-sm leading-7 text-muted">
           صيغة أخرى لنفس الطلب — نفس التوصيل، ونفس الدفع عند الباب.

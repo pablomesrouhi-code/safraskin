@@ -3,7 +3,7 @@ import type { Product } from "@/data/products";
 export default function IngredientsList({ product }: { product: Product }) {
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-container px-4 py-16">
+      <div className="mx-auto max-w-container px-4 py-10 md:py-12">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
           التركيبة
         </p>

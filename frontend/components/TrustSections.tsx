@@ -8,7 +8,7 @@ export function TrustBar() {
       {items.map((item, index) => (
         <span
           key={`${item}-${index}`}
-          className="flex items-center gap-4 px-6 text-xs font-medium text-cream md:text-sm"
+          className="flex items-center gap-4 px-6 text-[11px] font-medium text-cream md:text-sm"
         >
           <span>{item}</span>
           <span className="text-saffron" aria-hidden>
@@ -20,8 +20,8 @@ export function TrustBar() {
   );
 
   return (
-    <div className="w-full bg-ink py-3.5 md:py-4">
-      <Marquee duration={24}>{row}</Marquee>
+    <div className="w-full bg-ink py-2.5 md:py-3">
+      <Marquee duration={26}>{row}</Marquee>
     </div>
   );
 }
