@@ -10,9 +10,7 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
     <section className="bg-white">
       <div className="mx-auto max-w-container px-4 py-10 md:py-12">
         <h2 className="text-2xl font-bold">واش كاين إحساس آخر كيشبه ليكِ؟</h2>
-        <p className="mt-2 text-sm leading-7 text-muted">
-          صيغة أخرى لنفس الطلب — نفس التوصيل، ونفس الدفع عند الباب.
-        </p>
+        <p className="mt-2 text-sm leading-7 text-muted">صيغة أخرى لنفس الإحساس، أو لمشكل آخر كتعرفيه.</p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {others.map((p) => (
             <Link

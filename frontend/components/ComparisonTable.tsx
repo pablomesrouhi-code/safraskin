@@ -11,7 +11,7 @@ export default function ComparisonTable({ product }: { product: Product }) {
         <div className="grid grid-cols-3 bg-ink text-xs font-semibold text-cream">
           <span className="p-3"> </span>
           <span className="p-3">العادي فالسوق</span>
-          <span className="p-3">من المختبر</span>
+          <span className="p-3">هاد الصيغة</span>
         </div>
         {product.comparison.map((row) => (
           <div key={row.title} className="grid grid-cols-3 border-t border-border text-sm">

@@ -8,9 +8,7 @@ export default function IngredientsList({ product }: { product: Product }) {
           التركيبة
         </p>
         <h2 className="text-2xl font-bold">هاد المكوّنات جاؤ لهاد المشكلة</h2>
-        <p className="mt-2 max-w-2xl text-sm leading-7 text-muted">
-          كل عنصر مكتوب بالاسم، وعندو شغل واحد. بلا لائحة سحرية.
-        </p>
+        <p className="mt-2 max-w-2xl text-sm leading-7 text-muted">كل عنصر مكتوب، وعندو شغل على هاد المشكل.</p>
         <ul className="mt-8 grid gap-4 md:grid-cols-2">
           {product.ingredients.map((item) => (
             <li key={item.name} className="rounded-2xl border border-border bg-cream p-5">
