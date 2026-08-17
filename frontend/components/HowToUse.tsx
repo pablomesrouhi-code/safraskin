@@ -2,7 +2,7 @@ import type { Product } from "@/data/products";
 
 export default function HowToUse({ product }: { product: Product }) {
   return (
-    <section className="mx-auto max-w-container px-4 py-10 md:py-12">
+    <section className="mx-auto max-w-container px-4 py-14 md:py-16">
       <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
         الروتين
       </p>
