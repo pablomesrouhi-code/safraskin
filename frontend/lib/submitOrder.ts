@@ -66,12 +66,12 @@ export async function submitOrder(payload: CreateOrderPayload): Promise<string> 
     throw new OrderSubmitError("لم يُرجع الخادم رقم الطلب");
   }
 
-  if (data.sheets_synced === false) {
-    const sheetErr =
-      typeof data.sheets_sync_error === "string"
-        ? data.sheets_sync_error
-        : "تعذر إرسال الطلب إلى Google Sheet";
-    throw new OrderSubmitError(sheetErr, "SHEETS_SYNC_FAILED");
+  if (
+    data.sheets_synced === false &&
+    typeof data.sheets_sync_error === "string" &&
+    data.sheets_sync_error
+  ) {
+    throw new OrderSubmitError(data.sheets_sync_error, "SHEETS_SYNC_FAILED");
   }
 
   return orderId;
