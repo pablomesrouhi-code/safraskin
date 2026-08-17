@@ -1,0 +1,52 @@
+# Safraskin — Next.js 14 (standalone)
+# Easypanel: Build context = frontend  |  Dockerfile = frontend/Dockerfile
+FROM node:20-alpine AS base
+RUN apk add --no-cache libc6-compat
+
+FROM base AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# NEXT_PUBLIC_* must exist at BUILD time (Easypanel: Build Args or "available at build")
+ARG NEXT_PUBLIC_SITE_URL=https://safraskin.online
+ARG NEXT_PUBLIC_UPSELL_TIMER_SECONDS=12
+ARG NEXT_PUBLIC_META_PIXEL_ID=
+ARG NEXT_PUBLIC_TIKTOK_PIXEL_ID=
+ARG NEXT_PUBLIC_SNAP_PIXEL_ID=
+ARG NEXT_PUBLIC_WHATSAPP_NUMBER=
+ARG NEXT_PUBLIC_GA4_ID=
+
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_UPSELL_TIMER_SECONDS=$NEXT_PUBLIC_UPSELL_TIMER_SECONDS
+ENV NEXT_PUBLIC_META_PIXEL_ID=$NEXT_PUBLIC_META_PIXEL_ID
+ENV NEXT_PUBLIC_TIKTOK_PIXEL_ID=$NEXT_PUBLIC_TIKTOK_PIXEL_ID
+ENV NEXT_PUBLIC_SNAP_PIXEL_ID=$NEXT_PUBLIC_SNAP_PIXEL_ID
+ENV NEXT_PUBLIC_WHATSAPP_NUMBER=$NEXT_PUBLIC_WHATSAPP_NUMBER
+ENV NEXT_PUBLIC_GA4_ID=$NEXT_PUBLIC_GA4_ID
+
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+ENV ORDER_NUMBER_PREFIX=safra
+
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]

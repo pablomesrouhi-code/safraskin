@@ -1,3 +1,3 @@
-# New brand
+# Safraskin
 
-This repository is being reset. The previous Safraskin store has been removed.
+متجر DTC مغربي — الدفع عند الاستلام. الكود فالـ `frontend/`.

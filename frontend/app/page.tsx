@@ -1,0 +1,120 @@
+import Link from "next/link";
+import { EmptyFrame } from "@/components/ProductImage";
+import CollectionProductCard from "@/components/CollectionProductCard";
+import { AuthorityGrid, CodSteps, TrustBar } from "@/components/TrustSections";
+import { FAQ_ITEMS, HOME_REVIEWS, PROBLEM_ZONES, PRODUCTS } from "@/data/products";
+import { BRAND_SLOGAN } from "@/data/brand";
+import { Star } from "lucide-react";
+
+export default function HomePage() {
+  return (
+    <>
+      <section className="hero-glow">
+        <div className="mx-auto grid max-w-container items-center gap-10 px-4 py-12 md:grid-cols-2 md:py-16">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-saffron-dark">
+              Safraskin · المغرب
+            </p>
+            <h1 className="mt-3 text-3xl font-bold leading-snug md:text-5xl">
+              أربعة مشاكل. أربعة حلول. متجر واضح للمرأة المغربية.
+            </h1>
+            <p className="mt-4 max-w-lg text-[15px] leading-8 text-muted">
+              {BRAND_SLOGAN} التصبغات والكلف، القوام الأنثوي، سقوط الشعر، وفقدان الإشراق من الداخل.
+              كتخاري العرض، كتعمري الاسم والتيليفون، وكتخلّصي ملي توصّل الطلبيّة.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/collection"
+                className="rounded-xl bg-rose px-6 py-3.5 text-sm font-bold text-white hover:bg-rose-dark"
+              >
+                شوفي المجموعة
+              </Link>
+              <a
+                href="#problems"
+                className="rounded-xl border border-border bg-white px-6 py-3.5 text-sm font-bold text-ink"
+              >
+                اختاري مشكلتك
+              </a>
+            </div>
+          </div>
+          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl md:aspect-[5/4]">
+            <EmptyFrame label="صورة الهيرو الرئيسية" className="h-full w-full rounded-3xl" />
+          </div>
+        </div>
+      </section>
+
+      <TrustBar />
+
+      <section id="problems" className="mx-auto max-w-container px-4 py-14">
+        <h2 className="text-2xl font-bold">شنو هي مشكلتك اليوم؟</h2>
+        <p className="mt-2 max-w-xl text-sm leading-7 text-muted">
+          ما تدوريش فالمتجر. دخلي من الباب اللي كيشبه ليكِ.
+        </p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {PROBLEM_ZONES.map((zone) => (
+            <Link
+              key={zone.id}
+              href={`/products/${zone.slug}`}
+              className="rounded-3xl border border-border bg-white p-6 hover:border-rose/30"
+            >
+              <p className="text-xs font-semibold text-saffron-dark">المشكلة</p>
+              <h3 className="mt-2 text-xl font-bold">{zone.name}</h3>
+              <p className="mt-3 text-sm leading-7 text-muted">{zone.feeling}</p>
+              <span className="mt-4 inline-block text-sm font-bold text-rose">شوفي الحل ←</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white">
+        <div className="mx-auto max-w-container px-4 py-14">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="text-2xl font-bold">المجموعة</h2>
+            <Link href="/collection" className="text-sm font-semibold text-rose">
+              الكل
+            </Link>
+          </div>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {PRODUCTS.map((product) => (
+              <CollectionProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <AuthorityGrid />
+      <CodSteps />
+
+      <section className="mx-auto max-w-container px-4 py-14">
+        <h2 className="text-2xl font-bold">كلام الزبونات</h2>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {HOME_REVIEWS.map((review) => (
+            <article key={review.name + review.product} className="rounded-2xl border border-border bg-white p-5">
+              <div className="flex items-center gap-2 text-saffron">
+                {Array.from({ length: review.stars }).map((_, i) => (
+                  <Star key={i} size={14} className="fill-saffron" />
+                ))}
+              </div>
+              <p className="mt-3 text-sm leading-7 text-muted">{review.text}</p>
+              <p className="mt-3 text-sm font-semibold">
+                {review.name} · {review.city}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-container px-4 pb-16">
+        <h2 className="text-2xl font-bold">أسئلة سريعة</h2>
+        <div className="mt-6 divide-y divide-border rounded-2xl border border-border bg-white">
+          {FAQ_ITEMS.map((item) => (
+            <details key={item.q} className="px-5 py-4">
+              <summary className="cursor-pointer font-semibold">{item.q}</summary>
+              <p className="mt-2 text-sm leading-7 text-muted">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
