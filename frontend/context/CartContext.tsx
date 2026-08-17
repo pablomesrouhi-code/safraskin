@@ -33,6 +33,7 @@ type Action =
   | { type: "ADD"; slug: ProductSlug; qty: number; sku: string }
   | { type: "ADD_SLUG"; slug: ProductSlug }
   | { type: "ADD_PACK"; packId: PackId }
+  | { type: "SET_QTY"; slug: CartSlug; qty: number }
   | { type: "REMOVE"; slug: CartSlug }
   | { type: "OPEN_DRAWER" }
   | { type: "CLOSE_DRAWER" }
@@ -89,6 +90,17 @@ function cartReducer(state: State, action: Action): State {
         isDrawerOpen: true,
       };
     }
+    case "SET_QTY": {
+      if (isPackId(action.slug)) return state;
+      const qty = Math.min(3, Math.max(0, action.qty));
+      if (qty < 1) {
+        return { ...state, items: state.items.filter((i) => i.slug !== action.slug) };
+      }
+      return {
+        ...state,
+        items: state.items.map((item) => (item.slug === action.slug ? { ...item, qty } : item)),
+      };
+    }
     case "REMOVE":
       return { ...state, items: state.items.filter((i) => i.slug !== action.slug) };
     case "OPEN_DRAWER":
@@ -128,6 +140,7 @@ type CartContextValue = {
   addToCart: (slug: ProductSlug, qty: number) => void;
   addSlug: (slug: ProductSlug) => void;
   addPack: (packId: PackId) => void;
+  setQty: (slug: CartSlug, qty: number) => void;
   removeFromCart: (slug: CartSlug) => void;
   openDrawer: () => void;
   closeDrawer: () => void;
@@ -163,6 +176,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     trackEvent("add_to_cart", { product_slug: packId });
   }, []);
 
+  const setQty = useCallback((slug: CartSlug, qty: number) => {
+    dispatch({ type: "SET_QTY", slug, qty });
+  }, []);
+
   const removeFromCart = useCallback((slug: CartSlug) => {
     dispatch({ type: "REMOVE", slug });
   }, []);
@@ -186,6 +203,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addToCart,
     addSlug,
     addPack,
+    setQty,
     removeFromCart,
     openDrawer: () => dispatch({ type: "OPEN_DRAWER" }),
     closeDrawer: () => dispatch({ type: "CLOSE_DRAWER" }),

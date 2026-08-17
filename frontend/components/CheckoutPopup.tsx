@@ -7,7 +7,7 @@ import { X, ShieldCheck, Package, Truck } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getProduct } from "@/data/products";
 import { getPack } from "@/data/packs";
-import { getLinePrice } from "@/lib/pricing";
+import QtyStepper from "@/components/QtyStepper";
 import { isValidMaPhone } from "@/lib/phone";
 import { formatPrice } from "@/lib/money";
 import { trackEvent } from "@/lib/track";
@@ -20,7 +20,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function CheckoutPopup() {
-  const { state, closeCheckout, openUpsell, total } = useCart();
+  const { state, closeCheckout, openUpsell, setQty, total } = useCart();
 
   const {
     register,
@@ -64,14 +64,19 @@ export default function CheckoutPopup() {
               const pack = getPack(item.slug);
               const product = !pack ? getProduct(item.slug) : undefined;
               const title = pack?.title || product?.headlineAr || item.slug;
-              const hint = pack ? pack.subtitle : item.qty === 1 ? "علبة واحدة" : item.qty === 2 ? "علبتين" : "3 علب";
               return (
-                <div key={item.slug} className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-bold tabular-nums">{formatPrice(getLinePrice(item))}</span>
+                <div key={item.slug} className="space-y-3">
                   <div className="min-w-0 text-right">
                     <p className="text-sm font-medium text-ink">{title}</p>
-                    <p className="text-xs text-muted">{hint}</p>
+                    {pack ? <p className="text-xs text-muted">{pack.subtitle}</p> : null}
                   </div>
+                  {!pack ? (
+                    <QtyStepper
+                      qty={item.qty}
+                      onDecrease={() => setQty(item.slug, item.qty - 1)}
+                      onIncrease={() => setQty(item.slug, item.qty + 1)}
+                    />
+                  ) : null}
                 </div>
               );
             })}
@@ -140,9 +145,9 @@ export default function CheckoutPopup() {
             <button
               type="submit"
               disabled={!isValid}
-              className="w-full rounded-xl bg-rose py-4 text-lg font-semibold text-white transition-colors hover:bg-rose-dark disabled:cursor-not-allowed disabled:opacity-40"
+              className="w-full rounded-2xl bg-rose py-5 text-xl font-extrabold text-white shadow-lg shadow-rose/30 transition-colors hover:bg-rose-dark disabled:cursor-not-allowed disabled:opacity-40"
             >
-              أكّدي الطلب — الدفع عند الاستلام
+              للطلب
             </button>
             <p className="text-center text-xs text-muted">
               بالضغط، كتقبلي{" "}

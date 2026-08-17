@@ -2,15 +2,15 @@
 
 import { X, Trash2 } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
+import QtyStepper from "@/components/QtyStepper";
 import { useCart } from "@/context/CartContext";
 import { getProduct, CROSSSELL_PRICE_MAD, type ProductSlug } from "@/data/products";
 import { getPack, isPackId } from "@/data/packs";
-import { getLinePrice } from "@/lib/pricing";
 import { getCrossSells } from "@/lib/upsell";
 import { formatPrice } from "@/lib/money";
 
 export default function CartDrawer() {
-  const { state, closeDrawer, openCheckout, removeFromCart, addSlug, total, itemCount, cartSlugs, hasPack } =
+  const { state, closeDrawer, openCheckout, removeFromCart, setQty, addSlug, total, itemCount, cartSlugs, hasPack } =
     useCart();
 
   if (!state.isDrawerOpen) return null;
@@ -37,31 +37,31 @@ export default function CartDrawer() {
               const pack = getPack(item.slug);
               const product = !pack ? getProduct(item.slug) : undefined;
               const title = pack?.title || product?.headlineAr || item.slug;
-              const hint = pack
-                ? pack.subtitle
-                : item.qty === 1
-                  ? "علبة واحدة"
-                  : item.qty === 2
-                    ? "علبتين"
-                    : "3 علب";
               return (
-                <div key={item.slug} className="flex items-center gap-3">
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-cream">
-                    <ProductImage src={product?.image} alt={title} fill emptyLabel={title} />
+                <div key={item.slug} className="space-y-3 rounded-xl border border-border p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-cream">
+                      <ProductImage src={product?.image} alt={title} fill emptyLabel={title} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{title}</p>
+                      {pack ? <p className="text-xs text-muted">{pack.subtitle}</p> : null}
+                    </div>
+                    <button
+                      onClick={() => removeFromCart(item.slug)}
+                      className="p-2 text-gray-400 hover:text-scarcity"
+                      aria-label="حذف"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{title}</p>
-                    <p className="text-xs text-muted">
-                      {hint} · {formatPrice(getLinePrice(item))}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => removeFromCart(item.slug)}
-                    className="p-2 text-gray-400 hover:text-scarcity"
-                    aria-label="حذف"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {!pack ? (
+                    <QtyStepper
+                      qty={item.qty}
+                      onDecrease={() => setQty(item.slug, item.qty - 1)}
+                      onIncrease={() => setQty(item.slug, item.qty + 1)}
+                    />
+                  ) : null}
                 </div>
               );
             })
@@ -102,9 +102,9 @@ export default function CartDrawer() {
             </div>
             <button
               onClick={openCheckout}
-              className="w-full rounded-xl bg-rose py-4 font-semibold text-white hover:bg-rose-dark"
+              className="w-full rounded-2xl bg-rose py-5 text-lg font-extrabold text-white shadow-lg shadow-rose/30 hover:bg-rose-dark"
             >
-              إتمام الطلب
+              للطلب
             </button>
           </div>
         )}
