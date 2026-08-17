@@ -32,7 +32,7 @@ type State = {
 type Action =
   | { type: "ADD"; slug: ProductSlug; qty: number; sku: string; dest?: "drawer" | "checkout" }
   | { type: "ADD_SLUG"; slug: ProductSlug }
-  | { type: "ADD_PACK"; packId: PackId }
+  | { type: "ADD_PACK"; packId: PackId; dest?: "drawer" | "checkout" }
   | { type: "SET_QTY"; slug: CartSlug; qty: number }
   | { type: "REMOVE"; slug: CartSlug }
   | { type: "OPEN_DRAWER" }
@@ -97,10 +97,12 @@ function cartReducer(state: State, action: Action): State {
     case "ADD_PACK": {
       const pack = getPack(action.packId);
       if (!pack) return state;
+      const dest = action.dest ?? "drawer";
       return {
         ...state,
         items: [{ slug: pack.id, qty: 1, sku: pack.sku }],
-        isDrawerOpen: true,
+        isDrawerOpen: dest === "drawer",
+        isCheckoutOpen: dest === "checkout",
       };
     }
     case "SET_QTY": {
@@ -154,6 +156,7 @@ type CartContextValue = {
   buyNow: (slug: ProductSlug, qty: number) => void;
   addSlug: (slug: ProductSlug) => void;
   addPack: (packId: PackId) => void;
+  buyPack: (packId: PackId) => void;
   setQty: (slug: CartSlug, qty: number) => void;
   removeFromCart: (slug: CartSlug) => void;
   openDrawer: () => void;
@@ -192,7 +195,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addPack = useCallback((packId: PackId) => {
-    dispatch({ type: "ADD_PACK", packId });
+    dispatch({ type: "ADD_PACK", packId, dest: "drawer" });
+    trackEvent("add_to_cart", { product_slug: packId });
+  }, []);
+
+  const buyPack = useCallback((packId: PackId) => {
+    dispatch({ type: "ADD_PACK", packId, dest: "checkout" });
     trackEvent("add_to_cart", { product_slug: packId });
   }, []);
 
@@ -224,6 +232,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     buyNow,
     addSlug,
     addPack,
+    buyPack,
     setQty,
     removeFromCart,
     openDrawer: () => dispatch({ type: "OPEN_DRAWER" }),

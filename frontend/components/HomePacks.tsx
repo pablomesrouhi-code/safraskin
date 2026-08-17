@@ -8,7 +8,7 @@ import { EmptyFrame } from "@/components/ProductImage";
 import { ShoppingBag } from "lucide-react";
 
 export default function HomePacks() {
-  const { addPack } = useCart();
+  const { addPack, buyPack } = useCart();
 
   return (
     <section id="packs" className="scroll-mt-header border-t border-border bg-white">
@@ -44,14 +44,23 @@ export default function HomePacks() {
                   })}
                 </ul>
                 <p className="mt-6 text-lg font-bold text-rose">{formatPrice(pack.price)}</p>
-                <button
-                  type="button"
-                  onClick={() => addPack(pack.id)}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-rose py-3.5 text-sm font-bold text-white hover:bg-rose-dark"
-                >
-                  <ShoppingBag size={16} />
-                  زيدِ الروتين للسلة
-                </button>
+                <div className="mt-4 space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => addPack(pack.id)}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose py-2.5 text-sm font-bold text-rose hover:bg-rose/5"
+                  >
+                    <ShoppingBag size={16} />
+                    أضيفي للسلة
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => buyPack(pack.id)}
+                    className="flex w-full items-center justify-center rounded-xl bg-rose py-3 text-sm font-bold text-white hover:bg-rose-dark"
+                  >
+                    اطلبي · الدفع عند الاستلام
+                  </button>
+                </div>
               </div>
             </article>
           ))}

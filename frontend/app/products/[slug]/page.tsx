@@ -44,7 +44,7 @@ export default function ProductPage({ params }: Props) {
         <ProductFAQ product={product} />
       </div>
       <ProductPageCrossSells currentSlug={product.slug} />
-      <ScrollToOrderCTA />
+      <ScrollToOrderCTA slug={product.slug} />
     </div>
   );
 }

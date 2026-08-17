@@ -22,14 +22,14 @@ export default function CartDrawer() {
     <>
       <div className="fixed inset-0 z-50 bg-black/40" onClick={closeDrawer} />
       <div className="fixed top-0 left-0 z-50 flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-border p-5">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <button onClick={closeDrawer} className="p-1 text-muted hover:text-ink" aria-label="إغلاق">
             <X size={22} />
           </button>
           <h2 className="text-lg font-bold">سلتك ({itemCount})</h2>
         </div>
 
-        <div className="flex-1 space-y-4 overflow-y-auto p-5">
+        <div className="flex-1 space-y-3 overflow-y-auto p-4">
           {state.items.length === 0 ? (
             <p className="py-12 text-center text-muted">السلة فارغة</p>
           ) : (
@@ -95,14 +95,14 @@ export default function CartDrawer() {
         </div>
 
         {state.items.length > 0 && (
-          <div className="space-y-3 border-t border-border p-5">
+          <div className="space-y-2 border-t border-border p-4">
             <div className="flex items-center justify-between">
               <span className="text-2xl font-bold text-rose tabular-nums">{formatPrice(total)}</span>
               <span className="text-sm text-muted">المجموع · الدفع عند الاستلام</span>
             </div>
             <button
               onClick={openCheckout}
-              className="w-full rounded-xl bg-rose py-4 font-semibold text-white hover:bg-rose-dark"
+              className="w-full rounded-xl bg-rose py-3 text-sm font-extrabold text-white hover:bg-rose-dark"
             >
               إتمام الطلب
             </button>

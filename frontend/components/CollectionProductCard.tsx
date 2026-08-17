@@ -6,7 +6,7 @@ import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
 export default function CollectionProductCard({ product }: { product: Product }) {
-  const { addToCart } = useCart();
+  const { addToCart, buyNow } = useCart();
 
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-white shadow-sm">
@@ -31,9 +31,16 @@ export default function CollectionProductCard({ product }: { product: Product })
         <button
           type="button"
           onClick={() => addToCart(product.slug, 1)}
-          className="flex w-full items-center justify-center rounded-xl bg-rose py-2.5 text-sm font-bold text-white hover:bg-rose-dark"
+          className="flex w-full items-center justify-center rounded-xl border border-rose py-2.5 text-sm font-bold text-rose hover:bg-rose/5"
         >
           أضيفي للسلة
+        </button>
+        <button
+          type="button"
+          onClick={() => buyNow(product.slug, 1)}
+          className="flex w-full items-center justify-center rounded-xl bg-rose py-2.5 text-sm font-bold text-white hover:bg-rose-dark"
+        >
+          اطلبي · الدفع عند الاستلام
         </button>
       </div>
     </article>
