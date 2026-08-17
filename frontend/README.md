@@ -22,8 +22,9 @@ npm run dev
 
 ## Easypanel
 
-- Build context: `frontend`
-- Dockerfile: `frontend/Dockerfile`
-- Port: `3000`
+خدمتين:
 
-المتغيرات الكاملة فـ `.env.example`. المهم: `GOOGLE_SHEETS_WEBHOOK_URL` runtime، و `NEXT_PUBLIC_*` خاصهم يكونو موجودين فالـ build.
+**Frontend:** context `frontend` · Dockerfile `frontend/Dockerfile` · port `3000`  
+**Backend:** context `backend` · Dockerfile `backend/Dockerfile` · port `8000` + Postgres
+
+المتغيرات فـ `frontend/.env.example` و `backend/.env.example`.

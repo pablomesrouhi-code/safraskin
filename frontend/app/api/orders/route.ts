@@ -10,6 +10,56 @@ import { isValidMaPhone, toE164 } from "@/lib/phone";
 import { syncOrderToSheets } from "@/lib/sheetsWebhook";
 import { UPSELL_PRICE_MAD } from "@/data/products";
 
+function apiBase(): string {
+  return (
+    process.env.API_URL?.replace(/\/$/, "") ||
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+    ""
+  );
+}
+
+async function proxyToBackend(body: unknown): Promise<NextResponse | null> {
+  const base = apiBase();
+  if (!base) return null;
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const res = await fetch(`${base}/api/v1/orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    const text = await res.text();
+    let data: Record<string, unknown> = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { detail: text || "خطأ من الخادم" };
+    }
+
+    if (res.ok && (data.order_id || data.order_number)) {
+      return NextResponse.json(data, { status: res.status });
+    }
+
+    if (!res.ok) {
+      return NextResponse.json(
+        {
+          detail: typeof data.detail === "string" ? data.detail : "ما قدرناش نأكدو الطلب",
+          code: typeof data.code === "string" ? data.code : "BACKEND_ERROR",
+        },
+        { status: res.status }
+      );
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 async function handleSheetsOrder(body: CreateOrderBody): Promise<NextResponse> {
   const name = body.customer_name?.trim();
   if (!name || name.length < 2) {
@@ -61,7 +111,7 @@ async function handleSheetsOrder(body: CreateOrderBody): Promise<NextResponse> {
         { status: 502 }
       );
     }
-  } else if (process.env.NODE_ENV === "production") {
+  } else if (process.env.NODE_ENV === "production" && !apiBase()) {
     return NextResponse.json(
       { detail: "الطلبات غير مهيأة على السيرفر", code: "API_NOT_CONFIGURED" },
       { status: 503 }
@@ -88,6 +138,9 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ detail: "طلب غير صالح", code: "INVALID_JSON" }, { status: 400 });
   }
+
+  const backendRes = await proxyToBackend(body);
+  if (backendRes) return backendRes;
 
   return handleSheetsOrder(body);
 }
