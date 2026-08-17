@@ -11,7 +11,6 @@ import ProductReviews from "@/components/ProductReviews";
 import ProductFAQ from "@/components/ProductFAQ";
 import ProductPageCrossSells from "@/components/ProductPageCrossSells";
 import ScrollToOrderCTA from "@/components/ScrollToOrderCTA";
-import { TrustBar } from "@/components/TrustSections";
 
 type Props = { params: { slug: string } };
 
@@ -35,7 +34,6 @@ export default function ProductPage({ params }: Props) {
   return (
     <div className="pb-24">
       <ProductHero product={product} />
-      <TrustBar />
       <div id="details" className="scroll-mt-header">
         <ProductProblem product={product} />
         <ProductLanding product={product} />
