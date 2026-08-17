@@ -8,9 +8,12 @@ class Base(DeclarativeBase):
     pass
 
 
-connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
-db_url = settings.database_url.replace("postgres://", "postgresql://", 1)
-engine = create_engine(db_url, pool_pre_ping=True, connect_args=connect_args)
+_url = settings.sqlalchemy_url
+if not settings.database_url_valid:
+    _url = "sqlite:///./invalid-database-url.db"
+
+connect_args = {"check_same_thread": False} if _url.startswith("sqlite") else {}
+engine = create_engine(_url, pool_pre_ping=True, connect_args=connect_args)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 

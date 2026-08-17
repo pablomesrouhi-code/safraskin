@@ -16,12 +16,13 @@ from app.services.pricing import PricingError
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    for _ in range(20):
-        try:
-            Base.metadata.create_all(bind=engine)
-            break
-        except Exception:
-            time.sleep(2)
+    if settings.database_url_valid:
+        for _ in range(20):
+            try:
+                Base.metadata.create_all(bind=engine)
+                break
+            except Exception:
+                time.sleep(2)
     yield
 
 
@@ -49,3 +50,16 @@ app.include_router(products_router, prefix="/api/v1")
 @app.get("/")
 def root():
     return {"service": "safraskin-api", "ok": True}
+
+
+@app.get("/health")
+def easypanel_health():
+    return {"ok": True, "service": "safraskin-api"}
+
+
+@app.get("/ready")
+def ready():
+    return {
+        "ok": settings.database_url_valid,
+        "database_url_valid": settings.database_url_valid,
+    }
