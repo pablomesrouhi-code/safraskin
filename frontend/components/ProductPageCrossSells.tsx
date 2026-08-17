@@ -7,10 +7,10 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-container px-4 py-14">
-        <h2 className="text-2xl font-bold">كمّلي الروتين</h2>
-        <p className="mt-2 text-sm text-muted">
-          زيدِ منتج آخر من السلة من بعد ما تختاري العرض — نفس التوصيل، نفس الدفع عند الباب.
+      <div className="mx-auto max-w-container px-4 py-16">
+        <h2 className="text-2xl font-bold">كمّلي العناية</h2>
+        <p className="mt-2 text-sm leading-7 text-muted">
+          صيغة أخرى لنفس الطلب — نفس التوصيل، ونفس الدفع عند الباب.
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {others.map((p) => (
@@ -20,12 +20,13 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
               className="overflow-hidden rounded-2xl border border-border bg-cream hover:border-rose/30"
             >
               <div className="relative aspect-[4/3]">
-                <ProductImage src={p.image} alt={p.nameAr} fill emptyLabel={p.nameAr} />
+                <ProductImage src={p.image} alt={p.headlineAr} fill emptyLabel={p.headlineAr} />
               </div>
               <div className="p-4">
                 <p className="text-xs text-saffron-dark">{p.problemTitle}</p>
-                <p className="mt-1 font-bold">{p.nameAr}</p>
-                <p className="mt-2 text-sm font-semibold text-rose">من {TIER_PRICES[1]} د.م</p>
+                <p className="mt-1 font-bold leading-snug">{p.headlineAr}</p>
+                <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted">{p.formulaLine}</p>
+                <p className="mt-3 text-sm font-semibold text-rose">من {TIER_PRICES[1]} د.م</p>
               </div>
             </Link>
           ))}

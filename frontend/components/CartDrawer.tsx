@@ -35,10 +35,10 @@ export default function CartDrawer() {
               return (
                 <div key={item.slug} className="flex items-center gap-3">
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-cream">
-                    <ProductImage src={product.image} alt={product.nameAr} fill emptyLabel={product.nameAr} />
+                    <ProductImage src={product.image} alt={product.headlineAr} fill emptyLabel={product.headlineAr} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{product.nameAr}</p>
+                    <p className="truncate text-sm font-medium">{product.headlineAr}</p>
                     <p className="text-xs text-muted">
                       {item.qty === 1 ? "علبة واحدة" : item.qty === 2 ? "علبتين" : "3 علب"} ·{" "}
                       {getOfferPrice(item.qty)} د.م
@@ -70,10 +70,10 @@ export default function CartDrawer() {
                     className="flex w-full items-center gap-3 rounded-xl border border-border p-3 text-right hover:border-rose/40"
                   >
                     <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-cream">
-                      <ProductImage src={p.image} alt={p.nameAr} fill emptyLabel={p.nameAr} />
+                      <ProductImage src={p.image} alt={p.headlineAr} fill emptyLabel={p.headlineAr} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium">{p.nameAr}</p>
+                      <p className="text-sm font-medium">{p.headlineAr}</p>
                       <p className="text-xs text-muted">{p.problemTitle}</p>
                     </div>
                     <span className="shrink-0 text-sm font-bold text-rose">{CROSSSELL_PRICE_MAD} د.م</span>

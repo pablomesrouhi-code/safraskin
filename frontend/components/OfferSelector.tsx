@@ -12,7 +12,7 @@ const OFFERS = [
     price: TIER_PRICES[1],
     label: "علبة واحدة",
     hint: "شهر للبداية",
-    tag: null,
+    tag: "عرض البداية",
   },
   {
     qty: 2 as const,
@@ -31,7 +31,7 @@ const OFFERS = [
 ] as const;
 
 export default function OfferSelector({ slug }: { slug: ProductSlug }) {
-  const [selected, setSelected] = useState<1 | 2 | 3>(2);
+  const [selected, setSelected] = useState<1 | 2 | 3>(1);
   const { addToCart } = useCart();
   const active = OFFERS.find((o) => o.qty === selected)!;
 

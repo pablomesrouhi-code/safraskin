@@ -3,31 +3,31 @@ import { EmptyFrame } from "@/components/ProductImage";
 import CollectionProductCard from "@/components/CollectionProductCard";
 import { AuthorityGrid, CodSteps, TrustBar } from "@/components/TrustSections";
 import { FAQ_ITEMS, HOME_REVIEWS, PROBLEM_ZONES, PRODUCTS } from "@/data/products";
-import { BRAND_SLOGAN } from "@/data/brand";
+import { LAB_INTRO } from "@/data/brand";
 import { Star } from "lucide-react";
 
 export default function HomePage() {
   return (
     <>
       <section className="hero-glow">
-        <div className="mx-auto grid max-w-container items-center gap-10 px-4 py-12 md:grid-cols-2 md:py-16">
+        <div className="mx-auto grid max-w-container items-center gap-10 px-4 py-14 md:grid-cols-2 md:py-20">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-saffron-dark">
-              Safraskin · المغرب
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+              {LAB_INTRO.kicker} · المغرب
             </p>
-            <h1 className="mt-3 text-3xl font-bold leading-snug md:text-5xl">
-              أربعة مشاكل. أربعة حلول. متجر واضح للمرأة المغربية.
+            <h1 className="mt-4 text-3xl font-bold leading-snug md:text-5xl">
+              عناية مكتوبة لمشكلتكِ — صيغ محدودة، وثمن صريح، والدفع عند الباب.
             </h1>
-            <p className="mt-4 max-w-lg text-[15px] leading-8 text-muted">
-              {BRAND_SLOGAN} التصبغات والكلف، القوام الأنثوي، سقوط الشعر، وفقدان الإشراق من الداخل.
-              كتخاري العرض، كتعمري الاسم والتيليفون، وكتخلّصي ملي توصّل الطلبيّة.
+            <p className="mt-5 max-w-lg text-[15px] leading-8 text-muted">
+              كريم الكلف والتصبغات، كريم القوام الأنثوي، سيروم الفروة ضد التساقط، وعناية الإشراق من الداخل.
+              كل علبة لمشكلة واحدة. كتخاري العرض، كتعمري الاسم والتيليفون، وكتخلّصي ملي توصّل الطلبيّة.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/collection"
                 className="rounded-xl bg-rose px-6 py-3.5 text-sm font-bold text-white hover:bg-rose-dark"
               >
-                شوفي المجموعة
+                شوفي الصيغ
               </Link>
               <a
                 href="#problems"
@@ -45,31 +45,39 @@ export default function HomePage() {
 
       <TrustBar />
 
-      <section id="problems" className="mx-auto max-w-container px-4 py-14">
-        <h2 className="text-2xl font-bold">شنو هي مشكلتك اليوم؟</h2>
-        <p className="mt-2 max-w-xl text-sm leading-7 text-muted">
-          ما تدوريش فالمتجر. دخلي من الباب اللي كيشبه ليكِ.
+      <section id="problems" className="mx-auto max-w-container px-4 py-16">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+          المشكلة
+        </p>
+        <h2 className="mt-3 text-2xl font-bold md:text-3xl">شنو هي اللي كتقلّقك اليوم؟</h2>
+        <p className="mt-3 max-w-xl text-sm leading-7 text-muted">
+          ما تدوريش فكتالوج عام. دخلي من الباب اللي كيشبه ليكِ — والصيغة مكتوبة لتما.
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {PROBLEM_ZONES.map((zone) => (
             <Link
               key={zone.id}
               href={`/products/${zone.slug}`}
-              className="rounded-3xl border border-border bg-white p-6 hover:border-rose/30"
+              className="rounded-3xl border border-border bg-white p-6 transition-shadow hover:border-rose/30 hover:shadow-sm"
             >
               <p className="text-xs font-semibold text-saffron-dark">المشكلة</p>
               <h3 className="mt-2 text-xl font-bold">{zone.name}</h3>
               <p className="mt-3 text-sm leading-7 text-muted">{zone.feeling}</p>
-              <span className="mt-4 inline-block text-sm font-bold text-rose">شوفي الحل ←</span>
+              <span className="mt-4 inline-block text-sm font-bold text-rose">شوفي الصيغة ←</span>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="bg-white">
-        <div className="mx-auto max-w-container px-4 py-14">
+        <div className="mx-auto max-w-container px-4 py-16">
           <div className="flex items-end justify-between gap-4">
-            <h2 className="text-2xl font-bold">المجموعة</h2>
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+                المختبر
+              </p>
+              <h2 className="mt-2 text-2xl font-bold md:text-3xl">أربع صيغ</h2>
+            </div>
             <Link href="/collection" className="text-sm font-semibold text-rose">
               الكل
             </Link>
@@ -85,7 +93,7 @@ export default function HomePage() {
       <AuthorityGrid />
       <CodSteps />
 
-      <section className="mx-auto max-w-container px-4 py-14">
+      <section className="mx-auto max-w-container px-4 py-16">
         <h2 className="text-2xl font-bold">كلام الزبونات</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {HOME_REVIEWS.map((review) => (

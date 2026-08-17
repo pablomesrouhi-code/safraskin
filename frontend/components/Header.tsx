@@ -20,7 +20,7 @@ export default function Header() {
             المجموعة
           </Link>
           <Link href="/about" className="hover:text-ink">
-            البراند
+            المختبر
           </Link>
           <Link href="/contact" className="hover:text-ink">
             تواصل

@@ -64,7 +64,7 @@ export default function CheckoutPopup() {
                 <div key={item.slug} className="flex items-center justify-between gap-3">
                   <span className="text-sm font-bold tabular-nums">{getOfferPrice(item.qty)} د.م</span>
                   <div className="min-w-0 text-right">
-                    <p className="text-sm font-medium text-ink">{product.nameAr}</p>
+                    <p className="text-sm font-medium text-ink">{product.headlineAr}</p>
                     <p className="text-xs text-muted">
                       {item.qty === 1 ? "علبة واحدة" : item.qty === 2 ? "علبتين" : "3 علب"} · {product.problemTitle}
                     </p>

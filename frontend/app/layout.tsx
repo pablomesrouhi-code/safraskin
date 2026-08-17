@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DeferredPixels from "@/components/DeferredPixels";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
-import { BRAND_NAME_AR, BRAND_NAME_EN, SITE_URL } from "@/data/brand";
+import { BRAND_NAME_AR, SITE_URL } from "@/data/brand";
 
 const arabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -26,9 +26,9 @@ const english = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${BRAND_NAME_AR} | ${BRAND_NAME_EN} — عناية للمرأة المغربية`,
+  title: `${BRAND_NAME_AR} | مختبر عناية للمرأة المغربية`,
   description:
-    "سفراسكين — الكلف، القوام الأنثوي، سقوط الشعر، والإشراق من الداخل. الدفع عند الاستلام في المغرب.",
+    "سفراسكين — كريم الكلف والتصبغات، كريم القوام الأنثوي، سيروم الفروة ضد التساقط، وعناية الإشراق من الداخل. الدفع عند الاستلام في المغرب.",
   openGraph: {
     siteName: BRAND_NAME_AR,
     locale: "ar_MA",

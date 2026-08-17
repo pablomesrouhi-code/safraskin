@@ -45,13 +45,13 @@ export default function ThankYouView({ orderId }: { orderId: string }) {
               const product = getProduct(item.slug);
               return (
                 <li key={item.slug}>
-                  {product?.nameAr || item.slug} × {item.qty}
+                  {product?.headlineAr || item.slug} × {item.qty}
                 </li>
               );
             })}
             {upsell && (
               <li>
-                إضافة: {getProduct(upsell)?.nameAr || upsell} · {UPSELL_PRICE_MAD} د.م
+                إضافة: {getProduct(upsell)?.headlineAr || upsell} · {UPSELL_PRICE_MAD} د.م
               </li>
             )}
           </ul>

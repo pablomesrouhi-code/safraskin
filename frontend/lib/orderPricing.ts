@@ -30,7 +30,7 @@ const SKU_TO_SLUG: Record<string, ProductSlug> = {
 };
 
 const SLUG_TO_NAME_AR = Object.fromEntries(
-  PRODUCTS.map((p) => [p.slug, p.nameAr])
+  PRODUCTS.map((p) => [p.slug, p.headlineAr])
 ) as Record<ProductSlug, string>;
 
 export class OrderValidationError extends Error {

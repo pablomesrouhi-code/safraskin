@@ -188,17 +188,17 @@ export default function UpsellModal() {
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-rose/15 bg-white">
               <ProductImage
                 src={upsellProduct.image}
-                alt={upsellProduct.nameAr}
+                alt={upsellProduct.headlineAr}
                 fill
-                emptyLabel={upsellProduct.nameAr}
+                emptyLabel={upsellProduct.headlineAr}
               />
             </div>
             <div className="min-w-0 flex-1 text-right">
               <span className="mb-1 inline-block rounded-full bg-saffron/20 px-2 py-0.5 text-[10px] font-bold text-saffron-dark">
                 هنا غير: {savings} د.م أقل من الثمن العادي
               </span>
-              <h3 className="font-bold leading-snug text-ink">{upsellProduct.nameAr}</h3>
-              <p className="mt-0.5 line-clamp-2 text-xs text-muted">{upsellProduct.problemTitle}</p>
+              <h3 className="font-bold leading-snug text-ink">{upsellProduct.headlineAr}</h3>
+              <p className="mt-0.5 line-clamp-2 text-xs text-muted">{upsellProduct.formulaLine}</p>
             </div>
           </div>
 

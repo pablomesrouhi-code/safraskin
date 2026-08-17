@@ -3,7 +3,7 @@ import type { Product } from "@/data/products";
 export default function ProductFAQ({ product }: { product: Product }) {
   return (
     <section className="mx-auto max-w-container px-4 py-14">
-      <h2 className="text-2xl font-bold">أسئلة كتتردد</h2>
+      <h2 className="text-2xl font-bold">أسئلة على الصيغة</h2>
       <div className="mt-6 divide-y divide-border rounded-2xl border border-border bg-white">
         {product.faqs.map((item) => (
           <details key={item.q} className="group px-5 py-4">

@@ -22,8 +22,8 @@ export function generateMetadata({ params }: Props): Metadata {
   const product = getProduct(params.slug);
   if (!product) return {};
   return {
-    title: `${product.nameAr} | ${product.problemTitle} | سفراسكين`,
-    description: product.taglineAr,
+    title: `${product.headlineAr} | سفراسكين`,
+    description: `${product.formulaLine}. ${product.taglineAr}`,
   };
 }
 
@@ -36,11 +36,34 @@ export default function ProductPage({ params }: Props) {
       <ProductHero product={product} />
       <TrustBar />
 
-      <section className="mx-auto max-w-container px-4 pb-8 pt-10">
-        <h2 className="text-2xl font-bold">{product.problemHook}</h2>
-        <p className="mt-4 max-w-3xl text-[15px] leading-8 text-muted">{product.problemBody}</p>
-        <h3 className="mt-8 text-xl font-bold">{product.mechanismTitle}</h3>
-        <p className="mt-3 max-w-3xl text-[15px] leading-8 text-muted">{product.mechanismBody}</p>
+      <section className="bg-ink text-cream">
+        <div className="mx-auto max-w-container px-4 py-12 md:py-14">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron">من المختبر</p>
+          <h2 className="mt-3 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
+            {product.headlineAr}
+          </h2>
+          <p className="mt-4 max-w-3xl text-[15px] leading-8 text-cream/75">{product.labNote}</p>
+          <p className="mt-4 text-sm text-saffron">{product.formulaLine}</p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-container px-4 py-14 md:py-16">
+        <div className="grid gap-10 md:grid-cols-2">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+              المشكلة
+            </p>
+            <h2 className="mt-3 text-2xl font-bold leading-snug">{product.problemHook}</h2>
+            <p className="mt-4 text-[15px] leading-8 text-muted">{product.problemBody}</p>
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+              الصيغة
+            </p>
+            <h3 className="mt-3 text-2xl font-bold leading-snug">{product.mechanismTitle}</h3>
+            <p className="mt-4 text-[15px] leading-8 text-muted">{product.mechanismBody}</p>
+          </div>
+        </div>
       </section>
 
       <ProductLanding product={product} />
@@ -50,7 +73,7 @@ export default function ProductPage({ params }: Props) {
       <ProductReviews product={product} />
       <ProductFAQ product={product} />
       <ProductPageCrossSells currentSlug={product.slug} />
-      <ScrollToOrderCTA productName={product.nameAr} />
+      <ScrollToOrderCTA productName={product.headlineAr} />
     </div>
   );
 }

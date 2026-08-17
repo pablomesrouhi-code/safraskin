@@ -12,8 +12,7 @@ export default function Footer() {
             {BRAND_NAME_EN}
           </p>
           <p className="mt-3 max-w-md text-sm leading-7 text-muted">
-            براند مغربي للمرأة: الكلف، القوام الأنثوي، سقوط الشعر، والإشراق من الداخل.
-            الدفع عند الاستلام. مكالمة تأكيد قبل الإرسال.
+            مختبر عناية للمرأة المغربية: أربع صيغ لمشاكل واضحة. الدفع عند الاستلام، ومكالمة تأكيد قبل الإرسال.
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {TRUST_BAR.map((item) => (
@@ -32,7 +31,7 @@ export default function Footer() {
             {PRODUCTS.map((p) => (
               <li key={p.slug}>
                 <Link href={`/products/${p.slug}`} className="hover:text-ink">
-                  {p.nameAr} — {p.problemTitle}
+                  {p.headlineAr}
                 </Link>
               </li>
             ))}
@@ -48,7 +47,7 @@ export default function Footer() {
             </li>
             <li>
               <Link href="/about" className="hover:text-ink">
-                من نحن
+                المختبر
               </Link>
             </li>
             <li>
