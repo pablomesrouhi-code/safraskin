@@ -5,9 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { X, ShieldCheck, Package, Truck } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { getProduct } from "@/data/products";
-import { getPack } from "@/data/packs";
+import { getProduct, type ProductSlug } from "@/data/products";
+import { getPack, isPackId } from "@/data/packs";
 import QtyStepper from "@/components/QtyStepper";
+import ProductImage from "@/components/ProductImage";
+import { getCrossSells } from "@/lib/upsell";
 import { isValidMaPhone } from "@/lib/phone";
 import { formatPrice } from "@/lib/money";
 import { trackEvent } from "@/lib/track";
@@ -20,7 +22,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function CheckoutPopup() {
-  const { state, closeCheckout, openUpsell, setQty, total } = useCart();
+  const { state, closeCheckout, openUpsell, setQty, addSlug, total, cartSlugs, hasPack } = useCart();
 
   const {
     register,
@@ -36,6 +38,9 @@ export default function CheckoutPopup() {
 
   if (!state.isCheckoutOpen) return null;
 
+  const productSlugs = cartSlugs.filter((slug): slug is ProductSlug => !isPackId(slug));
+  const extras = hasPack ? [] : getCrossSells(productSlugs);
+
   const onSubmit = (data: FormData) => {
     trackEvent("checkout_start");
     openUpsell(data.name, data.phone);
@@ -49,7 +54,7 @@ export default function CheckoutPopup() {
         role="dialog"
         aria-labelledby="checkout-title"
       >
-        <div className="sticky top-0 flex items-center justify-between rounded-t-2xl border-b border-border bg-white p-5">
+        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-white p-5">
           <button onClick={closeCheckout} className="p-1 text-muted" aria-label="إغلاق">
             <X size={22} />
           </button>
@@ -59,27 +64,61 @@ export default function CheckoutPopup() {
         </div>
 
         <div className="space-y-5 p-5">
-          <div className="space-y-3 rounded-xl bg-cream p-4">
-            {state.items.map((item) => {
-              const pack = getPack(item.slug);
-              const product = !pack ? getProduct(item.slug) : undefined;
-              const title = pack?.title || product?.headlineAr || item.slug;
-              return (
-                <div key={item.slug} className="space-y-3">
-                  <div className="min-w-0 text-right">
-                    <p className="text-sm font-medium text-ink">{title}</p>
-                    {pack ? <p className="text-xs text-muted">{pack.subtitle}</p> : null}
+          <div className="space-y-4 rounded-xl bg-cream p-4">
+            {state.items.length === 0 ? (
+              <p className="text-center text-sm text-muted">السلة فارغة</p>
+            ) : (
+              state.items.map((item) => {
+                const pack = getPack(item.slug);
+                const product = !pack ? getProduct(item.slug) : undefined;
+                const title = pack?.title || product?.headlineAr || item.slug;
+                return (
+                  <div key={item.slug} className="space-y-3 rounded-xl bg-white p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-cream">
+                        <ProductImage src={product?.image} alt={title} fill emptyLabel={title} />
+                      </div>
+                      <div className="min-w-0 flex-1 text-right">
+                        <p className="text-sm font-medium text-ink">{title}</p>
+                        {pack ? <p className="text-xs text-muted">{pack.subtitle}</p> : null}
+                      </div>
+                    </div>
+                    {!pack ? (
+                      <QtyStepper
+                        qty={item.qty}
+                        onDecrease={() => setQty(item.slug, item.qty - 1)}
+                        onIncrease={() => setQty(item.slug, item.qty + 1)}
+                      />
+                    ) : null}
                   </div>
-                  {!pack ? (
-                    <QtyStepper
-                      qty={item.qty}
-                      onDecrease={() => setQty(item.slug, item.qty - 1)}
-                      onIncrease={() => setQty(item.slug, item.qty + 1)}
-                    />
-                  ) : null}
-                </div>
-              );
-            })}
+                );
+              })
+            )}
+
+            {extras.length > 0 && (
+              <div className="space-y-2 border-t border-border/60 pt-3">
+                <p className="text-sm font-bold text-ink">زيدِ منتج لنفس الطلب</p>
+                <p className="text-xs text-muted">كيتزاد لنفس التوصيل · الدفع عند الباب</p>
+                {extras.map((product) => (
+                  <div key={product.slug} className="flex items-center gap-3 rounded-xl bg-white p-3">
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-cream">
+                      <ProductImage src={product.image} alt={product.headlineAr} fill emptyLabel={product.headlineAr} />
+                    </div>
+                    <div className="min-w-0 flex-1 text-right">
+                      <p className="text-sm font-medium text-ink">{product.headlineAr}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => addSlug(product.slug)}
+                      className="shrink-0 rounded-xl bg-rose px-3 py-2 text-xs font-bold text-white hover:bg-rose-dark"
+                    >
+                      أضيفي
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="flex items-center justify-between border-t border-border/60 pt-3">
               <span className="text-xl font-bold tabular-nums text-rose">{formatPrice(total)}</span>
               <div className="text-right">
@@ -144,7 +183,7 @@ export default function CheckoutPopup() {
 
             <button
               type="submit"
-              disabled={!isValid}
+              disabled={!isValid || state.items.length === 0}
               className="w-full rounded-2xl bg-rose py-5 text-xl font-extrabold text-white shadow-lg shadow-rose/30 transition-colors hover:bg-rose-dark disabled:cursor-not-allowed disabled:opacity-40"
             >
               للطلب

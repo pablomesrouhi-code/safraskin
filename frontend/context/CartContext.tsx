@@ -30,7 +30,7 @@ type State = {
 };
 
 type Action =
-  | { type: "ADD"; slug: ProductSlug; qty: number; sku: string }
+  | { type: "ADD"; slug: ProductSlug; qty: number; sku: string; dest?: "drawer" | "checkout" }
   | { type: "ADD_SLUG"; slug: ProductSlug }
   | { type: "ADD_PACK"; packId: PackId }
   | { type: "SET_QTY"; slug: CartSlug; qty: number }
@@ -66,19 +66,32 @@ function cartReducer(state: State, action: Action): State {
             i.slug === action.slug ? { ...i, qty: action.qty, sku: action.sku } : i
           )
         : [...items, { slug: action.slug, qty: action.qty, sku: action.sku }];
-      return { ...state, items: next, isDrawerOpen: true };
+      const dest = action.dest ?? "drawer";
+      return {
+        ...state,
+        items: next,
+        isDrawerOpen: dest === "drawer",
+        isCheckoutOpen: dest === "checkout",
+      };
     }
     case "ADD_SLUG": {
       const product = getProductOrThrow(action.slug);
       const items = withoutPacks(state.items);
       const existing = items.find((i) => i.slug === action.slug);
+      const stayInCheckout = state.isCheckoutOpen;
       if (existing) {
-        return { ...state, items, isDrawerOpen: true };
+        return {
+          ...state,
+          items,
+          isDrawerOpen: !stayInCheckout,
+          isCheckoutOpen: stayInCheckout,
+        };
       }
       return {
         ...state,
         items: [...items, { slug: action.slug, qty: 1, sku: product.sku }],
-        isDrawerOpen: true,
+        isDrawerOpen: !stayInCheckout,
+        isCheckoutOpen: stayInCheckout,
       };
     }
     case "ADD_PACK": {
@@ -138,6 +151,7 @@ function cartReducer(state: State, action: Action): State {
 type CartContextValue = {
   state: State;
   addToCart: (slug: ProductSlug, qty: number) => void;
+  buyNow: (slug: ProductSlug, qty: number) => void;
   addSlug: (slug: ProductSlug) => void;
   addPack: (packId: PackId) => void;
   setQty: (slug: CartSlug, qty: number) => void;
@@ -162,7 +176,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = useCallback((slug: ProductSlug, qty: number) => {
     const product = getProductOrThrow(slug);
-    dispatch({ type: "ADD", slug, qty, sku: product.sku });
+    dispatch({ type: "ADD", slug, qty, sku: product.sku, dest: "drawer" });
+    trackEvent("add_to_cart", { product_slug: slug });
+  }, []);
+
+  const buyNow = useCallback((slug: ProductSlug, qty: number) => {
+    const product = getProductOrThrow(slug);
+    dispatch({ type: "ADD", slug, qty, sku: product.sku, dest: "checkout" });
     trackEvent("add_to_cart", { product_slug: slug });
   }, []);
 
@@ -201,6 +221,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const value: CartContextValue = {
     state,
     addToCart,
+    buyNow,
     addSlug,
     addPack,
     setQty,

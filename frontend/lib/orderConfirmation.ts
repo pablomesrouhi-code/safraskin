@@ -23,27 +23,32 @@ export function getCallWindow(date = new Date()): CallWindow {
   if (hour >= CALL_START && hour < CALL_END) {
     return {
       isOpen: true,
-      headline: "غنعيّطو ليكِ دابا تقريباً",
-      subline: "جاوبي على التيليفون باش نأكدو العنوان — بلا ما نرسلو فالغلط",
-      badge: "مكالمة التأكيد",
+      headline: "غنعيّطو ليكِ فـ أقل من 10 دقايق",
+      subline: "الرقم غادي يبان جديد، وماشي محفوظ عندكِ. جاوبي باش نأكدو العنوان ونرسلو الطلب.",
+      badge: "مكالمة التأكيد دابا",
     };
   }
 
   if (hour >= CALL_END) {
     return {
       isOpen: false,
-      headline: "طلبكِ مسجّل — المكالمة غداً مع الصباح",
-      subline: "من 9 الصباح كنعيّطو لتأكيد العنوان قبل الإرسال",
+      headline: "راح يوصلك اتصال منا في الصباح الباكر لتأكيد طلبك",
+      subline: "من 9 الصباح كنعيّطو. خلّي التيليفون قريب، والرقم غادي يبان جديد.",
       badge: "طلب مسجّل ✓",
     };
   }
 
   return {
     isOpen: false,
-    headline: "طلبكِ مسجّل — المكالمة هاد الصباح",
-    subline: "من 9 الصباح كنعيّطو لتأكيد العنوان",
+    headline: "راح يوصلك اتصال منا في الصباح الباكر لتأكيد طلبك",
+    subline: "من 9 الصباح كنعيّطو لتأكيد العنوان قبل الإرسال. الرقم غادي يبان جديد.",
     badge: "طلب مسجّل ✓",
   };
+}
+
+export function firstNameFrom(fullName: string): string {
+  const part = fullName.trim().split(/\s+/)[0];
+  return part || "";
 }
 
 export type OrderLine = { slug: string; qty: number };

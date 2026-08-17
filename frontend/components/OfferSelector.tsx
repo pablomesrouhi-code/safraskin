@@ -37,7 +37,7 @@ const OFFERS = [
 
 export default function OfferSelector({ slug }: { slug: ProductSlug }) {
   const [selected, setSelected] = useState<1 | 2 | 3>(1);
-  const { addToCart } = useCart();
+  const { addToCart, buyNow } = useCart();
   const active = OFFERS.find((offer) => offer.qty === selected)!;
 
   return (
@@ -98,26 +98,25 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
           })}
         </div>
 
-        <div className="p-4 pt-0">
+        <div className="space-y-2 p-4 pt-0">
           <button
             type="button"
             onClick={() => addToCart(slug, selected)}
-            className="flex w-full items-center justify-between gap-3 rounded-2xl bg-rose px-5 py-4 text-white shadow-lg shadow-rose/30 transition hover:bg-rose-dark"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-rose bg-white px-5 py-3.5 font-bold text-rose transition hover:bg-rose/5"
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15">
-              <ShoppingBag size={20} aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1 text-right">
-              <span className="block text-lg font-bold leading-tight">للطلب</span>
-              <span className="mt-0.5 block text-xs font-medium text-white/85">
-                {active.label} · الدفع عند الباب
-              </span>
-            </span>
-            <span className="shrink-0 text-left">
-              <span className="block text-xl font-extrabold tabular-nums leading-none">{active.price}</span>
-              <span className="mt-1 block text-[11px] font-semibold text-white/80">درهم مغربي</span>
-            </span>
+            <ShoppingBag size={18} aria-hidden />
+            أضيفي للسلة
           </button>
+          <button
+            type="button"
+            onClick={() => buyNow(slug, selected)}
+            className="w-full rounded-2xl bg-rose px-5 py-4 text-lg font-extrabold text-white shadow-lg shadow-rose/30 transition hover:bg-rose-dark"
+          >
+            اطلبي · الدفع عند الاستلام
+          </button>
+          <p className="text-center text-xs text-muted">
+            {active.label} · {active.price} درهم مغربي
+          </p>
         </div>
       </div>
     </div>
