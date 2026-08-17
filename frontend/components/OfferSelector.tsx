@@ -1,5 +1,6 @@
 "use client";
 
+import { formatPrice } from "@/lib/money";
 import { ProductSlug, TIER_PRICES } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import clsx from "clsx";
@@ -77,7 +78,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
                   <span className="text-xl font-bold leading-tight tabular-nums text-rose">
                     {offer.price}
                   </span>
-                  <span className="mt-0.5 block text-xs font-semibold text-muted">د.م</span>
+                  <span className="mt-0.5 block text-[11px] font-semibold text-muted">درهم مغربي</span>
                 </div>
               </button>
             );
@@ -91,7 +92,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose py-3.5 text-base font-bold text-white shadow-md shadow-rose/20 transition-all hover:bg-rose-dark active:scale-[0.99]"
           >
             <ShoppingBag size={18} aria-hidden />
-            زيدِ للسلة — {active.price} د.م
+            زيدِ للسلة — {formatPrice(active.price)}
           </button>
           <p className="text-center text-xs text-muted">
             ✓ خلّصي ملي توصّل · ✓ مكالمة تأكيد · ✓ تغليف محترم

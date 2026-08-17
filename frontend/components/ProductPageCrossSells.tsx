@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ProductImage from "@/components/ProductImage";
 import { PRODUCTS, type ProductSlug, TIER_PRICES } from "@/data/products";
+import { formatPrice } from "@/lib/money";
 
 export default function ProductPageCrossSells({ currentSlug }: { currentSlug: ProductSlug }) {
   const others = PRODUCTS.filter((p) => p.slug !== currentSlug);
@@ -26,7 +27,7 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
                 <p className="text-xs text-saffron-dark">{p.problemTitle}</p>
                 <p className="mt-1 font-bold leading-snug">{p.headlineAr}</p>
                 <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted">{p.formulaLine}</p>
-                <p className="mt-3 text-sm font-semibold text-rose">من {TIER_PRICES[1]} د.م</p>
+                <p className="mt-3 text-sm font-semibold text-rose">من {formatPrice(TIER_PRICES[1])}</p>
               </div>
             </Link>
           ))}

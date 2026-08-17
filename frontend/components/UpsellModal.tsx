@@ -10,6 +10,7 @@ import { getUpsellSlug } from "@/lib/upsell";
 import { encodeOrderItems } from "@/lib/orderConfirmation";
 import { toE164 } from "@/lib/phone";
 import { submitOrder, OrderSubmitError } from "@/lib/submitOrder";
+import { formatPrice } from "@/lib/money";
 
 const TIMER = Number(process.env.NEXT_PUBLIC_UPSELL_TIMER_SECONDS) || 12;
 
@@ -195,7 +196,7 @@ export default function UpsellModal() {
             </div>
             <div className="min-w-0 flex-1 text-right">
               <span className="mb-1 inline-block rounded-full bg-saffron/20 px-2 py-0.5 text-[10px] font-bold text-saffron-dark">
-                هنا غير: {savings} د.م أقل من الثمن العادي
+                هنا غير: {formatPrice(savings)} أقل من الثمن العادي
               </span>
               <h3 className="font-bold leading-snug text-ink">{upsellProduct.headlineAr}</h3>
               <p className="mt-0.5 line-clamp-2 text-xs text-muted">{upsellProduct.formulaLine}</p>
@@ -204,7 +205,7 @@ export default function UpsellModal() {
 
           <div className="flex items-center justify-center gap-4 py-2">
             <div className="text-center">
-              <span className="block text-sm text-gray-400 line-through">{TIER_PRICES[1]} د.م</span>
+              <span className="block text-sm text-gray-400 line-through">{formatPrice(TIER_PRICES[1])}</span>
               <span className="text-[10px] text-gray-400">الثمن العادي</span>
             </div>
             <div className="h-10 w-px bg-border" />
@@ -212,7 +213,7 @@ export default function UpsellModal() {
               <span className="block text-3xl font-extrabold tabular-nums text-rose">
                 {UPSELL_PRICE_MAD}
               </span>
-              <span className="text-xs font-semibold text-rose">د.م غير</span>
+              <span className="text-xs font-semibold text-rose">درهم مغربي</span>
             </div>
           </div>
 
@@ -233,7 +234,7 @@ export default function UpsellModal() {
             onClick={() => placeOrder(true)}
             className="w-full rounded-2xl bg-rose py-4 text-lg font-bold text-white shadow-lg shadow-rose/25 hover:bg-rose-dark disabled:opacity-50"
           >
-            إييه، زيديه بـ {UPSELL_PRICE_MAD} د.م
+            إييه، زيديه بـ {formatPrice(UPSELL_PRICE_MAD)}
           </button>
           <button
             type="button"
@@ -241,7 +242,7 @@ export default function UpsellModal() {
             onClick={() => placeOrder(false)}
             className="w-full py-2 text-sm text-muted hover:text-ink"
           >
-            لا شكراً — كمّلي طلبي ({total} د.م)
+            لا شكراً — كمّلي طلبي ({formatPrice(total)})
           </button>
         </div>
       </div>

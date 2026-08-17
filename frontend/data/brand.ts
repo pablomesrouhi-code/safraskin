@@ -1,9 +1,9 @@
 export const BRAND_NAME_AR = "سفراسكين";
 export const BRAND_NAME_EN = "Safraskin";
-export const BRAND_TAGLINE = "مختبر عناية للمرأة المغربية";
-export const BRAND_SLOGAN = "صيغ محدودة، مكتوبة لمشكلتكِ — والدفع عند الباب.";
+export const BRAND_TAGLINE = "عناية أنثوية · صيغ محدودة";
+export const BRAND_SLOGAN = "أربع صيغ مكتوبة لمشكلتكِ — والدفع عند الباب.";
 
-/** Flip to true after dropping real photos in /public */
+/** Flip to true after dropping real product photos in /public */
 export const ASSETS_READY = false;
 
 export const SITE_URL =
@@ -17,9 +17,9 @@ export const TRUST_BAR = [
 ] as const;
 
 export const LAB_INTRO = {
-  kicker: "من المختبر",
+  kicker: "سفراسكين",
   title: "ما كنديروش كتالوج عام. كنديرو أربع صيغ، كل وحدة لمشكلة واضحة.",
-  body: "التركيب كيتكتب على مهل: مكوّن معلن، جرعة مفهومة، وروتين تقدري تلتزمي بيه فدارك. المختبر هنا ماشي شعار — هو الطريقة اللي كنختارو بيها شنو يدخل العلبة، وشنو كيخرج منها.",
+  body: "التركيب كيتكتب على مهل: مكوّن معلن، جرعة مفهومة، وروتين تقدري تلتزمي بيه فدارك. المختبر هنا هو الطريقة اللي كنختارو بيها شنو يدخل العلبة، وشنو كيخرج منها.",
 } as const;
 
 export const AUTHORITY_PILLARS = [
@@ -31,7 +31,7 @@ export const AUTHORITY_PILLARS = [
   {
     icon: "02",
     title: "مكونات مكتوبة",
-    body: "اللي داخل التركيبة كيبان بالاسم. بلا لائحة سحرية، وبلا كلام فارغ على «سرّ المختبر».",
+    body: "اللي داخل التركيبة كيبان بالاسم. بلا لائحة سحرية، وبلا كلام فارغ.",
   },
   {
     icon: "03",
@@ -54,7 +54,7 @@ export const COD_STEPS = [
   {
     step: "2",
     title: "الاسم والتيليفون",
-    body: "جوج خانات. رقم مغربي، ومكالمة هادئة باش نأكدو العنوان قبل ما تخرج الطلبيّة.",
+    body: "جوج خانات. رقم يبدا بـ 06 أو 07، ومكالمة هادئة باش نأكدو العنوان قبل ما تخرج الطلبيّة.",
   },
   {
     step: "3",

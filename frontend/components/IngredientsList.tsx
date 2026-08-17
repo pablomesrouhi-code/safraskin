@@ -7,10 +7,8 @@ export default function IngredientsList({ product }: { product: Product }) {
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
           التركيبة
         </p>
-        <h2 className="mt-3 text-2xl font-bold md:text-3xl">شنو داخل العلبة؟</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
-          كل عنصر معلن، وكل عنصر عندو سبب. ما كايناش لائحة سحرية — كاينة صيغة تقدر تتقراها.
-        </p>
+        <h2 className="text-2xl font-bold">شنو داخل؟</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-7 text-muted">المكونات مكتوبة. كل عنصر عندو سبب.</p>
         <ul className="mt-8 grid gap-4 md:grid-cols-2">
           {product.ingredients.map((item) => (
             <li key={item.name} className="rounded-2xl border border-border bg-cream p-5">

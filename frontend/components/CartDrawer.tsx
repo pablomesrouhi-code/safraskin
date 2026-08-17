@@ -3,17 +3,20 @@
 import { X, Trash2 } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
 import { useCart } from "@/context/CartContext";
-import { getProductOrThrow, CROSSSELL_PRICE_MAD } from "@/data/products";
-import { getOfferPrice } from "@/lib/pricing";
+import { getProduct, CROSSSELL_PRICE_MAD, type ProductSlug } from "@/data/products";
+import { getPack, isPackId } from "@/data/packs";
+import { getLinePrice } from "@/lib/pricing";
 import { getCrossSells } from "@/lib/upsell";
+import { formatPrice } from "@/lib/money";
 
 export default function CartDrawer() {
-  const { state, closeDrawer, openCheckout, removeFromCart, addSlug, total, itemCount, cartSlugs } =
+  const { state, closeDrawer, openCheckout, removeFromCart, addSlug, total, itemCount, cartSlugs, hasPack } =
     useCart();
 
   if (!state.isDrawerOpen) return null;
 
-  const crossSells = getCrossSells(cartSlugs);
+  const productSlugs = cartSlugs.filter((slug): slug is ProductSlug => !isPackId(slug));
+  const crossSells = hasPack ? [] : getCrossSells(productSlugs);
 
   return (
     <>
@@ -28,20 +31,28 @@ export default function CartDrawer() {
 
         <div className="flex-1 space-y-4 overflow-y-auto p-5">
           {state.items.length === 0 ? (
-            <p className="py-12 text-center text-muted">السلة فارغة — اختاري مشكلتك من المجموعة</p>
+            <p className="py-12 text-center text-muted">السلة فارغة</p>
           ) : (
             state.items.map((item) => {
-              const product = getProductOrThrow(item.slug);
+              const pack = getPack(item.slug);
+              const product = !pack ? getProduct(item.slug) : undefined;
+              const title = pack?.title || product?.headlineAr || item.slug;
+              const hint = pack
+                ? pack.subtitle
+                : item.qty === 1
+                  ? "علبة واحدة"
+                  : item.qty === 2
+                    ? "علبتين"
+                    : "3 علب";
               return (
                 <div key={item.slug} className="flex items-center gap-3">
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-cream">
-                    <ProductImage src={product.image} alt={product.headlineAr} fill emptyLabel={product.headlineAr} />
+                    <ProductImage src={product?.image} alt={title} fill emptyLabel={title} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{product.headlineAr}</p>
+                    <p className="truncate text-sm font-medium">{title}</p>
                     <p className="text-xs text-muted">
-                      {item.qty === 1 ? "علبة واحدة" : item.qty === 2 ? "علبتين" : "3 علب"} ·{" "}
-                      {getOfferPrice(item.qty)} د.م
+                      {hint} · {formatPrice(getLinePrice(item))}
                     </p>
                   </div>
                   <button
@@ -60,7 +71,7 @@ export default function CartDrawer() {
             <div className="border-t border-border pt-4">
               <p className="mb-1 text-sm font-semibold">زيدِ حل آخر لنفس الطلب</p>
               <p className="mb-3 text-xs text-muted">
-                كيتزاد للسلة بـ {CROSSSELL_PRICE_MAD} د.م · نفس التوصيل · نفس الدفع عند الباب
+                كيتزاد للسلة بـ {formatPrice(CROSSSELL_PRICE_MAD)}
               </p>
               <div className="space-y-3">
                 {crossSells.map((p) => (
@@ -74,9 +85,8 @@ export default function CartDrawer() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium">{p.headlineAr}</p>
-                      <p className="text-xs text-muted">{p.problemTitle}</p>
                     </div>
-                    <span className="shrink-0 text-sm font-bold text-rose">{CROSSSELL_PRICE_MAD} د.م</span>
+                    <span className="shrink-0 text-sm font-bold text-rose">{formatPrice(CROSSSELL_PRICE_MAD)}</span>
                   </button>
                 ))}
               </div>
@@ -87,17 +97,14 @@ export default function CartDrawer() {
         {state.items.length > 0 && (
           <div className="space-y-3 border-t border-border p-5">
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-rose tabular-nums">{total} د.م</span>
+              <span className="text-2xl font-bold text-rose tabular-nums">{formatPrice(total)}</span>
               <span className="text-sm text-muted">المجموع · الدفع عند الاستلام</span>
             </div>
-            <p className="text-center text-xs text-muted">
-              غنعيّطو ليكِ لتأكيد العنوان · خلّصي ملي توصّل
-            </p>
             <button
               onClick={openCheckout}
-              className="w-full rounded-xl bg-rose py-4 font-semibold text-white transition-colors hover:bg-rose-dark"
+              className="w-full rounded-xl bg-rose py-4 font-semibold text-white hover:bg-rose-dark"
             >
-              إتمام الطلب — الدفع عند الاستلام
+              إتمام الطلب
             </button>
           </div>
         )}

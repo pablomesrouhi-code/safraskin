@@ -16,11 +16,11 @@ export default function CollectionPage() {
         </p>
         <h1 className="mt-2 text-3xl font-bold">أربع صيغ. اختاري اللي كتشبه ليكِ.</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
-          كل علبة لمشكلة واحدة. الثمن من 219 د.م. الدفع عند الاستلام. المكوّنات مكتوبة قبل ما تضيفي للسلة.
+          كل علبة لمشكلة واحدة. الثمن من 219 درهم مغربي. الدفع عند الاستلام. المكوّنات مكتوبة قبل ما تضيفي للسلة.
         </p>
       </div>
       <TrustBar />
-      <div className="mx-auto grid max-w-container gap-6 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-container gap-8 px-4 py-12 md:grid-cols-2">
         {PRODUCTS.map((product) => (
           <CollectionProductCard key={product.slug} product={product} />
         ))}

@@ -5,6 +5,7 @@ import {
   UPSELL_PRICE_MAD,
   type ProductSlug,
 } from "@/data/products";
+import { PACK_SKUS, PACKS, getPack, type PackId } from "@/data/packs";
 import { getOfferPrice } from "@/lib/pricing";
 
 export type OrderItemInput = { sku: string; qty: number };
@@ -22,16 +23,19 @@ export type CreateOrderBody = {
   session_id?: string;
 };
 
-const SKU_TO_SLUG: Record<string, ProductSlug> = {
+const SKU_TO_SLUG: Record<string, ProductSlug | PackId> = {
   [PRODUCT_SKUS.clarelia]: "clarelia",
   [PRODUCT_SKUS.femmelia]: "femmelia",
   [PRODUCT_SKUS.capilys]: "capilys",
   [PRODUCT_SKUS.luminora]: "luminora",
+  ...PACK_SKUS,
 };
 
-const SLUG_TO_NAME_AR = Object.fromEntries(
-  PRODUCTS.map((p) => [p.slug, p.headlineAr])
-) as Record<ProductSlug, string>;
+const SLUG_TO_NAME_AR = {
+  ...Object.fromEntries(PRODUCTS.map((p) => [p.slug, p.headlineAr])),
+  "pack-4": PACKS["pack-4"].title,
+  "pack-3": PACKS["pack-3"].title,
+} as Record<string, string>;
 
 export class OrderValidationError extends Error {
   code: string;
@@ -41,11 +45,11 @@ export class OrderValidationError extends Error {
   }
 }
 
-function slugForSku(sku: string): ProductSlug | null {
+function slugForSku(sku: string): ProductSlug | PackId | null {
   return SKU_TO_SLUG[sku.trim().toUpperCase()] ?? null;
 }
 
-export type PricedLine = { sku: string; product_slug: ProductSlug; quantity: number };
+export type PricedLine = { sku: string; product_slug: string; quantity: number };
 
 export function validateAndPrice(body: CreateOrderBody): {
   line_items: PricedLine[];
@@ -69,8 +73,9 @@ export function validateAndPrice(body: CreateOrderBody): {
     if (item.qty < 1) {
       throw new OrderValidationError("الكمية غير صالحة", "INVALID_QTY");
     }
+    const pack = getPack(slug);
     line_items.push({ sku, product_slug: slug, quantity: item.qty });
-    merchandise += getOfferPrice(item.qty);
+    merchandise += pack ? pack.price : getOfferPrice(item.qty);
   }
 
   let upsell_accepted = false;
@@ -81,7 +86,7 @@ export function validateAndPrice(body: CreateOrderBody): {
 
   if (incomingUpsell) {
     upsell_sku = incomingUpsell.trim().toUpperCase();
-    if (!slugForSku(upsell_sku)) {
+    if (!slugForSku(upsell_sku) || PACK_SKUS[upsell_sku]) {
       throw new OrderValidationError("منتج الإضافة غير صالح", "INVALID_UPSELL");
     }
     if (incomingPrice != null && incomingPrice !== UPSELL_PRICE_MAD) {

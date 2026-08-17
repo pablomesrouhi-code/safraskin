@@ -5,7 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { Phone } from "lucide-react";
 import { getCallWindow, parseOrderItems } from "@/lib/orderConfirmation";
 import { getProduct, UPSELL_PRICE_MAD } from "@/data/products";
+import { getPack } from "@/data/packs";
 import { formatPhoneDisplay } from "@/lib/phone";
+import { formatPrice } from "@/lib/money";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function ThankYouView({ orderId }: { orderId: string }) {
   const searchParams = useSearchParams();
@@ -18,6 +21,9 @@ export default function ThankYouView({ orderId }: { orderId: string }) {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-12">
+      <div className="mb-8 flex justify-center">
+        <BrandLogo />
+      </div>
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-saffron-dark">
         {windowInfo.badge}
       </p>
@@ -36,22 +42,23 @@ export default function ThankYouView({ orderId }: { orderId: string }) {
         )}
         {total && (
           <p className="mt-4 text-xl font-bold text-rose">
-            {total} د.م · الدفع عند الاستلام
+            {formatPrice(Number(total))} · الدفع عند الاستلام
           </p>
         )}
         {items.length > 0 && (
           <ul className="mt-4 space-y-1 text-sm text-muted">
             {items.map((item) => {
               const product = getProduct(item.slug);
+              const pack = getPack(item.slug);
               return (
                 <li key={item.slug}>
-                  {product?.headlineAr || item.slug} × {item.qty}
+                  {pack?.title || product?.headlineAr || item.slug} × {item.qty}
                 </li>
               );
             })}
             {upsell && (
               <li>
-                إضافة: {getProduct(upsell)?.headlineAr || upsell} · {UPSELL_PRICE_MAD} د.م
+                إضافة: {getProduct(upsell)?.headlineAr || upsell} · {formatPrice(UPSELL_PRICE_MAD)}
               </li>
             )}
           </ul>

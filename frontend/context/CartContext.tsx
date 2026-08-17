@@ -9,13 +9,15 @@ import {
   ReactNode,
 } from "react";
 import { ProductSlug, getProductOrThrow } from "@/data/products";
+import { type PackId, getPack, isPackId } from "@/data/packs";
 import { getCartTotal } from "@/lib/pricing";
 import { trackEvent } from "@/lib/track";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutPopup from "@/components/CheckoutPopup";
 import UpsellModal from "@/components/UpsellModal";
 
-export type CartItem = { slug: ProductSlug; qty: number; sku: string };
+export type CartSlug = ProductSlug | PackId;
+export type CartItem = { slug: CartSlug; qty: number; sku: string };
 
 type CheckoutData = { name: string; phone: string };
 
@@ -30,7 +32,8 @@ type State = {
 type Action =
   | { type: "ADD"; slug: ProductSlug; qty: number; sku: string }
   | { type: "ADD_SLUG"; slug: ProductSlug }
-  | { type: "REMOVE"; slug: ProductSlug }
+  | { type: "ADD_PACK"; packId: PackId }
+  | { type: "REMOVE"; slug: CartSlug }
   | { type: "OPEN_DRAWER" }
   | { type: "CLOSE_DRAWER" }
   | { type: "OPEN_CHECKOUT" }
@@ -48,26 +51,41 @@ const initialState: State = {
   checkoutData: null,
 };
 
+function withoutPacks(items: CartItem[]): CartItem[] {
+  return items.filter((item) => !isPackId(item.slug));
+}
+
 function cartReducer(state: State, action: Action): State {
   switch (action.type) {
     case "ADD": {
-      const existing = state.items.find((i) => i.slug === action.slug);
-      const items = existing
-        ? state.items.map((i) =>
+      const items = withoutPacks(state.items);
+      const existing = items.find((i) => i.slug === action.slug);
+      const next = existing
+        ? items.map((i) =>
             i.slug === action.slug ? { ...i, qty: action.qty, sku: action.sku } : i
           )
-        : [...state.items, { slug: action.slug, qty: action.qty, sku: action.sku }];
-      return { ...state, items, isDrawerOpen: true };
+        : [...items, { slug: action.slug, qty: action.qty, sku: action.sku }];
+      return { ...state, items: next, isDrawerOpen: true };
     }
     case "ADD_SLUG": {
       const product = getProductOrThrow(action.slug);
-      const existing = state.items.find((i) => i.slug === action.slug);
+      const items = withoutPacks(state.items);
+      const existing = items.find((i) => i.slug === action.slug);
       if (existing) {
-        return { ...state, isDrawerOpen: true };
+        return { ...state, items, isDrawerOpen: true };
       }
       return {
         ...state,
-        items: [...state.items, { slug: action.slug, qty: 1, sku: product.sku }],
+        items: [...items, { slug: action.slug, qty: 1, sku: product.sku }],
+        isDrawerOpen: true,
+      };
+    }
+    case "ADD_PACK": {
+      const pack = getPack(action.packId);
+      if (!pack) return state;
+      return {
+        ...state,
+        items: [{ slug: pack.id, qty: 1, sku: pack.sku }],
         isDrawerOpen: true,
       };
     }
@@ -109,17 +127,19 @@ type CartContextValue = {
   state: State;
   addToCart: (slug: ProductSlug, qty: number) => void;
   addSlug: (slug: ProductSlug) => void;
-  removeFromCart: (slug: ProductSlug) => void;
+  addPack: (packId: PackId) => void;
+  removeFromCart: (slug: CartSlug) => void;
   openDrawer: () => void;
   closeDrawer: () => void;
   openCheckout: () => void;
-  openUpsell: (name: string, phone: string) => void;
+  openUpsell: (name: string; phone: string) => void;
   closeCheckout: () => void;
   closeAll: () => void;
   clearCart: () => void;
   itemCount: number;
   total: number;
-  cartSlugs: ProductSlug[];
+  cartSlugs: CartSlug[];
+  hasPack: boolean;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -138,7 +158,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     trackEvent("add_to_cart", { product_slug: slug });
   }, []);
 
-  const removeFromCart = useCallback((slug: ProductSlug) => {
+  const addPack = useCallback((packId: PackId) => {
+    dispatch({ type: "ADD_PACK", packId });
+    trackEvent("add_to_cart", { product_slug: packId });
+  }, []);
+
+  const removeFromCart = useCallback((slug: CartSlug) => {
     dispatch({ type: "REMOVE", slug });
   }, []);
 
@@ -152,12 +177,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [state.items]
   );
 
+  const hasPack = useMemo(() => state.items.some((i) => isPackId(i.slug)), [state.items]);
+
   const total = useMemo(() => getCartTotal(state.items), [state.items]);
 
   const value: CartContextValue = {
     state,
     addToCart,
     addSlug,
+    addPack,
     removeFromCart,
     openDrawer: () => dispatch({ type: "OPEN_DRAWER" }),
     closeDrawer: () => dispatch({ type: "CLOSE_DRAWER" }),
@@ -169,6 +197,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     itemCount,
     total,
     cartSlugs,
+    hasPack,
   };
 
   return (

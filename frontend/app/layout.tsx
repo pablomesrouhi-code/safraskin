@@ -26,9 +26,9 @@ const english = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${BRAND_NAME_AR} | مختبر عناية للمرأة المغربية`,
+  title: `${BRAND_NAME_AR} | عناية أنثوية`,
   description:
-    "سفراسكين — كريم الكلف والتصبغات، كريم القوام الأنثوي، سيروم الفروة ضد التساقط، وعناية الإشراق من الداخل. الدفع عند الاستلام في المغرب.",
+    "سفراسكين — كريم الكلف والتصبغات، كريم القوام الأنثوي، سيروم الفروة ضد التساقط، وعناية الإشراق من الداخل. الأثمنة بالدرهم المغربي. الدفع عند الاستلام.",
   openGraph: {
     siteName: BRAND_NAME_AR,
     locale: "ar_MA",

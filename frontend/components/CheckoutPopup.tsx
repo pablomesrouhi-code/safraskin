@@ -5,14 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { X, ShieldCheck, Package, Truck } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { getProductOrThrow } from "@/data/products";
-import { getOfferPrice } from "@/lib/pricing";
+import { getProduct } from "@/data/products";
+import { getPack } from "@/data/packs";
+import { getLinePrice } from "@/lib/pricing";
 import { isValidMaPhone } from "@/lib/phone";
+import { formatPrice } from "@/lib/money";
 import { trackEvent } from "@/lib/track";
 
 const schema = z.object({
   name: z.string().min(2, "كتبي سميتك كاملة (حرفين على الأقل)"),
-  phone: z.string().refine(isValidMaPhone, "دخّلي رقم مغربي صحيح: 06 أو 07"),
+  phone: z.string().refine(isValidMaPhone, "دخّلي رقم صحيح: 06 أو 07"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -59,21 +61,22 @@ export default function CheckoutPopup() {
         <div className="space-y-5 p-5">
           <div className="space-y-3 rounded-xl bg-cream p-4">
             {state.items.map((item) => {
-              const product = getProductOrThrow(item.slug);
+              const pack = getPack(item.slug);
+              const product = !pack ? getProduct(item.slug) : undefined;
+              const title = pack?.title || product?.headlineAr || item.slug;
+              const hint = pack ? pack.subtitle : item.qty === 1 ? "علبة واحدة" : item.qty === 2 ? "علبتين" : "3 علب";
               return (
                 <div key={item.slug} className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-bold tabular-nums">{getOfferPrice(item.qty)} د.م</span>
+                  <span className="text-sm font-bold tabular-nums">{formatPrice(getLinePrice(item))}</span>
                   <div className="min-w-0 text-right">
-                    <p className="text-sm font-medium text-ink">{product.headlineAr}</p>
-                    <p className="text-xs text-muted">
-                      {item.qty === 1 ? "علبة واحدة" : item.qty === 2 ? "علبتين" : "3 علب"} · {product.problemTitle}
-                    </p>
+                    <p className="text-sm font-medium text-ink">{title}</p>
+                    <p className="text-xs text-muted">{hint}</p>
                   </div>
                 </div>
               );
             })}
             <div className="flex items-center justify-between border-t border-border/60 pt-3">
-              <span className="text-xl font-bold tabular-nums text-rose">{total} د.م</span>
+              <span className="text-xl font-bold tabular-nums text-rose">{formatPrice(total)}</span>
               <div className="text-right">
                 <p className="font-bold text-ink">المجموع</p>
                 <p className="text-xs text-muted">الدفع عند الاستلام</p>
@@ -126,11 +129,11 @@ export default function CheckoutPopup() {
                 placeholder="06xxxxxxxx"
                 dir="ltr"
               />
-              <p className="mt-1.5 text-xs text-muted">رقم مغربي يبدا بـ 06 أو 07 — باش نقدروا نعيّطو ليكِ</p>
+              <p className="mt-1.5 text-xs text-muted">رقم يبدا بـ 06 أو 07 — باش نقدروا نعيّطو ليكِ</p>
               {errors.phone ? (
                 <p className="mt-1 text-xs text-scarcity">{errors.phone.message}</p>
               ) : phoneValue && isValidMaPhone(phoneValue) ? (
-                <p className="mt-1 text-xs text-rose">✓ رقم مغربي صالح</p>
+                <p className="mt-1 text-xs text-rose">✓ رقم صالح</p>
               ) : null}
             </div>
 

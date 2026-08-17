@@ -6,10 +6,7 @@ export default function HowToUse({ product }: { product: Product }) {
       <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
         الروتين
       </p>
-      <h2 className="mt-3 text-2xl font-bold md:text-3xl">كيفاش تستعمليه؟</h2>
-      <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
-        ثلاث خطوات هادئة. العناية الفاخرة ما كتعقّدش نهارك — كتعطيه إيقاع تقدر تعيشيه.
-      </p>
+      <h2 className="mt-3 text-2xl font-bold">كيفاش تستعمليه؟</h2>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {product.howToUse.map((step) => (
           <div key={step.step} className="rounded-2xl border border-border bg-white p-5">

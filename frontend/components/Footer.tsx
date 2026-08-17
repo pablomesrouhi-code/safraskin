@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BRAND_NAME_AR, BRAND_NAME_EN, TRUST_BAR } from "@/data/brand";
+import BrandLogo from "@/components/BrandLogo";
+import { BRAND_NAME_EN, TRUST_BAR } from "@/data/brand";
 import { PRODUCTS } from "@/data/products";
 
 export default function Footer() {
@@ -7,12 +8,9 @@ export default function Footer() {
     <footer className="mt-16 border-t border-border bg-white">
       <div className="mx-auto grid max-w-container gap-10 px-4 py-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <p className="font-bold text-ink">{BRAND_NAME_AR}</p>
-          <p className="font-english text-xs uppercase tracking-[0.2em] text-saffron-dark mt-1">
-            {BRAND_NAME_EN}
-          </p>
+          <BrandLogo />
           <p className="mt-3 max-w-md text-sm leading-7 text-muted">
-            مختبر عناية للمرأة المغربية: أربع صيغ لمشاكل واضحة. الدفع عند الاستلام، ومكالمة تأكيد قبل الإرسال.
+            عناية أنثوية: أربع صيغ لمشاكل واضحة. الأثمنة بالدرهم المغربي. الدفع عند الاستلام، ومكالمة تأكيد قبل الإرسال.
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {TRUST_BAR.map((item) => (
@@ -40,6 +38,11 @@ export default function Footer() {
         <div>
           <p className="mb-3 text-sm font-bold">المتجر</p>
           <ul className="space-y-2 text-sm text-muted">
+            <li>
+              <Link href="/" className="hover:text-ink">
+                الرئيسية
+              </Link>
+            </li>
             <li>
               <Link href="/collection" className="hover:text-ink">
                 المجموعة
@@ -74,7 +77,7 @@ export default function Footer() {
         </div>
       </div>
       <p className="border-t border-border py-4 text-center text-xs text-muted">
-        © {new Date().getFullYear()} {BRAND_NAME_EN} · المغرب · الدفع عند الاستلام
+        © {new Date().getFullYear()} {BRAND_NAME_EN} · الدفع عند الاستلام
       </p>
     </footer>
   );

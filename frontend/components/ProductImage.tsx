@@ -8,12 +8,14 @@ type FrameProps = {
 export function EmptyFrame({ label, className = "" }: FrameProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#F3EBE0] via-cream to-[#EAD9C4] border border-dashed border-saffron/45 text-center px-3 ${className}`}
+      className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#F3EBE0] via-cream to-[#EAD9C4] text-center px-3 ${className}`}
     >
-      <span className="text-[11px] font-semibold tracking-wide text-saffron-dark/80">
-        {label || "صورة"}
+      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rose text-sm font-semibold text-white">
+        S
       </span>
-      <span className="mt-1 text-[10px] text-muted/80">غادي تزاد هنا</span>
+      {label ? (
+        <span className="mt-3 text-[11px] font-semibold leading-5 text-saffron-dark">{label}</span>
+      ) : null}
     </div>
   );
 }

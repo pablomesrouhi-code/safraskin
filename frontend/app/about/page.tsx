@@ -3,11 +3,13 @@ export const metadata = { title: "المختبر | سفراسكين" };
 export default function AboutPage() {
   return (
     <article className="mx-auto max-w-2xl px-4 py-16 leading-8 text-muted">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">من المختبر</p>
-      <h1 className="mt-3 text-3xl font-bold text-ink">ما كنديروش براند عام. كنديرو أربع صيغ.</h1>
+      <p className="font-english text-[11px] font-semibold uppercase tracking-[0.22em] text-saffron-dark">
+        Safraskin
+      </p>
+      <h1 className="mt-3 text-3xl font-bold text-ink">ما كنديروش كتالوج عام. كنديرو أربع صيغ.</h1>
       <p className="mt-6">
-        سفراسكين مختبر عناية للمرأة المغربية. كل علبة كتتكتب لمشكلة واحدة: الكلف والتصبغات، القوام الأنثوي،
-        تساقط الشعر، والإشراق اللي كينقص من الداخل. المكوّن كيبان بالاسم، والروتين كيبان بالدقيقة، والثمن كيبان قبل السلة.
+        سفراسكين مختبر عناية أنثوية. كل علبة كتتكتب لمشكلة واحدة: الكلف والتصبغات، القوام الأنثوي،
+        تساقط الشعر، والإشراق اللي كينقص من الداخل. المكوّن كيبان بالاسم، والروتين كيبان بالدقيقة، والثمن كيبان بالدرهم المغربي قبل السلة.
       </p>
       <p className="mt-4">
         المختبر هنا معناه الاختيار: شنو كيدخل التركيبة، وشنو كيخرج منها. ما كنخلطوش عشر وعود فكريم واحد،
