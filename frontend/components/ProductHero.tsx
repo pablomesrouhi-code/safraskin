@@ -6,19 +6,14 @@ export default function ProductHero({ product }: { product: Product }) {
   return (
     <section className="hero-glow border-b border-border">
       <div className="mx-auto grid max-w-container items-center gap-8 px-4 py-8 md:grid-cols-2 md:gap-12 md:py-12">
-        <div className="order-1 min-w-0 md:order-2">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-white shadow-sm md:aspect-square">
-            <ProductImage
-              src={product.heroImage}
-              alt={product.feelingTitle}
-              fill
-              priority
-              emptyLabel={product.headlineAr}
-            />
-          </div>
-          <div className="mt-4">
-            <OfferSelector slug={product.slug} />
-          </div>
+        <div className="relative order-1 aspect-[4/5] overflow-hidden rounded-3xl bg-white shadow-sm md:order-2 md:aspect-square">
+          <ProductImage
+            src={product.heroImage}
+            alt={product.feelingTitle}
+            fill
+            priority
+            emptyLabel={product.headlineAr}
+          />
         </div>
         <div className="order-2 min-w-0 md:order-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-saffron-dark">
@@ -32,6 +27,9 @@ export default function ProductHero({ product }: { product: Product }) {
           <p className="mt-4 text-sm text-saffron-dark">
             {product.headlineAr} · {product.formulaLine}
           </p>
+          <div className="mt-6">
+            <OfferSelector slug={product.slug} />
+          </div>
         </div>
       </div>
     </section>
