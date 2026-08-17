@@ -1,0 +1,7 @@
+**/node_modules
+**/.next
+**/.venv
+**/venv
+**/.git
+**/*.db
+setup_log.txt
