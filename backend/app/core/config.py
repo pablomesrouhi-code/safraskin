@@ -30,7 +30,7 @@ class Settings(BaseSettings):
             "google_sheets_webhook_url",
         ),
     )
-    order_number_prefix: str = "safra"
+    order_number_prefix: str = "nama"
     upsell_price_mad: int = 120
 
     meta_pixel_id: str = ""

@@ -14,7 +14,7 @@ export type Pack = {
 export const PACKS: Record<PackId, Pack> = {
   "pack-4": {
     id: "pack-4",
-    sku: "SK-PACK-04",
+    sku: "SK618204P4",
     title: "الروتين الكامل",
     subtitle: "لللي كتقلّقها أكثر من حاجة: الوجه، الشعر، الكولاجين، والمناطق الأنثوية.",
     slugs: ["clarelia", "femmelia", "capilys", "luminora"],
@@ -22,7 +22,7 @@ export const PACKS: Record<PackId, Pack> = {
   },
   "pack-3": {
     id: "pack-3",
-    sku: "SK-PACK-03",
+    sku: "SK275839P3",
     title: "روتين الوجه والشعر",
     subtitle: "تفتيح + تساقط + كولاجين بحري — بلا كبسول المناطق الأنثوية.",
     slugs: ["clarelia", "capilys", "luminora"],

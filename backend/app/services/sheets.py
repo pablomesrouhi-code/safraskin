@@ -5,7 +5,8 @@ from urllib.parse import quote
 import httpx
 
 from app.core.config import settings
-from app.services.pricing import SLUG_TO_NAME_AR
+from app.services.phone import to_local_ma
+from app.services.pricing import SLUG_TO_NAME_AR, SLUG_TO_SKU
 
 
 CASABLANCA = timezone(timedelta(hours=1))
@@ -24,14 +25,14 @@ def build_sheets_payload(order_id: str, name: str, phone_e164: str, line_items: 
     return {
         "date": now.strftime("%d/%m/%Y"),
         "orderid": order_id,
-        "country": "MA",
+        "country": "MAROC",
         "name": name.strip(),
-        "phone": phone_e164.replace("+", ""),
+        "phone": to_local_ma(phone_e164),
         "product": "/".join(SLUG_TO_NAME_AR.get(l["product_slug"], l["product_slug"]) for l in lines),
-        "sku": "/".join(l["sku"] for l in lines),
+        "sku": "/".join(SLUG_TO_SKU.get(l["product_slug"], l["sku"]) for l in lines),
         "quantity": "/".join(str(l["quantity"]) for l in lines),
         "total_price": total,
-        "currency": "MAD",
+        "currency": "DH",
         "status": "",
     }
 

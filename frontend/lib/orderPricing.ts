@@ -7,6 +7,7 @@ import {
 } from "@/data/products";
 import { PACK_SKUS, PACKS, getPack, type PackId } from "@/data/packs";
 import { getOfferPrice } from "@/lib/pricing";
+import { formatPhoneDisplay } from "@/lib/phone";
 
 export type OrderItemInput = { sku: string; qty: number };
 
@@ -23,12 +24,31 @@ export type CreateOrderBody = {
   session_id?: string;
 };
 
+const SKU_ALIASES: Record<string, ProductSlug | PackId> = {
+  "SK-CLAR-01": "clarelia",
+  "SK-FEMM-02": "femmelia",
+  "SK-CAPI-03": "capilys",
+  "SK-LUMI-04": "luminora",
+  "SK-PACK-04": "pack-4",
+  "SK-PACK-03": "pack-3",
+};
+
 const SKU_TO_SLUG: Record<string, ProductSlug | PackId> = {
   [PRODUCT_SKUS.clarelia]: "clarelia",
   [PRODUCT_SKUS.femmelia]: "femmelia",
   [PRODUCT_SKUS.capilys]: "capilys",
   [PRODUCT_SKUS.luminora]: "luminora",
   ...PACK_SKUS,
+  ...SKU_ALIASES,
+};
+
+const SLUG_TO_SKU: Record<string, string> = {
+  clarelia: PRODUCT_SKUS.clarelia,
+  femmelia: PRODUCT_SKUS.femmelia,
+  capilys: PRODUCT_SKUS.capilys,
+  luminora: PRODUCT_SKUS.luminora,
+  "pack-4": PACKS["pack-4"].sku,
+  "pack-3": PACKS["pack-3"].sku,
 };
 
 const SLUG_TO_NAME_AR = {
@@ -74,7 +94,7 @@ export function validateAndPrice(body: CreateOrderBody): {
       throw new OrderValidationError("الكمية غير صالحة", "INVALID_QTY");
     }
     const pack = getPack(slug);
-    line_items.push({ sku, product_slug: slug, quantity: item.qty });
+    line_items.push({ sku: SLUG_TO_SKU[slug] || sku, product_slug: slug, quantity: item.qty });
     merchandise += pack ? pack.price : getOfferPrice(item.qty);
   }
 
@@ -86,9 +106,11 @@ export function validateAndPrice(body: CreateOrderBody): {
 
   if (incomingUpsell) {
     upsell_sku = incomingUpsell.trim().toUpperCase();
-    if (!slugForSku(upsell_sku) || PACK_SKUS[upsell_sku]) {
+    const upsellSlug = slugForSku(upsell_sku);
+    if (!upsellSlug || String(upsellSlug).startsWith("pack")) {
       throw new OrderValidationError("منتج الإضافة غير صالح", "INVALID_UPSELL");
     }
+    upsell_sku = SLUG_TO_SKU[upsellSlug] || upsell_sku;
     if (incomingPrice != null && incomingPrice !== UPSELL_PRICE_MAD) {
       throw new OrderValidationError("سعر الإضافة غير صحيح", "PRICE_MISMATCH");
     }
@@ -131,20 +153,20 @@ export function buildSheetsPayload(
   return {
     date,
     orderid: orderId,
-    country: "MA",
+    country: "MAROC",
     name: customerName.trim(),
-    phone: phoneE164.replace(/^\+/, ""),
+    phone: formatPhoneDisplay(phoneE164),
     product: lines.map((l) => SLUG_TO_NAME_AR[l.product_slug] || l.product_slug).join("/"),
-    sku: lines.map((l) => l.sku).join("/"),
+    sku: lines.map((l) => SLUG_TO_SKU[l.product_slug] || l.sku).join("/"),
     quantity: lines.map((l) => String(l.quantity)).join("/"),
     total_price: grand_total_mad,
-    currency: "MAD",
+    currency: "DH",
     status: "",
   };
 }
 
 export function generateOrderId(): string {
-  const prefix = process.env.ORDER_NUMBER_PREFIX || "safra";
+  const prefix = process.env.ORDER_NUMBER_PREFIX || "nama";
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   let suffix = "";
   for (let i = 0; i < 8; i++) {

@@ -12,7 +12,7 @@ from app.services.sheets import build_sheets_payload, sync_order_to_sheets
 
 
 def generate_order_id() -> str:
-    prefix = settings.order_number_prefix or "safra"
+    prefix = settings.order_number_prefix or "nama"
     suffix = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
     return f"{prefix}{suffix}"
 

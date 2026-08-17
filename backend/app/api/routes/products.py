@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.services.pricing import SKU_TO_SLUG, SLUG_TO_NAME_AR, TIER_PRICES, UPSELL_PRICE_MAD
+from app.services.pricing import SLUG_TO_NAME_AR, SLUG_TO_SKU, TIER_PRICES, UPSELL_PRICE_MAD
 
 router = APIRouter()
 
@@ -12,6 +12,6 @@ def list_products():
         "upsell_price_mad": UPSELL_PRICE_MAD,
         "products": [
             {"sku": sku, "slug": slug, "name_ar": SLUG_TO_NAME_AR[slug]}
-            for sku, slug in SKU_TO_SLUG.items()
+            for slug, sku in SLUG_TO_SKU.items()
         ],
     }

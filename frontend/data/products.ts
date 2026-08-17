@@ -6,10 +6,10 @@ export type ProductSlug = "clarelia" | "femmelia" | "capilys" | "luminora";
 export type OfferQty = 1 | 2 | 3;
 
 export const PRODUCT_SKUS = {
-  clarelia: "SK-CLAR-01",
-  femmelia: "SK-FEMM-02",
-  capilys: "SK-CAPI-03",
-  luminora: "SK-LUMI-04",
+  clarelia: "SK482917CL",
+  femmelia: "SK739405FM",
+  capilys: "SK156820CP",
+  luminora: "SK904371LM",
 } as const satisfies Record<ProductSlug, string>;
 
 export type ProductSection = {
