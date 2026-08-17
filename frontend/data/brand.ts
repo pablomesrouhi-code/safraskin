@@ -6,9 +6,6 @@ export const BRAND_SLOGAN = "أربع مشاكل واضحة. أربع صيغ. و
 /** Flip to true after dropping real product photos in /public */
 export const ASSETS_READY = false;
 
-/** Flip to true after dropping real product photos in /public */
-export const ASSETS_READY = false;
-
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://safraskin.online";
 
