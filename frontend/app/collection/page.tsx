@@ -5,7 +5,7 @@ import { PRODUCTS } from "@/data/products";
 export const metadata = {
   title: "الصيغ | سفراسكين",
   description:
-    "كلف تحت الفوندو، تساقط فالمغسل، وجه باهت، أو عناية للقوام بهدوء. أربع صيغ. الدفع عند الاستلام.",
+    "كريم تفتيح الوجه، زيت تساقط الشعر، كولاجين بحري، وزيادة المناطق الأنثوية. أربع صيغ. الدفع عند الاستلام.",
 };
 
 export default function CollectionPage() {
@@ -17,7 +17,7 @@ export default function CollectionPage() {
         </p>
         <h1 className="mt-2 text-3xl font-bold">اختاري الإحساس اللي كتشبه ليكِ</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
-          كل علبة لمشكلة واحدة كتعرفيها: البقع، التساقط، البهتان، أو القوام. الثمن من 219 درهم مغربي.
+          كل صيغة لمشكلة واحدة: التفتيح، التساقط، البهتان، أو المناطق الأنثوية. الثمن من 219 درهم مغربي.
           الدفع عند الاستلام.
         </p>
       </div>
