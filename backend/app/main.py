@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import logging
 import time
 
 from fastapi import FastAPI, Request
@@ -14,8 +15,12 @@ from app.models import order as _order_model  # noqa: F401
 from app.services.pricing import PricingError
 
 
+logger = logging.getLogger("app.main")
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    logger.info("SAFRASKIN MOROCCO API starting")
     if settings.database_url_valid:
         for _ in range(20):
             try:
