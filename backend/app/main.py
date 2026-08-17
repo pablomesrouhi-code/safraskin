@@ -54,7 +54,19 @@ def root():
 
 @app.get("/health")
 def easypanel_health():
-    return {"ok": True, "service": "safraskin-api"}
+    """Always 200 so EasyPanel keeps the container in rotation."""
+    return {
+        "ok": True,
+        "status": "ok" if settings.database_url_valid else "degraded",
+        "service": "safraskin-api",
+        "app": "safraskin-morocco",
+        "database": settings.database_url_valid,
+        "sheets_webhook_configured": bool(settings.google_sheets_webhook_url.strip()),
+        "sheets_webhook_hint": None
+        if settings.google_sheets_webhook_url.strip()
+        else "Set GOOGLE_SHEETS_WEBHOOK_URL",
+        "order_number_prefix": settings.order_number_prefix,
+    }
 
 
 @app.get("/ready")
