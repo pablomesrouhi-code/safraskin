@@ -19,7 +19,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-cream/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-cream">
       <TrustBar />
       <div className="relative mx-auto flex max-w-container items-center justify-between px-4 py-3">
         <button
@@ -66,14 +66,14 @@ export default function Header() {
 
       {menuOpen ? (
         <>
-          <div className="fixed inset-0 z-50 bg-black/40 md:hidden" onClick={() => setMenuOpen(false)} />
+          <div className="fixed inset-0 z-[70] bg-black/45 md:hidden" onClick={() => setMenuOpen(false)} />
           <aside
-            className="fixed inset-y-0 right-0 z-50 flex w-64 flex-col bg-cream p-5 shadow-2xl md:hidden"
+            className="fixed inset-y-0 right-0 z-[80] flex h-dvh w-[82vw] max-w-xs flex-col overflow-y-auto bg-cream p-5 shadow-2xl md:hidden"
             role="dialog"
             aria-label="الصفحات"
           >
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-sm font-bold text-ink">الصفحات</p>
+            <div className="mb-6 flex shrink-0 items-center justify-between border-b border-border pb-4">
+              <p className="text-lg font-bold text-ink">الصفحات</p>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
@@ -83,13 +83,13 @@ export default function Header() {
                 <X size={20} />
               </button>
             </div>
-            <nav className="flex flex-col gap-1 text-base font-medium">
+            <nav className="flex flex-col gap-2 text-base font-semibold">
               {LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-xl px-3 py-3 text-ink hover:bg-white"
+                  className="block w-full rounded-xl border border-border bg-white px-4 py-3.5 text-ink hover:border-rose/30"
                 >
                   {link.label}
                 </Link>

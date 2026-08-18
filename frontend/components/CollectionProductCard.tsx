@@ -6,7 +6,7 @@ import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 
 export default function CollectionProductCard({ product }: { product: Product }) {
-  const { addToCart, buyNow } = useCart();
+  const { addToCart } = useCart();
 
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-white shadow-sm">
@@ -22,26 +22,19 @@ export default function CollectionProductCard({ product }: { product: Product })
         </div>
       </Link>
       <div className="mt-auto space-y-2 p-4 md:p-6">
-        <Link
-          href={`/products/${product.slug}`}
-          className="flex w-full items-center justify-center rounded-xl border border-saffron/40 bg-gold-light/40 py-2.5 text-sm font-bold text-ink hover:bg-gold-light"
-        >
-          بغيتي تقراي التفاصيل؟
-        </Link>
         <button
           type="button"
           onClick={() => addToCart(product.slug, 1)}
-          className="flex w-full items-center justify-center rounded-xl border border-rose py-2.5 text-sm font-bold text-rose hover:bg-rose/5"
+          className="flex w-full items-center justify-center rounded-xl bg-rose py-3 text-sm font-bold text-white hover:bg-rose-dark"
         >
           أضيفي للسلة
         </button>
-        <button
-          type="button"
-          onClick={() => buyNow(product.slug, 1)}
-          className="flex w-full items-center justify-center rounded-xl bg-rose py-2.5 text-sm font-bold text-white hover:bg-rose-dark"
+        <Link
+          href={`/products/${product.slug}`}
+          className="flex w-full items-center justify-center rounded-xl border border-rose py-3 text-sm font-bold text-rose hover:bg-rose/5"
         >
-          اطلبي · الدفع عند الاستلام
-        </button>
+          اقرئي التفاصيل
+        </Link>
       </div>
     </article>
   );

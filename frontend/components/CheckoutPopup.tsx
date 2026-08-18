@@ -50,12 +50,12 @@ export default function CheckoutPopup() {
     <>
       <div className="fixed inset-0 z-[60] bg-black/50" onClick={closeCheckout} />
       <div
-        className="fixed inset-x-3 top-1/2 z-[60] w-auto max-h-[90vh] -translate-y-1/2 overflow-y-auto rounded-2xl bg-white shadow-2xl md:inset-x-auto md:left-1/2 md:w-full md:max-w-md md:-translate-x-1/2"
+        className="fixed inset-x-0 bottom-0 z-[60] max-h-[calc(100dvh-0.75rem)] overflow-y-auto rounded-t-3xl bg-white shadow-2xl md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl"
         role="dialog"
         aria-labelledby="checkout-title"
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <button onClick={closeCheckout} className="p-1 text-muted" aria-label="إغلاق">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-white px-5 py-4">
+          <button onClick={closeCheckout} className="rounded-full p-1.5 text-muted hover:bg-cream" aria-label="إغلاق">
             <X size={20} />
           </button>
           <h2 id="checkout-title" className="text-base font-bold">
@@ -63,7 +63,7 @@ export default function CheckoutPopup() {
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 p-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4">
           {titles.length > 0 && (
             <p className="rounded-xl bg-cream px-3 py-2 text-center text-xs leading-6 text-muted">
               {titles.join(" · ")}
@@ -76,8 +76,7 @@ export default function CheckoutPopup() {
             <input
               {...register("name")}
               autoComplete="name"
-              autoFocus
-              className="w-full rounded-xl border border-border px-3 py-2.5 text-sm focus:border-rose focus:outline-none"
+              className="w-full touch-manipulation rounded-xl border border-border px-4 py-3 text-[16px] leading-6 focus:border-rose focus:outline-none"
               placeholder="مثال: سارة بنعلي"
             />
             {errors.name && <p className="mt-1 text-xs text-scarcity">{errors.name.message}</p>}
@@ -89,7 +88,7 @@ export default function CheckoutPopup() {
               type="tel"
               inputMode="numeric"
               autoComplete="tel"
-              className="w-full rounded-xl border border-border px-3 py-2.5 text-left text-sm focus:border-rose focus:outline-none"
+              className="w-full touch-manipulation rounded-xl border border-border px-4 py-3 text-left text-[16px] leading-6 focus:border-rose focus:outline-none"
               placeholder="06xxxxxxxx"
               dir="ltr"
             />

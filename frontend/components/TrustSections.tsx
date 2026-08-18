@@ -1,18 +1,27 @@
 import { AUTHORITY_PILLARS, COD_STEPS, LAB_INTRO, TRUST_BAR } from "@/data/brand";
+import Marquee from "@/components/Marquee";
 
 export function TrustBar() {
+  const items = [...TRUST_BAR, ...TRUST_BAR, ...TRUST_BAR];
+  const row = (
+    <>
+      {items.map((item, index) => (
+        <span
+          key={`${item}-${index}`}
+          className="flex shrink-0 items-center gap-4 whitespace-nowrap px-5 text-[11px] font-semibold text-cream sm:px-7 sm:text-xs md:text-sm"
+        >
+          <span>{item}</span>
+          <span className="text-saffron" aria-hidden>
+            ✦
+          </span>
+        </span>
+      ))}
+    </>
+  );
+
   return (
-    <div className="w-full bg-ink">
-      <div className="mx-auto grid max-w-container grid-cols-3 divide-x divide-white/15">
-        {TRUST_BAR.map((item) => (
-          <p
-            key={item}
-            className="px-1.5 py-2.5 text-center text-[10px] font-semibold leading-4 text-cream sm:px-3 sm:text-xs md:py-3 md:text-sm"
-          >
-            {item}
-          </p>
-        ))}
-      </div>
+    <div className="w-full bg-ink py-2.5 md:py-3">
+      <Marquee duration={55}>{row}</Marquee>
     </div>
   );
 }
