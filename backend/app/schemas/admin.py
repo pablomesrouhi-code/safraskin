@@ -33,5 +33,6 @@ class EconomicsIn(BaseModel):
     lead_cost_mad: float = Field(default=2, ge=0)
     space_seller_fee_mad: float = Field(default=63, ge=0)
     upsell_cost_mad: float = Field(default=10, ge=0)
+    cpl_mad: float = Field(default=0, ge=0)
     assumed_confirmation_rate: float = Field(default=50, ge=0, le=100)
-    assumed_delivery_rate: float = Field(default=80, ge=0, le=100)
+    assumed_delivery_rate: float = Field(default=70, ge=0, le=100)

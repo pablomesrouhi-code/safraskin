@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./admin-panel.css";
 
 export const metadata: Metadata = {
   title: "لوحة التحكم | سفراسكين",

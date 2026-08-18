@@ -22,8 +22,9 @@ DEFAULT_ECONOMICS = {
     "lead_cost_mad": 2,
     "space_seller_fee_mad": 63,
     "upsell_cost_mad": 10,
+    "cpl_mad": 0,
     "assumed_confirmation_rate": 50,
-    "assumed_delivery_rate": 80,
+    "assumed_delivery_rate": 70,
 }
 
 
