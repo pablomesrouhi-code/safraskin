@@ -162,22 +162,27 @@ export function emptyEconomicsInput(): EconomicsInput {
 
 export function computeOkDaba(
   form: EconomicsInput,
-  kpis: DashboardMetrics["kpis"] | null
+  kpis: DashboardMetrics["kpis"] | null,
+  scaleLeads?: number
 ): DashboardMetrics["economics"] {
-  const leads = kpis?.orders || 0;
+  const actualLeads = kpis?.orders || 0;
+  const scaling = typeof scaleLeads === "number" && scaleLeads >= 0;
+  const leads = scaling ? scaleLeads : actualLeads;
   const clicks = kpis?.clicks || 0;
-  const delivered = kpis?.delivered || 0;
-  const returned = kpis?.returned || 0;
-  const deliveredValue = kpis?.delivered_value || 0;
-  const upsells = kpis?.upsell_count || 0;
+  const delivered = scaling ? 0 : kpis?.delivered || 0;
+  const returnedActual = scaling ? 0 : kpis?.returned || 0;
+  const deliveredValue = scaling ? 0 : kpis?.delivered_value || 0;
+  const upsellRate = actualLeads > 0 ? (kpis?.upsell_count || 0) / actualLeads : 0;
+  const upsells = leads * upsellRate;
   const aov = form.selling_price_mad || kpis?.aov || 0;
   const conf =
-    leads > 0 && (kpis?.confirmation_rate || 0) > 0
+    actualLeads > 0 && (kpis?.confirmation_rate || 0) > 0
       ? kpis!.confirmation_rate / 100
       : form.assumed_confirmation_rate / 100;
   const deliv =
     (kpis?.delivery_rate || 0) > 0 ? kpis!.delivery_rate / 100 : form.assumed_delivery_rate / 100;
   const deliveredEst = delivered > 0 ? delivered : Math.round(leads * conf * deliv * 100) / 100;
+  const returnedEst = returnedActual > 0 ? returnedActual : Math.round(leads * conf * (1 - deliv) * 100) / 100;
   const leadCost = form.lead_cost_mad;
   const spaceFee = form.space_seller_fee_mad;
   const upsellFee = form.upsell_cost_mad;
@@ -186,22 +191,22 @@ export function computeOkDaba(
   const deliveryCost = form.delivery_cost_mad;
   const returnCost = form.return_cost_mad;
   const feePct = form.cod_fee_pct / 100;
-  const ads = form.ad_spend_mad;
-  const upsellRate = leads > 0 ? upsells / leads : 0;
+  const ads = scaling ? 0 : form.ad_spend_mad;
 
   const leadSpend = leads * leadCost + ads;
   const spaceSpend = deliveredEst * spaceFee;
   const upsellSpend = upsells * upsellFee;
   const productSpend = deliveredEst * (cogs + pack + deliveryCost);
-  const returnSpend = returned * returnCost;
+  const returnSpend = returnedEst * returnCost;
   const revenue = deliveredValue || deliveredEst * aov;
   const feeSpend = revenue * feePct;
-  const profit = Math.round((revenue - leadSpend - spaceSpend - upsellSpend - productSpend - returnSpend - feeSpend) * 100) / 100;
-  const costPerDelivered = deliveredEst > 0 ? Math.round(((leadSpend + spaceSpend + upsellSpend + productSpend + returnSpend + feeSpend) / deliveredEst) * 100) / 100 : 0;
+  const totalCost = leadSpend + spaceSpend + upsellSpend + productSpend + returnSpend + feeSpend;
+  const profit = Math.round((revenue - totalCost) * 100) / 100;
+  const costPerDelivered = deliveredEst > 0 ? Math.round((totalCost / deliveredEst) * 100) / 100 : 0;
   const net = aov - cogs - pack - deliveryCost - spaceFee - upsellFee * upsellRate - aov * feePct;
   const beLead = Math.round((conf * deliv * net - conf * (1 - deliv) * returnCost) * 100) / 100;
-  const cvr = clicks > 0 ? leads / clicks : 0;
-  const currentCpa = leadCost || (leads && ads ? ads / leads : 0);
+  const cvr = clicks > 0 ? actualLeads / clicks : 0;
+  const currentCpa = leadCost || (actualLeads && ads ? ads / actualLeads : 0);
   const currentCpc = clicks && leadSpend ? Math.round((leadSpend / clicks) * 100) / 100 : 0;
 
   let verdict: DashboardMetrics["economics"]["verdict"] = "fill_costs";

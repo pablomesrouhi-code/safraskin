@@ -5,7 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 import { adminLogin } from "@/lib/adminApi";
 
 export default function AdminLoginForm({ onSuccess }: { onSuccess: () => void }) {
-  const [username, setUsername] = useState("admin");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -25,48 +25,40 @@ export default function AdminLoginForm({ onSuccess }: { onSuccess: () => void })
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#f4f1ef] px-4">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-sm rounded-3xl border border-border bg-white p-6 shadow-xl shadow-rose/5"
+        className="relative w-full max-w-[440px] overflow-hidden rounded-[14px] border border-border bg-white p-6 text-center shadow-[0_8px_32px_rgba(28,28,28,0.06)]"
       >
-        <div className="flex justify-center">
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-l from-rose via-saffron to-rose" />
+        <div className="flex items-center justify-center gap-2">
           <BrandLogo compact />
+          <span className="rounded-full border border-rose/25 bg-rose/10 px-2.5 py-1 text-[11px] font-bold text-rose">Admin</span>
         </div>
-        <p className="mt-4 text-center text-[10px] font-bold tracking-[0.18em] text-saffron-dark">ADMIN</p>
-        <h1 className="mt-1 text-center text-xl font-extrabold">لوحة سفراسكين</h1>
-        <p className="mt-1 text-center text-xs leading-6 text-muted">
-          السمية <span className="font-english font-bold text-ink">admin</span>
-          <br />
-          كلمة السر: اللي حطيتي فـ EasyPanel <span className="font-english">ADMIN_PASSWORD</span> فالفرونت
+        <h1 className="mt-5 text-xl font-extrabold">تسجيل الدخول</h1>
+        <p className="mt-2 text-[13px] leading-6 text-muted">
+          لوحة تحكم داخلية لمتجر COD — لا تشارك الرابط أو كلمة المرور.
         </p>
-
-        <label className="mt-6 block text-xs text-muted">
-          السمية
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-            className="mt-1 w-full rounded-xl border border-border bg-cream px-3 py-2.5 font-english text-sm text-ink outline-none focus:border-saffron"
-          />
-        </label>
-        <label className="mt-3 block text-xs text-muted">
-          كلمة السر
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            className="mt-1 w-full rounded-xl border border-border bg-cream px-3 py-2.5 font-english text-sm text-ink outline-none focus:border-saffron"
-          />
-        </label>
-
+        <input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          autoComplete="username"
+          placeholder="اسم المستخدم"
+          className="mt-5 w-full rounded-xl border border-border bg-[#fdfcfc] px-3 py-3 font-english text-sm outline-none focus:border-rose"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+          placeholder="كلمة المرور"
+          className="mt-3 w-full rounded-xl border border-border bg-[#fdfcfc] px-3 py-3 font-english text-sm outline-none focus:border-rose"
+        />
         {error ? <p className="mt-3 text-sm text-rose">{error}</p> : null}
-
         <button
           type="submit"
           disabled={busy}
-          className="mt-5 w-full rounded-xl bg-ink py-3 text-sm font-bold text-white disabled:opacity-60"
+          className="mt-4 w-full rounded-xl bg-ink py-3 text-sm font-bold text-white disabled:opacity-60"
         >
           {busy ? "كنتحققو…" : "دخول"}
         </button>
