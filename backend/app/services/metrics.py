@@ -19,8 +19,11 @@ DEFAULT_ECONOMICS = {
     "cod_fee_pct": 0,
     "selling_price_mad": 0,
     "ad_spend_mad": 0,
-    "assumed_confirmation_rate": 0,
-    "assumed_delivery_rate": 0,
+    "lead_cost_mad": 2,
+    "space_seller_fee_mad": 63,
+    "upsell_cost_mad": 10,
+    "assumed_confirmation_rate": 50,
+    "assumed_delivery_rate": 80,
 }
 
 
@@ -179,6 +182,7 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
     pending_count = 0
     cancelled_count = 0
     upsell_count = 0
+    crosssell_count = 0
     units = 0
 
     for order in orders:
@@ -193,6 +197,11 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
         phones[order.customer_phone] += 1
         if order.upsell_accepted:
             upsell_count += 1
+        items = _parse_items(order.items_json)
+        unique_slugs = { (item.get("product_slug") or item.get("sku") or "") for item in items }
+        unique_slugs.discard("")
+        if len(unique_slugs) > 1:
+            crosssell_count += 1
         if order.status in CONFIRMED_PLUS:
             confirmed_count += 1
             confirmed_value += order.grand_total_mad or 0
@@ -208,7 +217,7 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
         if order.status in CANCELLED:
             cancelled_count += 1
         seen_slugs = set()
-        for item in _parse_items(order.items_json):
+        for item in items:
             slug = item.get("product_slug") or item.get("sku") or "unknown"
             qty = int(item.get("quantity") or item.get("qty") or 1)
             units += qty
@@ -243,6 +252,7 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
     return_rate = _pct(returned_count, shipped_count)
     cancel_rate = _pct(cancelled_count, total_orders)
     upsell_rate = _pct(upsell_count, total_orders)
+    crosssell_rate = _pct(crosssell_count, total_orders)
     repeat_customers = sum(1 for n in phones.values() if n > 1)
 
     economics = get_economics(db)
@@ -257,40 +267,51 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
     return_cost = economics["return_cost_mad"]
     fee_pct = economics["cod_fee_pct"] / 100.0
     ads = economics["ad_spend_mad"]
+    lead_cost = economics["lead_cost_mad"]
+    space_fee = economics["space_seller_fee_mad"]
+    upsell_fee = economics["upsell_cost_mad"]
+    upsell_frac = _rate(upsell_count, total_orders)
+    delivered_est = delivered_count if delivered_count else round(total_orders * conf_for_pl * deliv_for_pl, 2)
+    lead_spend = total_orders * lead_cost + ads
+    space_spend = delivered_est * space_fee
+    upsell_spend = upsell_count * upsell_fee
+    product_spend = delivered_est * (cogs + pack + delivery_cost)
+    return_spend = returned_count * return_cost
+    revenue = delivered_value or delivered_est * selling
+    fee_spend = revenue * fee_pct
+    profit = round(revenue - lead_spend - space_spend - upsell_spend - product_spend - return_spend - fee_spend, 2)
 
-    net_per_delivered = selling - cogs - pack - delivery_cost - (selling * fee_pct)
+    net_per_delivered = selling - cogs - pack - delivery_cost - space_fee - (upsell_fee * upsell_frac) - (selling * fee_pct)
     expected_per_lead = (conf_for_pl * deliv_for_pl * net_per_delivered) - (
         conf_for_pl * (1 - deliv_for_pl) * return_cost
     )
     cvr_frac = _rate(total_orders, clicks)
     be_cpa = round(expected_per_lead, 2)
-    be_cpc = round(expected_per_lead * cvr_frac, 2) if clicks else round(expected_per_lead * 0, 2)
-    current_cpa = round(ads / total_orders, 2) if total_orders and ads else 0
-    current_cpc = round(ads / clicks, 2) if clicks and ads else 0
-    profit_delivered = delivered_value - delivered_count * (cogs + pack + delivery_cost) - delivered_value * fee_pct
-    profit_returns = returned_count * return_cost
-    profit = round(profit_delivered - profit_returns - ads, 2)
-    margin_per_order = round(be_cpa - current_cpa, 2) if ads and total_orders else None
+    be_cpc = round(expected_per_lead * cvr_frac, 2) if clicks else 0
+    current_cpa = round(lead_cost or (ads / total_orders if total_orders and ads else 0), 2)
+    current_cpc = round(lead_spend / clicks, 2) if clicks and lead_spend else 0
+    margin_per_order = round(profit / delivered_est, 2) if delivered_est else None
+    cost_per_delivered = (
+        round((lead_spend + space_spend + upsell_spend + product_spend + return_spend + fee_spend) / delivered_est, 2)
+        if delivered_est
+        else 0
+    )
 
-    costs_ready = cogs > 0 or delivery_cost > 0 or selling > 0
-    if not costs_ready:
-        verdict = "fill_costs"
-        verdict_ar = "حط تكلفة المنتج، سعر البيع، والتوصيل باش نحسبو شحال OK دابا."
-    elif ads <= 0:
-        verdict = "fill_ads"
-        verdict_ar = f"أقصى CPA مسموح: {be_cpa:.0f} درهم. دخل مصروف الإعلانات باش نعرفو واش راك OK."
-    elif current_cpa <= be_cpa:
-        verdict = "ok"
-        verdict_ar = (
-            f"راك OK دابا. عندك هامش {max(be_cpa - current_cpa, 0):.0f} درهم فالطلب. "
-            f"تقدر تخلّص حتى {be_cpa:.0f} درهم CPA وباقي رابح."
-        )
+    if selling > 0:
+        if lead_cost <= be_cpa:
+            verdict = "ok"
+            verdict_ar = (
+                f"راك OK دابا. أقصى Lead entered مسموح {be_cpa:.2f} درهم. "
+                f"دابا كتخلّص {lead_cost:.2f} درهم."
+            )
+        else:
+            verdict = "losing"
+            verdict_ar = (
+                f"ماشي OK دابا. Lead entered {lead_cost:.2f} فوق الـ break-even {be_cpa:.2f} درهم."
+            )
     else:
-        verdict = "losing"
-        verdict_ar = (
-            f"ماشي OK دابا. كتخسر حوالي {current_cpa - be_cpa:.0f} درهم فالطلب. "
-            f"خاص CPA ينزل لـ {be_cpa:.0f} درهم أو تزيد التأكيد/التسليم."
-        )
+        verdict = "fill_costs"
+        verdict_ar = "حط سعر البيع والتأكيد والتسليم باش نحسبو شحال OK دابا."
 
     return {
         "range": {"from": days[0] if days else None, "to": days[-1] if days else None},
@@ -316,6 +337,8 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
             "cancel_rate": cancel_rate,
             "upsell_rate": upsell_rate,
             "upsell_count": upsell_count,
+            "crosssell_count": crosssell_count,
+            "crosssell_rate": crosssell_rate,
             "repeat_customers": repeat_customers,
             "units": units,
         },
@@ -360,6 +383,14 @@ def dashboard_metrics(db: Session, date_from: str | None, date_to: str | None) -
             "current_cpc": current_cpc,
             "profit": profit,
             "margin_per_order": margin_per_order,
+            "lead_spend": round(lead_spend, 2),
+            "space_spend": round(space_spend, 2),
+            "upsell_spend": round(upsell_spend, 2),
+            "product_spend": round(product_spend, 2),
+            "revenue": round(revenue, 2),
+            "cost_per_delivered": cost_per_delivered,
+            "break_even_lead_cost": be_cpa,
+            "delivered_est": delivered_est,
             "verdict": verdict,
             "verdict_ar": verdict_ar,
         },

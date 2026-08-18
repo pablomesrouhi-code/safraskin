@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import {
@@ -38,7 +38,7 @@ import {
 } from "@/lib/adminApi";
 import { formatPhoneDisplay } from "@/lib/phone";
 
-type Tab = "overview" | "orders" | "economics";
+type Tab = "overview" | "orders";
 
 const PRESETS = [
   { id: "today", label: "اليوم", span: 0 },
@@ -71,6 +71,7 @@ export default function AdminApp() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [econForm, setEconForm] = useState<EconomicsInput>(() => emptyEconomicsInput());
+  const econLoaded = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -105,13 +106,9 @@ export default function AdminApp() {
       setOrders(o.orders);
       setTotalOrders(o.total);
       setEconForm((prev) => {
-        const incoming = pickEconomics(m.economics);
-        const untouched =
-          prev.product_cost_mad === 0 &&
-          prev.selling_price_mad === 0 &&
-          prev.ad_spend_mad === 0 &&
-          prev.delivery_cost_mad === 0;
-        return untouched && (incoming.product_cost_mad || incoming.selling_price_mad) ? incoming : prev;
+        if (econLoaded.current) return prev;
+        econLoaded.current = true;
+        return pickEconomics(m.economics);
       });
     } catch (e) {
       if (isAuthError(e)) {
@@ -203,37 +200,7 @@ export default function AdminApp() {
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-5">
-        <section
-          className={clsx(
-            "rounded-3xl p-5 text-white shadow-lg",
-            live.verdict === "ok" ? "bg-emerald-700" : live.verdict === "losing" ? "bg-rose" : "bg-ink"
-          )}
-        >
-          <p className="text-[10px] font-bold tracking-[0.18em] text-white/70">شحال OK دابا</p>
-          <h2 className="mt-2 text-2xl font-extrabold leading-snug md:text-3xl">{live.verdict_ar}</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <Mini label="الربح" value={formatMad(live.profit)} />
-            <Mini label="أقصى CPA" value={formatMad(live.break_even_cpa)} />
-            <Mini label="CPA الحالي" value={live.current_cpa ? formatMad(live.current_cpa) : "—"} />
-          </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-            <FieldLight label="تكلفة المنتج" value={econForm.product_cost_mad} onChange={(v) => setEconForm({ ...econForm, product_cost_mad: v })} />
-            <FieldLight label="سعر البيع / AOV" value={econForm.selling_price_mad} onChange={(v) => setEconForm({ ...econForm, selling_price_mad: v })} />
-            <FieldLight label="إعلانات" value={econForm.ad_spend_mad} onChange={(v) => setEconForm({ ...econForm, ad_spend_mad: v })} />
-            <FieldLight label="تأكيد %" value={econForm.assumed_confirmation_rate} onChange={(v) => setEconForm({ ...econForm, assumed_confirmation_rate: v })} />
-            <FieldLight label="تسليم %" value={econForm.assumed_delivery_rate} onChange={(v) => setEconForm({ ...econForm, assumed_delivery_rate: v })} />
-          </div>
-          <button
-            type="button"
-            onClick={() => void persistEconomics()}
-            disabled={saving}
-            className="mt-4 rounded-xl bg-white px-4 py-2 text-sm font-bold text-ink"
-          >
-            {saving ? "كنحفظو…" : "حفظ الحساب"}
-          </button>
-        </section>
-
-        <div className="mt-4 flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-white p-3">
+        <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-white p-3">
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((p) => (
               <button
@@ -281,9 +248,8 @@ export default function AdminApp() {
         <nav className="mt-4 flex gap-1 rounded-2xl bg-white p-1 shadow-sm ring-1 ring-border">
           {(
             [
-              ["overview", "النظرة العامة", BarChart3],
+              ["overview", "اللوحة", BarChart3],
               ["orders", "الطلبات", Package],
-              ["economics", "الربح والـ Break-even", Calculator],
             ] as const
           ).map(([id, label, Icon]) => (
             <button
@@ -304,9 +270,9 @@ export default function AdminApp() {
         {error ? <p className="mt-3 rounded-xl bg-rose/10 px-3 py-2 text-sm text-rose">{error}</p> : null}
         {loading && !metrics ? <p className="mt-8 text-center text-muted">كنحسبو الأرقام…</p> : null}
 
-        {tab === "overview" && k ? (
+        {tab === "overview" ? (
           <div className="mt-5 space-y-5">
-            {k.pending > 0 ? (
+            {k && k.pending > 0 ? (
               <button
                 type="button"
                 onClick={() => {
@@ -323,104 +289,264 @@ export default function AdminApp() {
               </button>
             ) : null}
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Kpi label="كليك / زيارات" value={(k.clicks || 0).toLocaleString("fr-MA")} hint={`${k.page_views} مشاهدة صفحة`} />
-              <Kpi label="طلبات" value={k.orders.toLocaleString("fr-MA")} hint={`${formatPct(k.cvr)} تحويل`} />
-              <Kpi label="AOV" value={formatMad(k.aov)} hint={`${formatMad(k.gross_value)} إجمالي`} />
-              <Kpi label="صافي للمسلّم" value={formatMad(live.net_per_delivered)} hint={`تأكيد ${formatPct(live.confirmation_used)} · تسليم ${formatPct(live.delivery_used)}`} />
-            </div>
+            <div className="grid items-start gap-4 lg:grid-cols-2">
+              <section className="rounded-3xl border border-border bg-white p-4 md:p-5">
+                <p className="text-[10px] font-bold tracking-[0.16em] text-saffron-dark">الأرقام</p>
+                <h2 className="mt-1 text-xl font-extrabold">الطلبات فهاد الفترة</h2>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <Kpi
+                    label="Leads"
+                    value={(k?.orders || 0).toLocaleString("fr-MA")}
+                    hint={`${formatPct(k?.cvr || 0)} تحويل من ${(k?.clicks || 0).toLocaleString("fr-MA")} زيارة`}
+                  />
+                  <Kpi
+                    label="AOV"
+                    value={formatMad(k?.aov || 0)}
+                    hint={`${formatMad(k?.gross_value || 0)} إجمالي`}
+                  />
+                  <Kpi
+                    label="Upsell"
+                    value={(k?.upsell_count || 0).toLocaleString("fr-MA")}
+                    hint={`${formatPct(k?.upsell_rate || 0)} من الـ leads`}
+                  />
+                  <Kpi
+                    label="Cross-sell"
+                    value={(k?.crosssell_count || 0).toLocaleString("fr-MA")}
+                    hint={`${formatPct(k?.crosssell_rate || 0)} طلبات فيها أكثر من منتج`}
+                  />
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <Kpi
+                    label="تأكيد"
+                    value={formatPct(k?.confirmation_rate || 0)}
+                    hint={`${k?.confirmed || 0} مؤكد`}
+                  />
+                  <Kpi
+                    label="تسليم"
+                    value={formatPct(k?.delivery_rate || 0)}
+                    hint={`${k?.delivered || 0} تسلّم`}
+                  />
+                  <Kpi
+                    label="إلغاء / مرجع"
+                    value={`${formatPct(k?.cancel_rate || 0)} / ${formatPct(k?.return_rate || 0)}`}
+                    hint={`${k?.cancelled || 0} ملغي · ${k?.returned || 0} مرجع`}
+                  />
+                  <Kpi
+                    label="كليك"
+                    value={(k?.clicks || 0).toLocaleString("fr-MA")}
+                    hint={`${k?.page_views || 0} مشاهدة صفحة`}
+                  />
+                </div>
+              </section>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Kpi label="تأكيد" value={formatPct(k.confirmation_rate)} hint={`${k.confirmed} مؤكد · ${formatMad(k.confirmed_value)}`} />
-              <Kpi label="تسليم" value={formatPct(k.delivery_rate)} hint={`${k.delivered} تسلّم · ${formatMad(k.delivered_value)}`} />
-              <Kpi label="إلغاء / مرجع" value={`${formatPct(k.cancel_rate)} / ${formatPct(k.return_rate)}`} hint={`${k.cancelled} ملغي · ${k.returned} مرجع`} />
-              <Kpi label="Upsell" value={formatPct(k.upsell_rate)} hint={`${k.upsell_count} إضافة · ${k.repeat_customers} زبونة رجعات`} />
-            </div>
-
-            <section className="rounded-2xl border border-border bg-white p-4">
-              <p className="text-sm font-bold">القمع</p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-5">
-                {[
-                  ["زيارات", metrics.funnel.clicks],
-                  ["منتج", metrics.funnel.product_views],
-                  ["سلة", metrics.funnel.add_to_cart],
-                  ["تشيك أوت", metrics.funnel.checkout],
-                  ["طلب", metrics.funnel.orders],
-                ].map(([label, value], i, arr) => {
-                  const prev = i === 0 ? Number(value) : Number(arr[i - 1][1]);
-                  const drop = prev ? Math.round((100 * Number(value)) / prev) : 0;
-                  return (
-                    <div key={label} className="rounded-xl bg-cream px-3 py-3">
-                      <p className="text-[11px] text-muted">{label}</p>
-                      <p className="mt-1 text-xl font-extrabold tabular-nums">{Number(value).toLocaleString("fr-MA")}</p>
-                      {i > 0 ? <p className="text-[10px] text-muted">{drop}% من اللي قبل</p> : null}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-border bg-white p-4">
-              <p className="text-sm font-bold">كليك وطلبات باليوم</p>
-              <div className="mt-4 flex h-40 items-end gap-1">
-                {metrics.daily.map((day) => (
-                  <div key={day.date} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
-                    <div className="flex h-32 w-full items-end justify-center gap-0.5">
-                      <div
-                        className="w-1/2 rounded-t bg-gold-light"
-                        style={{ height: `${(100 * day.clicks) / maxBar}%` }}
-                        title={`${day.date} · ${day.clicks} زيارة`}
-                      />
-                      <div
-                        className="w-1/2 rounded-t bg-rose"
-                        style={{ height: `${(100 * day.orders) / maxBar}%` }}
-                        title={`${day.date} · ${day.orders} طلب`}
-                      />
-                    </div>
-                    <span className="font-english text-[9px] text-muted">{day.date.slice(8)}</span>
+              <section className="rounded-3xl border border-border bg-white p-4 md:p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-bold tracking-[0.16em] text-saffron-dark">الحساب</p>
+                    <h2 className="mt-1 flex items-center gap-2 text-xl font-extrabold">
+                      <Calculator size={18} /> Break-even
+                    </h2>
                   </div>
-                ))}
-              </div>
-              <p className="mt-2 text-[11px] text-muted">ذهبي = زيارات · وردي = طلبات</p>
-            </section>
+                  <span
+                    className={clsx(
+                      "rounded-full px-2.5 py-1 text-[11px] font-bold",
+                      live.verdict === "ok" && "bg-emerald-100 text-emerald-800",
+                      live.verdict === "losing" && "bg-rose/15 text-rose",
+                      live.verdict !== "ok" && live.verdict !== "losing" && "bg-cream text-muted"
+                    )}
+                  >
+                    {live.verdict === "ok" ? "OK دابا" : live.verdict === "losing" ? "ماشي OK" : "كمّل الحساب"}
+                  </span>
+                </div>
 
-            <div className="grid gap-3 lg:grid-cols-2">
-              <section className="rounded-2xl border border-border bg-white p-4">
-                <p className="text-sm font-bold">حسب الحالة</p>
-                <ul className="mt-3 space-y-2">
-                  {STATUS_FLOW.map((s) => (
-                    <li key={s} className="flex items-center justify-between text-sm">
-                      <span className={clsx("rounded-full px-2 py-0.5 text-xs font-bold", STATUS_META[s].tone)}>
-                        {STATUS_META[s].label}
-                      </span>
-                      <span className="tabular-nums font-bold">{metrics.status_counts[s] || 0}</span>
-                    </li>
-                  ))}
+                <p className="mt-3 text-xs leading-6 text-muted">
+                  حط أسعار الخدمة. الحساب كيتضرب فعدد الـ leads / المسلّمين / الـ upsells ديال الفترة.
+                </p>
+
+                <div className="mt-4 space-y-2">
+                  <CalcLine
+                    label="Leads entered"
+                    hint={`${(k?.orders || 0).toLocaleString("fr-MA")} lead`}
+                    value={econForm.lead_cost_mad}
+                    total={live.lead_spend - econForm.ad_spend_mad}
+                    onChange={(v) => setEconForm({ ...econForm, lead_cost_mad: v })}
+                  />
+                  <CalcLine
+                    label="Space Seller Fees"
+                    hint={`${Number(live.delivered_est).toLocaleString("fr-MA")} مسلّم`}
+                    value={econForm.space_seller_fee_mad}
+                    total={live.space_spend}
+                    onChange={(v) => setEconForm({ ...econForm, space_seller_fee_mad: v })}
+                  />
+                  <CalcLine
+                    label="Upsell"
+                    hint={`${(k?.upsell_count || 0).toLocaleString("fr-MA")} إضافة`}
+                    value={econForm.upsell_cost_mad}
+                    total={live.upsell_spend}
+                    onChange={(v) => setEconForm({ ...econForm, upsell_cost_mad: v })}
+                  />
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <Field
+                    label="تكلفة المنتج"
+                    value={econForm.product_cost_mad}
+                    onChange={(v) => setEconForm({ ...econForm, product_cost_mad: v })}
+                  />
+                  <Field
+                    label="سعر البيع / AOV"
+                    value={econForm.selling_price_mad}
+                    onChange={(v) => setEconForm({ ...econForm, selling_price_mad: v })}
+                  />
+                  <Field
+                    label="تغليف"
+                    value={econForm.packaging_mad}
+                    onChange={(v) => setEconForm({ ...econForm, packaging_mad: v })}
+                  />
+                  <Field
+                    label="تكلفة التوصيل"
+                    value={econForm.delivery_cost_mad}
+                    onChange={(v) => setEconForm({ ...econForm, delivery_cost_mad: v })}
+                  />
+                  <Field
+                    label="تأكيد %"
+                    value={econForm.assumed_confirmation_rate}
+                    onChange={(v) => setEconForm({ ...econForm, assumed_confirmation_rate: v })}
+                  />
+                  <Field
+                    label="تسليم %"
+                    value={econForm.assumed_delivery_rate}
+                    onChange={(v) => setEconForm({ ...econForm, assumed_delivery_rate: v })}
+                  />
+                </div>
+
+                <ul className="mt-4 space-y-1.5 rounded-2xl bg-cream px-3 py-3 text-sm">
+                  <SumRow label="المدخول (مسلّم)" value={formatDh(live.revenue)} />
+                  <SumRow label="Leads entered" value={`− ${formatDh(live.lead_spend)}`} />
+                  <SumRow label="Space Seller" value={`− ${formatDh(live.space_spend)}`} />
+                  <SumRow label="Upsell" value={`− ${formatDh(live.upsell_spend)}`} />
+                  <SumRow label="منتج / تغليف / توصيل" value={`− ${formatDh(live.product_spend)}`} />
+                  <li className="flex items-center justify-between border-t border-border pt-2 font-extrabold text-ink">
+                    <span>الربح</span>
+                    <span className={clsx("tabular-nums", live.profit >= 0 ? "text-emerald-700" : "text-rose")}>
+                      {formatDh(live.profit)}
+                    </span>
+                  </li>
+                  <SumRow label="أقصى Lead entered" value={formatDh(live.break_even_lead_cost)} />
                 </ul>
-              </section>
-              <section className="rounded-2xl border border-border bg-white p-4">
-                <p className="text-sm font-bold">المنتجات والمصادر</p>
-                <ul className="mt-3 space-y-2">
-                  {metrics.products.length === 0 ? <li className="text-sm text-muted">ما كاين حتى طلب.</li> : null}
-                  {metrics.products.map((p) => (
-                    <li key={p.slug} className="flex justify-between gap-3 text-sm">
-                      <span>{p.name_ar || p.slug}</span>
-                      <span className="tabular-nums text-muted">{p.qty} علبة · {p.orders} طلب</span>
-                    </li>
-                  ))}
-                </ul>
-                <ul className="mt-4 space-y-1 border-t border-border pt-3">
-                  {metrics.sources.map((s) => (
-                    <li key={s.source} className="flex justify-between text-xs text-muted">
-                      <span>{s.source}</span>
-                      <span>
-                        {s.orders} · {formatMad(s.revenue)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+
+                <p
+                  className={clsx(
+                    "mt-3 rounded-2xl px-3 py-3 text-sm font-bold leading-6",
+                    live.verdict === "ok" && "bg-emerald-700 text-white",
+                    live.verdict === "losing" && "bg-rose text-white",
+                    live.verdict !== "ok" && live.verdict !== "losing" && "bg-ink text-white"
+                  )}
+                >
+                  {live.verdict_ar}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => void persistEconomics()}
+                  disabled={saving}
+                  className="mt-3 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
+                >
+                  {saving ? "كنحفظو…" : "حفظ الحساب"}
+                </button>
               </section>
             </div>
+
+            {metrics ? (
+              <>
+                <section className="rounded-2xl border border-border bg-white p-4">
+                  <p className="text-sm font-bold">القمع</p>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-5">
+                    {[
+                      ["زيارات", metrics.funnel.clicks],
+                      ["منتج", metrics.funnel.product_views],
+                      ["سلة", metrics.funnel.add_to_cart],
+                      ["تشيك أوت", metrics.funnel.checkout],
+                      ["طلب", metrics.funnel.orders],
+                    ].map(([label, value], i, arr) => {
+                      const prev = i === 0 ? Number(value) : Number(arr[i - 1][1]);
+                      const drop = prev ? Math.round((100 * Number(value)) / prev) : 0;
+                      return (
+                        <div key={String(label)} className="rounded-xl bg-cream px-3 py-3">
+                          <p className="text-[11px] text-muted">{label}</p>
+                          <p className="mt-1 text-xl font-extrabold tabular-nums">{Number(value).toLocaleString("fr-MA")}</p>
+                          {i > 0 ? <p className="text-[10px] text-muted">{drop}% من اللي قبل</p> : null}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                <section className="rounded-2xl border border-border bg-white p-4">
+                  <p className="text-sm font-bold">كليك وطلبات باليوم</p>
+                  <div className="mt-4 flex h-40 items-end gap-1">
+                    {metrics.daily.map((day) => (
+                      <div key={day.date} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
+                        <div className="flex h-32 w-full items-end justify-center gap-0.5">
+                          <div
+                            className="w-1/2 rounded-t bg-gold-light"
+                            style={{ height: `${(100 * day.clicks) / maxBar}%` }}
+                            title={`${day.date} · ${day.clicks} زيارة`}
+                          />
+                          <div
+                            className="w-1/2 rounded-t bg-rose"
+                            style={{ height: `${(100 * day.orders) / maxBar}%` }}
+                            title={`${day.date} · ${day.orders} طلب`}
+                          />
+                        </div>
+                        <span className="font-english text-[9px] text-muted">{day.date.slice(8)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[11px] text-muted">ذهبي = زيارات · وردي = طلبات</p>
+                </section>
+
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <section className="rounded-2xl border border-border bg-white p-4">
+                    <p className="text-sm font-bold">حسب الحالة</p>
+                    <ul className="mt-3 space-y-2">
+                      {STATUS_FLOW.map((s) => (
+                        <li key={s} className="flex items-center justify-between text-sm">
+                          <span className={clsx("rounded-full px-2 py-0.5 text-xs font-bold", STATUS_META[s].tone)}>
+                            {STATUS_META[s].label}
+                          </span>
+                          <span className="tabular-nums font-bold">{metrics.status_counts[s] || 0}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section className="rounded-2xl border border-border bg-white p-4">
+                    <p className="text-sm font-bold">المنتجات والمصادر</p>
+                    <ul className="mt-3 space-y-2">
+                      {metrics.products.length === 0 ? <li className="text-sm text-muted">ما كاين حتى طلب.</li> : null}
+                      {metrics.products.map((p) => (
+                        <li key={p.slug} className="flex justify-between gap-3 text-sm">
+                          <span>{p.name_ar || p.slug}</span>
+                          <span className="tabular-nums text-muted">
+                            {p.qty} علبة · {p.orders} طلب
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="mt-4 space-y-1 border-t border-border pt-3">
+                      {metrics.sources.map((s) => (
+                        <li key={s.source} className="flex justify-between text-xs text-muted">
+                          <span>{s.source}</span>
+                          <span>
+                            {s.orders} · {formatMad(s.revenue)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                </div>
+              </>
+            ) : null}
           </div>
         ) : null}
 
@@ -522,111 +648,6 @@ export default function AdminApp() {
             ) : null}
           </div>
         ) : null}
-
-        {tab === "economics" ? (
-          <div className="mt-5 space-y-4">
-            <section
-              className={clsx(
-                "rounded-2xl p-5 text-white",
-                live.verdict === "ok" ? "bg-emerald-700" : live.verdict === "losing" ? "bg-rose" : "bg-ink"
-              )}
-            >
-              <p className="text-[10px] font-bold tracking-[0.16em] text-white/70">BREAK-EVEN · شحال OK دابا</p>
-              <h2 className="mt-2 text-2xl font-extrabold leading-snug">{live.verdict_ar}</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <Mini label="الربح فالفترة" value={formatMad(live.profit)} />
-                <Mini label="أقصى CPA" value={formatMad(live.break_even_cpa)} />
-                <Mini label="CPA الحالي" value={live.current_cpa ? formatMad(live.current_cpa) : "—"} />
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-border bg-white p-4">
-              <p className="text-sm font-bold">التكاليف والسعر</p>
-              <p className="mt-1 text-xs leading-6 text-muted">
-                حط تكلفة المنتج، التغليف، التوصيل، والإعلانات. AOV كيجي من الطلبات الحقيقية. التأكيد والتسليم كيجيو من
-                الحالة، وإلا من النسبة اللي كتدخلها.
-              </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                <Field
-                  label="تكلفة المنتج (للطلب المسلم)"
-                  value={econForm.product_cost_mad}
-                  onChange={(v) => setEconForm({ ...econForm, product_cost_mad: v })}
-                />
-                <Field
-                  label="سعر البيع / AOV (0 = من الطلبات)"
-                  value={econForm.selling_price_mad}
-                  onChange={(v) => setEconForm({ ...econForm, selling_price_mad: v })}
-                />
-                <Field
-                  label="تغليف"
-                  value={econForm.packaging_mad}
-                  onChange={(v) => setEconForm({ ...econForm, packaging_mad: v })}
-                />
-                <Field
-                  label="تكلفة التوصيل"
-                  value={econForm.delivery_cost_mad}
-                  onChange={(v) => setEconForm({ ...econForm, delivery_cost_mad: v })}
-                />
-                <Field
-                  label="تكلفة المرجع"
-                  value={econForm.return_cost_mad}
-                  onChange={(v) => setEconForm({ ...econForm, return_cost_mad: v })}
-                />
-                <Field
-                  label="رسوم COD %"
-                  value={econForm.cod_fee_pct}
-                  onChange={(v) => setEconForm({ ...econForm, cod_fee_pct: v })}
-                />
-                <Field
-                  label="مصروف الإعلانات فالفترة"
-                  value={econForm.ad_spend_mad}
-                  onChange={(v) => setEconForm({ ...econForm, ad_spend_mad: v })}
-                />
-                <Field
-                  label="تأكيد مفترض % (إلا ما كاينش داتا)"
-                  value={econForm.assumed_confirmation_rate}
-                  onChange={(v) => setEconForm({ ...econForm, assumed_confirmation_rate: v })}
-                />
-                <Field
-                  label="تسليم مفترض % (إلا ما كاينش داتا)"
-                  value={econForm.assumed_delivery_rate}
-                  onChange={(v) => setEconForm({ ...econForm, assumed_delivery_rate: v })}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => void persistEconomics()}
-                disabled={saving}
-                className="mt-4 rounded-xl bg-ink px-5 py-2.5 text-sm font-bold text-white"
-              >
-                {saving ? "كنحفظو…" : "حفظ وحساب"}
-              </button>
-            </section>
-
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Kpi label="AOV المستعمل" value={formatMad(live.selling_used)} hint="من الطلبات أو السعر اللي حطيتي" />
-              <Kpi label="تأكيد المستعمل" value={formatPct(live.confirmation_used)} />
-              <Kpi label="تسليم المستعمل" value={formatPct(live.delivery_used)} />
-              <Kpi label="صافي للمسلّم" value={formatMad(live.net_per_delivered)} hint="بيع − تكلفة − تغليف − توصيل − رسوم" />
-              <Kpi label="القيمة المتوقعة للطلب" value={formatMad(live.expected_per_lead)} hint="بعد التأكيد والتسليم والمرتجع" />
-              <Kpi label="Break-even CPC" value={live.break_even_cpc ? formatMad(live.break_even_cpc) : "—"} hint="أقصى ثمن للكليك" />
-              <Kpi label="هامش للطلب" value={live.margin_per_order == null ? "—" : formatMad(live.margin_per_order)} />
-              <Kpi
-                label="CVR"
-                value={formatPct(k?.cvr || 0)}
-                hint={`${k?.clicks || 0} زيارة → ${k?.orders || 0} طلب`}
-              />
-            </div>
-
-            <section className="rounded-2xl border border-border bg-white p-4 text-sm leading-7 text-muted">
-              <p className="font-bold text-ink">كيفاش كنحسبو</p>
-              <p className="mt-2">
-                القيمة المتوقعة للطلب = (تأكيد × تسليم × صافي المسلّم) − (تأكيد × (1 − تسليم) × تكلفة المرجع). هاد الرقم هو
-                أقصى CPA. إلا كان CPA ديال الإعلانات تحت منّو، راك OK. إلا فوق منّو، كتخسر فالطلب.
-              </p>
-            </section>
-          </div>
-        ) : null}
       </div>
 
       {selected ? (
@@ -651,17 +672,25 @@ export default function AdminApp() {
   );
 }
 
+function formatDh(n: number): string {
+  return `${n.toLocaleString("fr-MA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} dh`;
+}
+
 function pickEconomics(e: DashboardMetrics["economics"]): EconomicsInput {
+  const defaults = emptyEconomicsInput();
   return {
-    product_cost_mad: e.product_cost_mad,
-    packaging_mad: e.packaging_mad,
-    delivery_cost_mad: e.delivery_cost_mad,
-    return_cost_mad: e.return_cost_mad,
-    cod_fee_pct: e.cod_fee_pct,
-    selling_price_mad: e.selling_price_mad,
-    ad_spend_mad: e.ad_spend_mad,
-    assumed_confirmation_rate: e.assumed_confirmation_rate,
-    assumed_delivery_rate: e.assumed_delivery_rate,
+    product_cost_mad: e.product_cost_mad ?? defaults.product_cost_mad,
+    packaging_mad: e.packaging_mad ?? defaults.packaging_mad,
+    delivery_cost_mad: e.delivery_cost_mad ?? defaults.delivery_cost_mad,
+    return_cost_mad: e.return_cost_mad ?? defaults.return_cost_mad,
+    cod_fee_pct: e.cod_fee_pct ?? defaults.cod_fee_pct,
+    selling_price_mad: e.selling_price_mad ?? defaults.selling_price_mad,
+    ad_spend_mad: e.ad_spend_mad ?? defaults.ad_spend_mad,
+    lead_cost_mad: e.lead_cost_mad ?? defaults.lead_cost_mad,
+    space_seller_fee_mad: e.space_seller_fee_mad ?? defaults.space_seller_fee_mad,
+    upsell_cost_mad: e.upsell_cost_mad ?? defaults.upsell_cost_mad,
+    assumed_confirmation_rate: e.assumed_confirmation_rate ?? defaults.assumed_confirmation_rate,
+    assumed_delivery_rate: e.assumed_delivery_rate ?? defaults.assumed_delivery_rate,
   };
 }
 
@@ -683,21 +712,12 @@ function Kpi({
         tone === "ok" && "border-emerald-200 bg-emerald-50",
         tone === "bad" && "border-rose/30 bg-rose/5",
         tone === "warn" && "border-saffron/40 bg-gold-light/40",
-        tone === "default" && "border-border bg-white"
+        tone === "default" && "border-border bg-cream"
       )}
     >
       <p className="text-[11px] font-bold text-muted">{label}</p>
       <p className="mt-1 text-2xl font-extrabold tabular-nums leading-tight">{value}</p>
       {hint ? <p className="mt-1 text-[11px] leading-5 text-muted">{hint}</p> : null}
-    </div>
-  );
-}
-
-function Mini({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl bg-white/10 px-3 py-2">
-      <p className="text-[10px] text-white/70">{label}</p>
-      <p className="mt-1 text-lg font-extrabold tabular-nums">{value}</p>
     </div>
   );
 }
@@ -718,18 +738,48 @@ function Field({ label, value, onChange }: { label: string; value: number; onCha
   );
 }
 
-function FieldLight({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+function CalcLine({
+  label,
+  hint,
+  value,
+  total,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  value: number;
+  total: number;
+  onChange: (v: number) => void;
+}) {
   return (
-    <label className="text-[11px] text-white/75">
-      {label}
-      <input
-        type="number"
-        min={0}
-        step="0.01"
-        value={Number.isFinite(value) ? value : 0}
-        onChange={(e) => onChange(Number(e.target.value) || 0)}
-        className="mt-1 block w-full rounded-xl border-0 bg-white/15 px-3 py-2 font-english text-sm text-white outline-none ring-1 ring-white/20 placeholder:text-white/50 focus:ring-white"
-      />
-    </label>
+    <div className="rounded-2xl border border-border bg-cream/70 px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <p className="text-sm font-bold text-ink">{label}</p>
+          <p className="text-[11px] text-muted">{hint}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            step="0.01"
+            value={Number.isFinite(value) ? value : 0}
+            onChange={(e) => onChange(Number(e.target.value) || 0)}
+            className="w-24 rounded-xl border border-border bg-white px-2 py-1.5 text-left font-english text-sm font-bold outline-none focus:border-saffron"
+          />
+          <span className="text-xs text-muted">dh</span>
+        </div>
+      </div>
+      <p className="mt-1 text-left font-english text-xs font-bold tabular-nums text-ink">{formatDh(total)}</p>
+    </div>
+  );
+}
+
+function SumRow({ label, value }: { label: string; value: string }) {
+  return (
+    <li className="flex items-center justify-between text-muted">
+      <span>{label}</span>
+      <span className="font-english tabular-nums text-ink">{value}</span>
+    </li>
   );
 }

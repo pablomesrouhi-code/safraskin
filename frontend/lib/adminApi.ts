@@ -81,6 +81,8 @@ export type DashboardMetrics = {
     cancel_rate: number;
     upsell_rate: number;
     upsell_count: number;
+    crosssell_count: number;
+    crosssell_rate: number;
     repeat_customers: number;
     units: number;
   };
@@ -97,6 +99,9 @@ export type DashboardMetrics = {
     cod_fee_pct: number;
     selling_price_mad: number;
     ad_spend_mad: number;
+    lead_cost_mad: number;
+    space_seller_fee_mad: number;
+    upsell_cost_mad: number;
     assumed_confirmation_rate: number;
     assumed_delivery_rate: number;
     selling_used: number;
@@ -110,6 +115,14 @@ export type DashboardMetrics = {
     current_cpc: number;
     profit: number;
     margin_per_order: number | null;
+    lead_spend: number;
+    space_spend: number;
+    upsell_spend: number;
+    product_spend: number;
+    revenue: number;
+    cost_per_delivered: number;
+    break_even_lead_cost: number;
+    delivered_est: number;
     verdict: "ok" | "losing" | "fill_costs" | "fill_ads";
     verdict_ar: string;
   };
@@ -123,6 +136,9 @@ export type EconomicsInput = {
   cod_fee_pct: number;
   selling_price_mad: number;
   ad_spend_mad: number;
+  lead_cost_mad: number;
+  space_seller_fee_mad: number;
+  upsell_cost_mad: number;
   assumed_confirmation_rate: number;
   assumed_delivery_rate: number;
 };
@@ -136,6 +152,9 @@ export function emptyEconomicsInput(): EconomicsInput {
     cod_fee_pct: 0,
     selling_price_mad: 0,
     ad_spend_mad: 0,
+    lead_cost_mad: 2,
+    space_seller_fee_mad: 63,
+    upsell_cost_mad: 10,
     assumed_confirmation_rate: 50,
     assumed_delivery_rate: 80,
   };
@@ -145,65 +164,79 @@ export function computeOkDaba(
   form: EconomicsInput,
   kpis: DashboardMetrics["kpis"] | null
 ): DashboardMetrics["economics"] {
-  const orders = kpis?.orders || 0;
+  const leads = kpis?.orders || 0;
   const clicks = kpis?.clicks || 0;
   const delivered = kpis?.delivered || 0;
   const returned = kpis?.returned || 0;
   const deliveredValue = kpis?.delivered_value || 0;
+  const upsells = kpis?.upsell_count || 0;
   const aov = form.selling_price_mad || kpis?.aov || 0;
   const conf =
-    orders > 0 && (kpis?.confirmation_rate || 0) > 0
+    leads > 0 && (kpis?.confirmation_rate || 0) > 0
       ? kpis!.confirmation_rate / 100
       : form.assumed_confirmation_rate / 100;
   const deliv =
     (kpis?.delivery_rate || 0) > 0 ? kpis!.delivery_rate / 100 : form.assumed_delivery_rate / 100;
+  const deliveredEst = delivered > 0 ? delivered : Math.round(leads * conf * deliv * 100) / 100;
+  const leadCost = form.lead_cost_mad;
+  const spaceFee = form.space_seller_fee_mad;
+  const upsellFee = form.upsell_cost_mad;
   const cogs = form.product_cost_mad;
   const pack = form.packaging_mad;
   const deliveryCost = form.delivery_cost_mad;
   const returnCost = form.return_cost_mad;
   const feePct = form.cod_fee_pct / 100;
   const ads = form.ad_spend_mad;
-  const net = aov - cogs - pack - deliveryCost - aov * feePct;
-  const expected = conf * deliv * net - conf * (1 - deliv) * returnCost;
-  const cvr = clicks > 0 ? orders / clicks : 0;
-  const beCpa = Math.round(expected * 100) / 100;
-  const beCpc = Math.round(expected * cvr * 100) / 100;
-  const currentCpa = orders && ads ? Math.round((ads / orders) * 100) / 100 : 0;
-  const currentCpc = clicks && ads ? Math.round((ads / clicks) * 100) / 100 : 0;
-  const profit = Math.round(
-    ((deliveredValue || delivered * aov) -
-      delivered * (cogs + pack + deliveryCost) -
-      (deliveredValue || delivered * aov) * feePct -
-      returned * returnCost -
-      ads) *
-      100
-  ) / 100;
-  const costsReady = cogs > 0 || deliveryCost > 0 || aov > 0;
+  const upsellRate = leads > 0 ? upsells / leads : 0;
+
+  const leadSpend = leads * leadCost + ads;
+  const spaceSpend = deliveredEst * spaceFee;
+  const upsellSpend = upsells * upsellFee;
+  const productSpend = deliveredEst * (cogs + pack + deliveryCost);
+  const returnSpend = returned * returnCost;
+  const revenue = deliveredValue || deliveredEst * aov;
+  const feeSpend = revenue * feePct;
+  const profit = Math.round((revenue - leadSpend - spaceSpend - upsellSpend - productSpend - returnSpend - feeSpend) * 100) / 100;
+  const costPerDelivered = deliveredEst > 0 ? Math.round(((leadSpend + spaceSpend + upsellSpend + productSpend + returnSpend + feeSpend) / deliveredEst) * 100) / 100 : 0;
+  const net = aov - cogs - pack - deliveryCost - spaceFee - upsellFee * upsellRate - aov * feePct;
+  const beLead = Math.round((conf * deliv * net - conf * (1 - deliv) * returnCost) * 100) / 100;
+  const cvr = clicks > 0 ? leads / clicks : 0;
+  const currentCpa = leadCost || (leads && ads ? ads / leads : 0);
+  const currentCpc = clicks && leadSpend ? Math.round((leadSpend / clicks) * 100) / 100 : 0;
+
   let verdict: DashboardMetrics["economics"]["verdict"] = "fill_costs";
-  let verdict_ar = "حط تكلفة المنتج، سعر البيع، والتوصيل باش نحسبو شحال OK دابا.";
-  if (costsReady && ads <= 0) {
-    verdict = "fill_ads";
-    verdict_ar = `أقصى CPA مسموح: ${beCpa.toFixed(0)} درهم. دخل مصروف الإعلانات باش نعرفو واش راك OK.`;
-  } else if (costsReady && ads > 0 && currentCpa <= beCpa) {
-    verdict = "ok";
-    verdict_ar = `راك OK دابا. عندك هامش ${Math.max(beCpa - currentCpa, 0).toFixed(0)} درهم فالطلب. تقدر تخلّص حتى ${beCpa.toFixed(0)} درهم CPA وباقي رابح.`;
-  } else if (costsReady && ads > 0) {
-    verdict = "losing";
-    verdict_ar = `ماشي OK دابا. كتخسر حوالي ${(currentCpa - beCpa).toFixed(0)} درهم فالطلب. خاص CPA ينزل لـ ${beCpa.toFixed(0)} درهم.`;
+  let verdict_ar = "حط سعر البيع والتأكيد والتسليم باش نحسبو شحال OK دابا.";
+  if (aov > 0) {
+    if (leadCost <= beLead) {
+      verdict = "ok";
+      verdict_ar = `راك OK دابا. أقصى Lead entered مسموح ${beLead.toFixed(2)} درهم. دابا كتخلّص ${leadCost.toFixed(2)} درهم.`;
+    } else {
+      verdict = "losing";
+      verdict_ar = `ماشي OK دابا. Lead entered ${leadCost.toFixed(2)} فوق الـ break-even ${beLead.toFixed(2)} درهم.`;
+    }
   }
+
   return {
     ...form,
     selling_used: aov,
     confirmation_used: Math.round(conf * 10000) / 100,
     delivery_used: Math.round(deliv * 10000) / 100,
     net_per_delivered: Math.round(net * 100) / 100,
-    expected_per_lead: beCpa,
-    break_even_cpa: beCpa,
-    break_even_cpc: beCpc,
-    current_cpa: currentCpa,
+    expected_per_lead: beLead,
+    break_even_cpa: beLead,
+    break_even_cpc: Math.round(beLead * cvr * 100) / 100,
+    current_cpa: Math.round(currentCpa * 100) / 100,
     current_cpc: currentCpc,
     profit,
-    margin_per_order: ads && orders ? Math.round((beCpa - currentCpa) * 100) / 100 : null,
+    margin_per_order: deliveredEst ? Math.round((profit / deliveredEst) * 100) / 100 : null,
+    lead_spend: Math.round(leadSpend * 100) / 100,
+    space_spend: Math.round(spaceSpend * 100) / 100,
+    upsell_spend: Math.round(upsellSpend * 100) / 100,
+    product_spend: Math.round(productSpend * 100) / 100,
+    revenue: Math.round(revenue * 100) / 100,
+    cost_per_delivered: costPerDelivered,
+    break_even_lead_cost: beLead,
+    delivered_est: deliveredEst,
     verdict,
     verdict_ar,
   };
