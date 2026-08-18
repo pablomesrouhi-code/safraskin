@@ -1,5 +1,5 @@
 export const TIER_PRICES = { 1: 219, 2: 279, 3: 319 } as const;
-export const FEMMELIA_TIER_PRICES = { 1: 279, 2: 349, 3: 419 } as const;
+export const FEMMELIA_TIER_PRICES = { 1: 299, 2: 379, 3: 449 } as const;
 export const UPSELL_PRICE_MAD = 150;
 export const CROSSSELL_PRICE_MAD = TIER_PRICES[1];
 
