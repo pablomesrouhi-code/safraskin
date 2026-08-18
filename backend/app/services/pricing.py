@@ -1,4 +1,5 @@
 TIER_PRICES = {1: 219, 2: 279, 3: 319}
+CLARELIA_LUMINORA_TIER_PRICES = {1: 279, 2: 349, 3: 419}
 FEMMELIA_TIER_PRICES = {1: 299, 2: 379, 3: 449}
 UPSELL_PRICE_MAD = 150
 
@@ -44,7 +45,12 @@ PACK_PRICES = {
 
 
 def offer_price(slug: str, qty: int) -> int:
-    prices = FEMMELIA_TIER_PRICES if slug == "femmelia" else TIER_PRICES
+    if slug == "femmelia":
+        prices = FEMMELIA_TIER_PRICES
+    elif slug in {"clarelia", "luminora"}:
+        prices = CLARELIA_LUMINORA_TIER_PRICES
+    else:
+        prices = TIER_PRICES
     if qty <= 0:
         return 0
     if qty == 1:

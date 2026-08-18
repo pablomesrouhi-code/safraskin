@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.services.pricing import (
+    CLARELIA_LUMINORA_TIER_PRICES,
     FEMMELIA_TIER_PRICES,
     SLUG_TO_NAME_AR,
     SLUG_TO_SKU,
@@ -15,6 +16,7 @@ router = APIRouter()
 def list_products():
     return {
         "tier_prices": TIER_PRICES,
+        "clarelia_luminora_tier_prices": CLARELIA_LUMINORA_TIER_PRICES,
         "femmelia_tier_prices": FEMMELIA_TIER_PRICES,
         "upsell_price_mad": UPSELL_PRICE_MAD,
         "products": [
