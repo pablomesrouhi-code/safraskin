@@ -15,7 +15,6 @@ const OFFERS = [
     label: "علبة واحدة",
     hint: "شهر للبداية",
     save: 0,
-    limited: false,
   },
   {
     qty: 2 as const,
@@ -23,7 +22,6 @@ const OFFERS = [
     label: "علبتين",
     hint: "روتين شهرين",
     save: UNIT * 2 - TIER_PRICES[2],
-    limited: true,
   },
   {
     qty: 3 as const,
@@ -31,7 +29,6 @@ const OFFERS = [
     label: "3 علب",
     hint: "وقت كافي للنتيجة",
     save: UNIT * 3 - TIER_PRICES[3],
-    limited: true,
   },
 ] as const;
 
@@ -48,7 +45,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
           <p className="mt-0.5 text-xs text-muted">الثمن واضح · الدفع عند الاستلام</p>
         </div>
 
-        <div className="space-y-3 p-4" role="radiogroup" aria-label="اختيار العرض">
+        <div className="grid gap-2 p-3 sm:grid-cols-3 sm:gap-3 sm:p-4" role="radiogroup" aria-label="اختيار العرض">
           {OFFERS.map((offer) => {
             const isSelected = selected === offer.qty;
             const fullPrice = UNIT * offer.qty;
@@ -60,31 +57,27 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
                 aria-checked={isSelected}
                 onClick={() => setSelected(offer.qty)}
                 className={clsx(
-                  "grid w-full grid-cols-[auto_1fr_auto] items-center gap-3 rounded-xl border-2 p-4 text-right transition-all",
-                  isSelected ? "border-rose bg-rose/5" : "border-border bg-white hover:border-rose/40"
+                  "flex min-h-[4.75rem] w-full items-center gap-3 rounded-xl border-2 p-3 text-right transition-all sm:min-h-[9rem] sm:flex-col sm:items-stretch sm:justify-between sm:p-4",
+                  isSelected
+                    ? "border-rose bg-rose/10 shadow-sm"
+                    : "border-border bg-white hover:border-rose/40"
                 )}
               >
-                <span
-                  className={clsx(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
-                    isSelected ? "border-rose bg-rose" : "border-gray-300"
-                  )}
-                >
-                  {isSelected && <span className="h-2 w-2 rounded-full bg-white" />}
+                <span className="flex min-w-0 items-center gap-2">
+                  <span
+                    className={clsx(
+                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
+                      isSelected ? "border-rose bg-rose" : "border-gray-300"
+                    )}
+                  >
+                    {isSelected && <span className="h-2 w-2 rounded-full bg-white" />}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-ink">{offer.label}</span>
+                    <span className="block text-xs text-muted">{offer.hint}</span>
+                  </span>
                 </span>
-                <div className="min-w-0">
-                  <span className="block font-semibold text-ink">{offer.label}</span>
-                  <span className="mt-0.5 block text-xs text-muted">{offer.hint}</span>
-                  {offer.save > 0 && (
-                    <span className="mt-1 block text-xs font-bold text-rose">وفرتي {offer.save} درهم</span>
-                  )}
-                </div>
-                <div className="shrink-0 text-left">
-                  {offer.limited && (
-                    <span className="mb-1 block rounded-full bg-saffron/20 px-2 py-0.5 text-[10px] font-bold text-saffron-dark">
-                      عرض محدود
-                    </span>
-                  )}
+                <span className="mr-auto shrink-0 text-left sm:mr-0 sm:text-right">
                   {offer.save > 0 && (
                     <span className="block text-xs text-muted line-through tabular-nums">{fullPrice}</span>
                   )}
@@ -92,7 +85,10 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
                     {offer.price}
                   </span>
                   <span className="mt-0.5 block text-[11px] font-semibold text-muted">درهم مغربي</span>
-                </div>
+                  {offer.save > 0 && (
+                    <span className="mt-1 block text-[11px] font-bold text-rose">وفرتي {offer.save} درهم</span>
+                  )}
+                </span>
               </button>
             );
           })}

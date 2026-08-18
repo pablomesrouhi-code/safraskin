@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Sparkles, Clock, Check } from "lucide-react";
+import { Clock, Loader2 } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
 import { useCart } from "@/context/CartContext";
 import { getProductOrThrow, TIER_PRICES, UPSELL_PRICE_MAD } from "@/data/products";
@@ -162,31 +162,23 @@ export default function UpsellModal() {
     );
   }
 
-  const savings = TIER_PRICES[1] - UPSELL_PRICE_MAD;
-
   return (
     <>
-      <div className="fixed inset-0 z-[70] bg-black/65 backdrop-blur-[2px]" />
-      <div className="fixed inset-x-3 bottom-3 z-[70] overflow-hidden rounded-3xl border border-rose/10 bg-white shadow-2xl md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2">
-        <div className="bg-rose px-5 py-4 text-white">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Sparkles size={18} className="text-gold-light" />
-              <span className="text-sm font-bold">عرض مرة واحدة — هنا غير</span>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-sm font-bold tabular-nums">
-              <Clock size={14} className="text-gold-light" />
-              {seconds} ث
-            </div>
+      <div className="fixed inset-0 z-[70] bg-black/65" />
+      <div className="fixed inset-x-3 bottom-3 z-[70] overflow-hidden rounded-3xl bg-white shadow-2xl md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-sm md:-translate-x-1/2 md:-translate-y-1/2">
+        <div className="flex items-center justify-between bg-rose px-4 py-3 text-white">
+          <span className="text-sm font-bold">عرض خاص قبل التأكيد</span>
+          <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-sm font-bold tabular-nums">
+            <Clock size={14} aria-hidden />
+            {seconds} ث
           </div>
-          <p className="mt-2 text-xs text-white/80">زيديه دابا بثمن ما كيتكرّرش — قبل تأكيد الطلب</p>
         </div>
 
-        <div className="space-y-4 p-5">
+        <div className="p-4">
           {error && <p className="rounded-xl bg-scarcity/10 p-3 text-sm text-scarcity">{error}</p>}
 
-          <div className="flex items-center gap-4 rounded-2xl border-2 border-rose/20 bg-rose/5 p-3">
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-rose/15 bg-white">
+          <div className="flex items-center gap-3">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border bg-cream">
               <ProductImage
                 src={upsellProduct.image}
                 alt={upsellProduct.headlineAr}
@@ -195,54 +187,29 @@ export default function UpsellModal() {
               />
             </div>
             <div className="min-w-0 flex-1 text-right">
-              <span className="mb-1 inline-block rounded-full bg-saffron/20 px-2 py-0.5 text-[10px] font-bold text-saffron-dark">
-                هنا غير: {formatPrice(savings)} أقل من الثمن العادي
-              </span>
               <h3 className="font-bold leading-snug text-ink">{upsellProduct.feelingTitle}</h3>
-              <p className="mt-0.5 line-clamp-2 text-xs text-muted">{upsellProduct.problemHook}</p>
+              <p className="mt-1 flex items-baseline gap-2">
+                <span className="text-sm text-muted line-through">{formatPrice(TIER_PRICES[1])}</span>
+                <span className="text-xl font-extrabold text-rose">{formatPrice(UPSELL_PRICE_MAD)}</span>
+              </p>
             </div>
           </div>
-
-          <div className="flex items-center justify-center gap-4 py-2">
-            <div className="text-center">
-              <span className="block text-sm text-gray-400 line-through">{formatPrice(TIER_PRICES[1])}</span>
-              <span className="text-[10px] text-gray-400">الثمن العادي</span>
-            </div>
-            <div className="h-10 w-px bg-border" />
-            <div className="text-center">
-              <span className="block text-3xl font-extrabold tabular-nums text-rose">
-                {UPSELL_PRICE_MAD}
-              </span>
-              <span className="text-xs font-semibold text-rose">درهم مغربي</span>
-            </div>
-          </div>
-
-          <ul className="space-y-1.5 rounded-xl bg-cream p-3 text-xs text-muted">
-            <li className="flex gap-2">
-              <Check size={14} className="mt-0.5 shrink-0 text-rose" />
-              <span>كيتزاد لنفس طلب COD — بلا توصيل زايد</span>
-            </li>
-            <li className="flex gap-2">
-              <Check size={14} className="mt-0.5 shrink-0 text-rose" />
-              <span>منتج مكمل للطلب ديالك — هاد الثمن ما كيبانش فصفحة المنتج</span>
-            </li>
-          </ul>
 
           <button
             type="button"
             disabled={submitting}
             onClick={() => placeOrder(true)}
-            className="w-full rounded-2xl bg-rose py-4 text-lg font-bold text-white shadow-lg shadow-rose/25 hover:bg-rose-dark disabled:opacity-50"
+            className="mt-4 w-full rounded-2xl bg-rose py-4 text-base font-extrabold text-white hover:bg-rose-dark disabled:opacity-50"
           >
-            إييه، زيديه بـ {formatPrice(UPSELL_PRICE_MAD)}
+            زيديه بـ {formatPrice(UPSELL_PRICE_MAD)}
           </button>
           <button
             type="button"
             disabled={submitting}
             onClick={() => placeOrder(false)}
-            className="w-full py-2 text-sm text-muted hover:text-ink"
+            className="mt-1 w-full py-2.5 text-sm text-muted hover:text-ink"
           >
-            لا شكراً — كمّلي طلبي ({formatPrice(total)})
+            كمّلي الطلب بلا إضافة
           </button>
         </div>
       </div>

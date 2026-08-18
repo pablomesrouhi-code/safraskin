@@ -10,9 +10,8 @@ export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://safraskin.online";
 
 export const TRUST_BAR = [
-  "معترف به من منظمات صحية",
-  "مراقبة جودة المختبر",
-  "مكونات معلنة ومكتوبة",
+  "مكوّنات مكتوبة",
+  "تأكيد الطلب بالهاتف",
   "الدفع عند الاستلام",
 ] as const;
 

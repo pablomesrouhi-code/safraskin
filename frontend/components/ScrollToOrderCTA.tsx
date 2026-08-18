@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useCart } from "@/context/CartContext";
-import type { ProductSlug } from "@/data/products";
+import { ArrowUp } from "lucide-react";
 
-export default function ScrollToOrderCTA({ slug }: { slug: ProductSlug }) {
+export default function ScrollToOrderCTA() {
   const [pastForm, setPastForm] = useState(false);
-  const { buyNow } = useCart();
 
   useEffect(() => {
     const form = document.getElementById("offer-selector");
@@ -14,7 +12,7 @@ export default function ScrollToOrderCTA({ slug }: { slug: ProductSlug }) {
 
     const update = () => {
       const rect = form.getBoundingClientRect();
-      setPastForm(rect.bottom < 72);
+      setPastForm(rect.bottom < 88);
     };
 
     update();
@@ -32,10 +30,16 @@ export default function ScrollToOrderCTA({ slug }: { slug: ProductSlug }) {
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-white/95 p-2.5 backdrop-blur">
       <button
         type="button"
-        onClick={() => buyNow(slug, 1)}
-        className="flex w-full items-center justify-center rounded-xl bg-rose py-3 text-sm font-extrabold text-white"
+        onClick={() =>
+          document.getElementById("offer-selector")?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          })
+        }
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose py-3 text-sm font-extrabold text-white"
       >
-        اطلبي · الدفع عند الاستلام
+        <ArrowUp size={18} strokeWidth={2.5} aria-hidden />
+        رجعي للعروض
       </button>
     </div>
   );

@@ -1,27 +1,18 @@
 import { AUTHORITY_PILLARS, COD_STEPS, LAB_INTRO, TRUST_BAR } from "@/data/brand";
-import Marquee from "@/components/Marquee";
 
 export function TrustBar() {
-  const items = [...TRUST_BAR, ...TRUST_BAR, ...TRUST_BAR];
-  const row = (
-    <>
-      {items.map((item, index) => (
-        <span
-          key={`${item}-${index}`}
-          className="flex items-center gap-4 px-6 text-[11px] font-medium text-cream md:text-sm"
-        >
-          <span>{item}</span>
-          <span className="text-saffron" aria-hidden>
-            ✦
-          </span>
-        </span>
-      ))}
-    </>
-  );
-
   return (
-    <div className="w-full bg-ink py-2.5 md:py-3">
-      <Marquee duration={80}>{row}</Marquee>
+    <div className="w-full bg-ink">
+      <div className="mx-auto grid max-w-container grid-cols-3 divide-x divide-white/15">
+        {TRUST_BAR.map((item) => (
+          <p
+            key={item}
+            className="px-1.5 py-2.5 text-center text-[10px] font-semibold leading-4 text-cream sm:px-3 sm:text-xs md:py-3 md:text-sm"
+          >
+            {item}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
@@ -56,12 +47,19 @@ export function CodSteps() {
         <p className="mt-3 max-w-xl text-sm leading-7 text-cream/70">
           ثلاثة خطوات هادئة. الثمن ظاهر من اللولة، والفلوس غير ملي توصّل الطلبيّة.
         </p>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-3 md:grid-cols-3 md:gap-4">
           {COD_STEPS.map((step) => (
-            <article key={step.step} className="min-w-0 rounded-2xl border border-white/10 bg-white/5 p-5">
-              <span className="font-english text-sm text-saffron">0{step.step}</span>
-              <h3 className="mt-3 font-bold leading-7">{step.title}</h3>
-              <p className="mt-2 text-sm leading-7 text-cream/70">{step.body}</p>
+            <article
+              key={step.step}
+              className="flex min-w-0 items-start gap-4 rounded-2xl border border-white/15 bg-white/5 p-4 md:block md:p-5"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-saffron font-english text-sm font-bold text-ink">
+                {step.step}
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-bold leading-7 md:mt-4">{step.title}</h3>
+                <p className="mt-1 text-sm leading-7 text-cream/70 md:mt-2">{step.body}</p>
+              </div>
             </article>
           ))}
         </div>
