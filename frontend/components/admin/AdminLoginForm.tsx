@@ -35,7 +35,7 @@ export default function AdminLoginForm({ onSuccess }: { onSuccess: () => void })
         </div>
         <p className="mt-4 text-center text-[10px] font-bold tracking-[0.18em] text-saffron-dark">ADMIN</p>
         <h1 className="mt-1 text-center text-xl font-extrabold">لوحة سفراسكين</h1>
-        <p className="mt-1 text-center text-xs text-muted">ADMIN_USERNAME و ADMIN_PASSWORD من الباكند</p>
+        <p className="mt-1 text-center text-xs text-muted">السمية: admin · كلمة السر: ADMIN_PASSWORD من EasyPanel</p>
 
         <label className="mt-6 block text-xs text-muted">
           السمية

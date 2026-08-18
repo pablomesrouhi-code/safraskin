@@ -127,6 +127,88 @@ export type EconomicsInput = {
   assumed_delivery_rate: number;
 };
 
+export function emptyEconomicsInput(): EconomicsInput {
+  return {
+    product_cost_mad: 0,
+    packaging_mad: 0,
+    delivery_cost_mad: 0,
+    return_cost_mad: 0,
+    cod_fee_pct: 0,
+    selling_price_mad: 0,
+    ad_spend_mad: 0,
+    assumed_confirmation_rate: 50,
+    assumed_delivery_rate: 80,
+  };
+}
+
+export function computeOkDaba(
+  form: EconomicsInput,
+  kpis: DashboardMetrics["kpis"] | null
+): DashboardMetrics["economics"] {
+  const orders = kpis?.orders || 0;
+  const clicks = kpis?.clicks || 0;
+  const delivered = kpis?.delivered || 0;
+  const returned = kpis?.returned || 0;
+  const deliveredValue = kpis?.delivered_value || 0;
+  const aov = form.selling_price_mad || kpis?.aov || 0;
+  const conf =
+    orders > 0 && (kpis?.confirmation_rate || 0) > 0
+      ? kpis!.confirmation_rate / 100
+      : form.assumed_confirmation_rate / 100;
+  const deliv =
+    (kpis?.delivery_rate || 0) > 0 ? kpis!.delivery_rate / 100 : form.assumed_delivery_rate / 100;
+  const cogs = form.product_cost_mad;
+  const pack = form.packaging_mad;
+  const deliveryCost = form.delivery_cost_mad;
+  const returnCost = form.return_cost_mad;
+  const feePct = form.cod_fee_pct / 100;
+  const ads = form.ad_spend_mad;
+  const net = aov - cogs - pack - deliveryCost - aov * feePct;
+  const expected = conf * deliv * net - conf * (1 - deliv) * returnCost;
+  const cvr = clicks > 0 ? orders / clicks : 0;
+  const beCpa = Math.round(expected * 100) / 100;
+  const beCpc = Math.round(expected * cvr * 100) / 100;
+  const currentCpa = orders && ads ? Math.round((ads / orders) * 100) / 100 : 0;
+  const currentCpc = clicks && ads ? Math.round((ads / clicks) * 100) / 100 : 0;
+  const profit = Math.round(
+    ((deliveredValue || delivered * aov) -
+      delivered * (cogs + pack + deliveryCost) -
+      (deliveredValue || delivered * aov) * feePct -
+      returned * returnCost -
+      ads) *
+      100
+  ) / 100;
+  const costsReady = cogs > 0 || deliveryCost > 0 || aov > 0;
+  let verdict: DashboardMetrics["economics"]["verdict"] = "fill_costs";
+  let verdict_ar = "حط تكلفة المنتج، سعر البيع، والتوصيل باش نحسبو شحال OK دابا.";
+  if (costsReady && ads <= 0) {
+    verdict = "fill_ads";
+    verdict_ar = `أقصى CPA مسموح: ${beCpa.toFixed(0)} درهم. دخل مصروف الإعلانات باش نعرفو واش راك OK.`;
+  } else if (costsReady && ads > 0 && currentCpa <= beCpa) {
+    verdict = "ok";
+    verdict_ar = `راك OK دابا. عندك هامش ${Math.max(beCpa - currentCpa, 0).toFixed(0)} درهم فالطلب. تقدر تخلّص حتى ${beCpa.toFixed(0)} درهم CPA وباقي رابح.`;
+  } else if (costsReady && ads > 0) {
+    verdict = "losing";
+    verdict_ar = `ماشي OK دابا. كتخسر حوالي ${(currentCpa - beCpa).toFixed(0)} درهم فالطلب. خاص CPA ينزل لـ ${beCpa.toFixed(0)} درهم.`;
+  }
+  return {
+    ...form,
+    selling_used: aov,
+    confirmation_used: Math.round(conf * 10000) / 100,
+    delivery_used: Math.round(deliv * 10000) / 100,
+    net_per_delivered: Math.round(net * 100) / 100,
+    expected_per_lead: beCpa,
+    break_even_cpa: beCpa,
+    break_even_cpc: beCpc,
+    current_cpa: currentCpa,
+    current_cpc: currentCpc,
+    profit,
+    margin_per_order: ads && orders ? Math.round((beCpa - currentCpa) * 100) / 100 : null,
+    verdict,
+    verdict_ar,
+  };
+}
+
 export function getToken(): string {
   if (typeof window === "undefined") return "";
   return localStorage.getItem(TOKEN_KEY) || "";

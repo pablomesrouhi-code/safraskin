@@ -23,6 +23,8 @@ import {
   STATUS_META,
   adminMe,
   clearToken,
+  computeOkDaba,
+  emptyEconomicsInput,
   getToken,
   fetchMetrics,
   fetchOrders,
@@ -68,7 +70,7 @@ export default function AdminApp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const [econForm, setEconForm] = useState<EconomicsInput | null>(null);
+  const [econForm, setEconForm] = useState<EconomicsInput>(() => emptyEconomicsInput());
 
   useEffect(() => {
     let cancelled = false;
@@ -102,7 +104,15 @@ export default function AdminApp() {
       setMetrics(m);
       setOrders(o.orders);
       setTotalOrders(o.total);
-      setEconForm((prev) => prev ?? pickEconomics(m.economics));
+      setEconForm((prev) => {
+        const incoming = pickEconomics(m.economics);
+        const untouched =
+          prev.product_cost_mad === 0 &&
+          prev.selling_price_mad === 0 &&
+          prev.ad_spend_mad === 0 &&
+          prev.delivery_cost_mad === 0;
+        return untouched && (incoming.product_cost_mad || incoming.selling_price_mad) ? incoming : prev;
+      });
     } catch (e) {
       if (isAuthError(e)) {
         setReady(false);
@@ -138,7 +148,6 @@ export default function AdminApp() {
   }
 
   async function persistEconomics() {
-    if (!econForm) return;
     setSaving(true);
     setError("");
     try {
@@ -152,7 +161,7 @@ export default function AdminApp() {
   }
 
   const k = metrics?.kpis;
-  const econ = metrics?.economics;
+  const live = computeOkDaba(econForm, k ?? null);
   const maxBar = useMemo(() => {
     const days = metrics?.daily || [];
     return Math.max(1, ...days.map((d) => Math.max(d.clicks, d.orders)));
@@ -194,7 +203,37 @@ export default function AdminApp() {
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-5">
-        <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-white p-3">
+        <section
+          className={clsx(
+            "rounded-3xl p-5 text-white shadow-lg",
+            live.verdict === "ok" ? "bg-emerald-700" : live.verdict === "losing" ? "bg-rose" : "bg-ink"
+          )}
+        >
+          <p className="text-[10px] font-bold tracking-[0.18em] text-white/70">شحال OK دابا</p>
+          <h2 className="mt-2 text-2xl font-extrabold leading-snug md:text-3xl">{live.verdict_ar}</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <Mini label="الربح" value={formatMad(live.profit)} />
+            <Mini label="أقصى CPA" value={formatMad(live.break_even_cpa)} />
+            <Mini label="CPA الحالي" value={live.current_cpa ? formatMad(live.current_cpa) : "—"} />
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            <FieldLight label="تكلفة المنتج" value={econForm.product_cost_mad} onChange={(v) => setEconForm({ ...econForm, product_cost_mad: v })} />
+            <FieldLight label="سعر البيع / AOV" value={econForm.selling_price_mad} onChange={(v) => setEconForm({ ...econForm, selling_price_mad: v })} />
+            <FieldLight label="إعلانات" value={econForm.ad_spend_mad} onChange={(v) => setEconForm({ ...econForm, ad_spend_mad: v })} />
+            <FieldLight label="تأكيد %" value={econForm.assumed_confirmation_rate} onChange={(v) => setEconForm({ ...econForm, assumed_confirmation_rate: v })} />
+            <FieldLight label="تسليم %" value={econForm.assumed_delivery_rate} onChange={(v) => setEconForm({ ...econForm, assumed_delivery_rate: v })} />
+          </div>
+          <button
+            type="button"
+            onClick={() => void persistEconomics()}
+            disabled={saving}
+            className="mt-4 rounded-xl bg-white px-4 py-2 text-sm font-bold text-ink"
+          >
+            {saving ? "كنحفظو…" : "حفظ الحساب"}
+          </button>
+        </section>
+
+        <div className="mt-4 flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-white p-3">
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((p) => (
               <button
@@ -265,7 +304,7 @@ export default function AdminApp() {
         {error ? <p className="mt-3 rounded-xl bg-rose/10 px-3 py-2 text-sm text-rose">{error}</p> : null}
         {loading && !metrics ? <p className="mt-8 text-center text-muted">كنحسبو الأرقام…</p> : null}
 
-        {tab === "overview" && k && econ ? (
+        {tab === "overview" && k ? (
           <div className="mt-5 space-y-5">
             {k.pending > 0 ? (
               <button
@@ -285,15 +324,10 @@ export default function AdminApp() {
             ) : null}
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Kpi label="كليك / زيارات" value={k.clicks.toLocaleString("fr-MA")} hint={`${k.page_views} مشاهدة صفحة`} />
+              <Kpi label="كليك / زيارات" value={(k.clicks || 0).toLocaleString("fr-MA")} hint={`${k.page_views} مشاهدة صفحة`} />
               <Kpi label="طلبات" value={k.orders.toLocaleString("fr-MA")} hint={`${formatPct(k.cvr)} تحويل`} />
               <Kpi label="AOV" value={formatMad(k.aov)} hint={`${formatMad(k.gross_value)} إجمالي`} />
-              <Kpi
-                label="شحال OK دابا"
-                value={econ.verdict === "ok" ? "رابح" : econ.verdict === "losing" ? "خاسر" : "كمّل الحساب"}
-                hint={econ.verdict_ar}
-                tone={econ.verdict === "ok" ? "ok" : econ.verdict === "losing" ? "bad" : "warn"}
-              />
+              <Kpi label="صافي للمسلّم" value={formatMad(live.net_per_delivered)} hint={`تأكيد ${formatPct(live.confirmation_used)} · تسليم ${formatPct(live.delivery_used)}`} />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -489,20 +523,20 @@ export default function AdminApp() {
           </div>
         ) : null}
 
-        {tab === "economics" && econ && econForm ? (
+        {tab === "economics" ? (
           <div className="mt-5 space-y-4">
             <section
               className={clsx(
                 "rounded-2xl p-5 text-white",
-                econ.verdict === "ok" ? "bg-emerald-700" : econ.verdict === "losing" ? "bg-rose" : "bg-ink"
+                live.verdict === "ok" ? "bg-emerald-700" : live.verdict === "losing" ? "bg-rose" : "bg-ink"
               )}
             >
               <p className="text-[10px] font-bold tracking-[0.16em] text-white/70">BREAK-EVEN · شحال OK دابا</p>
-              <h2 className="mt-2 text-2xl font-extrabold leading-snug">{econ.verdict_ar}</h2>
+              <h2 className="mt-2 text-2xl font-extrabold leading-snug">{live.verdict_ar}</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <Mini label="الربح فالفترة" value={formatMad(econ.profit)} />
-                <Mini label="أقصى CPA" value={formatMad(econ.break_even_cpa)} />
-                <Mini label="CPA الحالي" value={econ.current_cpa ? formatMad(econ.current_cpa) : "—"} />
+                <Mini label="الربح فالفترة" value={formatMad(live.profit)} />
+                <Mini label="أقصى CPA" value={formatMad(live.break_even_cpa)} />
+                <Mini label="CPA الحالي" value={live.current_cpa ? formatMad(live.current_cpa) : "—"} />
               </div>
             </section>
 
@@ -570,13 +604,13 @@ export default function AdminApp() {
             </section>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Kpi label="AOV المستعمل" value={formatMad(econ.selling_used)} hint="من الطلبات أو السعر اللي حطيتي" />
-              <Kpi label="تأكيد المستعمل" value={formatPct(econ.confirmation_used)} />
-              <Kpi label="تسليم المستعمل" value={formatPct(econ.delivery_used)} />
-              <Kpi label="صافي للمسلّم" value={formatMad(econ.net_per_delivered)} hint="بيع − تكلفة − تغليف − توصيل − رسوم" />
-              <Kpi label="القيمة المتوقعة للطلب" value={formatMad(econ.expected_per_lead)} hint="بعد التأكيد والتسليم والمرتجع" />
-              <Kpi label="Break-even CPC" value={econ.break_even_cpc ? formatMad(econ.break_even_cpc) : "—"} hint="أقصى ثمن للكليك" />
-              <Kpi label="هامش للطلب" value={econ.margin_per_order == null ? "—" : formatMad(econ.margin_per_order)} />
+              <Kpi label="AOV المستعمل" value={formatMad(live.selling_used)} hint="من الطلبات أو السعر اللي حطيتي" />
+              <Kpi label="تأكيد المستعمل" value={formatPct(live.confirmation_used)} />
+              <Kpi label="تسليم المستعمل" value={formatPct(live.delivery_used)} />
+              <Kpi label="صافي للمسلّم" value={formatMad(live.net_per_delivered)} hint="بيع − تكلفة − تغليف − توصيل − رسوم" />
+              <Kpi label="القيمة المتوقعة للطلب" value={formatMad(live.expected_per_lead)} hint="بعد التأكيد والتسليم والمرتجع" />
+              <Kpi label="Break-even CPC" value={live.break_even_cpc ? formatMad(live.break_even_cpc) : "—"} hint="أقصى ثمن للكليك" />
+              <Kpi label="هامش للطلب" value={live.margin_per_order == null ? "—" : formatMad(live.margin_per_order)} />
               <Kpi
                 label="CVR"
                 value={formatPct(k?.cvr || 0)}
@@ -679,6 +713,22 @@ function Field({ label, value, onChange }: { label: string; value: number; onCha
         value={Number.isFinite(value) ? value : 0}
         onChange={(e) => onChange(Number(e.target.value) || 0)}
         className="mt-1 block w-full rounded-xl border border-border bg-cream px-3 py-2 font-english text-sm text-ink outline-none focus:border-saffron"
+      />
+    </label>
+  );
+}
+
+function FieldLight({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  return (
+    <label className="text-[11px] text-white/75">
+      {label}
+      <input
+        type="number"
+        min={0}
+        step="0.01"
+        value={Number.isFinite(value) ? value : 0}
+        onChange={(e) => onChange(Number(e.target.value) || 0)}
+        className="mt-1 block w-full rounded-xl border-0 bg-white/15 px-3 py-2 font-english text-sm text-white outline-none ring-1 ring-white/20 placeholder:text-white/50 focus:ring-white"
       />
     </label>
   );
