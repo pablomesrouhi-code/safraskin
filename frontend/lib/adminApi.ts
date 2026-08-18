@@ -297,12 +297,15 @@ async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   if (!res.ok) {
     const raw =
       data && typeof data === "object" && "detail" in data ? (data as { detail: unknown }).detail : null;
+    const detailText = typeof raw === "string" ? raw : "";
     const detail =
-      typeof raw === "string"
-        ? raw
-        : res.status === 404
-          ? "مسار الأدمن ما كاينش فالسيرفر. rebuild للـ API."
-          : "وقع خطأ";
+      /not found/i.test(detailText)
+        ? "الباسوورد غلط أو السيرفر ما فيهوش الأدمن. جرّب admin + كلمة السر ديال ADMIN_PASSWORD فالفرونت، أو change_me_strong_password."
+        : detailText
+          ? detailText
+          : res.status === 404
+            ? "مسار الأدمن ما كاينش. rebuild للفرونت."
+            : "وقع خطأ";
     throw new Error(detail);
   }
   return data as T;

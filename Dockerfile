@@ -28,6 +28,8 @@ ENV PORT=80
 ENV HOSTNAME=0.0.0.0
 ENV ORDER_NUMBER_PREFIX=safra
 ENV API_URL=http://safraskin_backend:8000
+ENV ADMIN_USERNAME=admin
+ENV ADMIN_PASSWORD=change_me_strong_password
 
 RUN npm run build
 

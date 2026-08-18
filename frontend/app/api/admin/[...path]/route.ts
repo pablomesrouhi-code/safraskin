@@ -1,11 +1,8 @@
-import { createHmac, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { apiBase, forwardingHeaders } from "@/lib/backend";
+import { adminUser, loginResponse, passwordAllowed, tokenOk, userAllowed } from "@/lib/adminLocalAuth";
 
 export const dynamic = "force-dynamic";
-
-const DEFAULT_USER = "admin";
-const DEFAULT_PASS = "change_me_strong_password";
 
 let savedEconomics: Record<string, number> = {
   product_cost_mad: 0,
@@ -18,30 +15,6 @@ let savedEconomics: Record<string, number> = {
   assumed_confirmation_rate: 50,
   assumed_delivery_rate: 80,
 };
-
-function adminUser() {
-  return (process.env.ADMIN_USERNAME || process.env.NEXT_PUBLIC_ADMIN_USERNAME || DEFAULT_USER).trim();
-}
-
-function adminPass() {
-  return process.env.ADMIN_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PASSWORD || DEFAULT_PASS;
-}
-
-function localToken(user: string) {
-  const secret = process.env.ADMIN_JWT_SECRET || adminPass();
-  return createHmac("sha256", secret).update(`safraskin-admin:${user}`).digest("hex");
-}
-
-function tokenOk(header: string | null) {
-  const raw = (header || "").replace(/^Bearer\s+/i, "").trim();
-  if (!raw) return false;
-  const expected = localToken(adminUser());
-  try {
-    return timingSafeEqual(Buffer.from(raw), Buffer.from(expected));
-  } catch {
-    return false;
-  }
-}
 
 function json(data: unknown, status = 200) {
   return NextResponse.json(data, { status });
@@ -75,8 +48,8 @@ async function tryBackend(req: NextRequest, segments: string[], rawBody: string 
         signal: controller.signal,
       });
       clearTimeout(timeout);
-      if (res.status === 404) continue;
       const text = await res.text();
+      if (res.status === 404 || text.includes("Not Found")) continue;
       return new NextResponse(text, {
         status: res.status,
         headers: { "Content-Type": res.headers.get("content-type") || "application/json" },
@@ -140,23 +113,27 @@ function emptyMetrics() {
   };
 }
 
+function localLogin(rawBody: string | undefined) {
+  let body: { username?: string; password?: string } = {};
+  try {
+    body = rawBody ? (JSON.parse(rawBody) as { username?: string; password?: string }) : {};
+  } catch {
+    body = {};
+  }
+  const user = (body.username || "").trim();
+  const pass = body.password || "";
+  if (!userAllowed(user) || !passwordAllowed(pass)) {
+    return json({ detail: "السمية أو كلمة السر غالطين" }, 401);
+  }
+  return loginResponse(user);
+}
+
 async function localAdmin(req: NextRequest, segments: string[], rawBody: string | undefined) {
   const action = segments[0] || "";
   const auth = req.headers.get("authorization");
 
   if (req.method === "POST" && action === "login") {
-    let body: { username?: string; password?: string } = {};
-    try {
-      body = rawBody ? (JSON.parse(rawBody) as { username?: string; password?: string }) : {};
-    } catch {
-      body = {};
-    }
-    const user = (body.username || "").trim();
-    const pass = body.password || "";
-    if (user !== adminUser() || pass !== adminPass()) {
-      return json({ detail: "السمية أو كلمة السر غالطين" }, 401);
-    }
-    return json({ token: localToken(user), expires_hours: 24, username: user, mode: "local" });
+    return localLogin(rawBody);
   }
 
   if (!tokenOk(auth)) {
@@ -164,30 +141,19 @@ async function localAdmin(req: NextRequest, segments: string[], rawBody: string 
   }
 
   if (action === "me") return json({ ok: true, username: adminUser(), mode: "local" });
-
   if (action === "metrics") return json(emptyMetrics());
-
   if (action === "orders") {
-    if (segments[1] && req.method === "GET") {
-      return json({ detail: "الطلب ما كاينش" }, 404);
-    }
+    if (segments[1] && req.method === "GET") return json({ detail: "الطلب ما كاينش" }, 404);
     return json({ total: 0, page: 1, page_size: 40, orders: [] });
   }
-
   if (action === "settings" && req.method === "GET") {
-    return json({
-      economics: savedEconomics,
-      statuses: [],
-      today: new Date().toISOString().slice(0, 10),
-    });
+    return json({ economics: savedEconomics, statuses: [], today: new Date().toISOString().slice(0, 10) });
   }
-
   if (action === "settings" && req.method === "PUT") {
     const body = (rawBody ? JSON.parse(rawBody) : {}) as Record<string, number>;
     savedEconomics = { ...savedEconomics, ...body };
     return json({ economics: savedEconomics });
   }
-
   return json({ detail: "مسار غير صالح" }, 404);
 }
 
@@ -195,25 +161,33 @@ async function proxy(req: NextRequest, path: string[] | undefined) {
   const segments = Array.isArray(path) ? path : [];
   if (!segments.length) return json({ detail: "مسار غير صالح" }, 404);
   const rawBody = ["GET", "HEAD"].includes(req.method) ? undefined : await req.text();
+  if (req.method === "POST" && segments[0] === "login") {
+    return localLogin(rawBody);
+  }
   const backendRes = await tryBackend(req, segments, rawBody);
   if (backendRes) return backendRes;
   return localAdmin(req, segments, rawBody);
 }
 
-type Ctx = { params: { path: string[] } };
+type Ctx = { params: { path: string[] } | Promise<{ path: string[] }> };
+
+async function pathOf(ctx: Ctx) {
+  const params = await Promise.resolve(ctx.params);
+  return params.path;
+}
 
 export async function GET(req: NextRequest, ctx: Ctx) {
-  return proxy(req, ctx.params.path);
+  return proxy(req, await pathOf(ctx));
 }
 export async function POST(req: NextRequest, ctx: Ctx) {
-  return proxy(req, ctx.params.path);
+  return proxy(req, await pathOf(ctx));
 }
 export async function PATCH(req: NextRequest, ctx: Ctx) {
-  return proxy(req, ctx.params.path);
+  return proxy(req, await pathOf(ctx));
 }
 export async function PUT(req: NextRequest, ctx: Ctx) {
-  return proxy(req, ctx.params.path);
+  return proxy(req, await pathOf(ctx));
 }
 export async function DELETE(req: NextRequest, ctx: Ctx) {
-  return proxy(req, ctx.params.path);
+  return proxy(req, await pathOf(ctx));
 }
