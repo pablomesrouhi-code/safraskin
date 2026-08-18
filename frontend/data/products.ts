@@ -1,5 +1,4 @@
-export const TIER_PRICES = { 1: 219, 2: 279, 3: 319 } as const;
-export const CLARELIA_LUMINORA_TIER_PRICES = { 1: 279, 2: 349, 3: 419 } as const;
+export const TIER_PRICES = { 1: 279, 2: 349, 3: 419 } as const;
 export const FEMMELIA_TIER_PRICES = { 1: 299, 2: 379, 3: 449 } as const;
 export const UPSELL_PRICE_MAD = 150;
 export const CROSSSELL_PRICE_MAD = TIER_PRICES[1];
@@ -9,9 +8,7 @@ export type OfferQty = 1 | 2 | 3;
 export type TierPrices = Record<OfferQty, number>;
 
 export function getTierPrices(slug: ProductSlug): TierPrices {
-  if (slug === "femmelia") return FEMMELIA_TIER_PRICES;
-  if (slug === "clarelia" || slug === "luminora") return CLARELIA_LUMINORA_TIER_PRICES;
-  return TIER_PRICES;
+  return slug === "femmelia" ? FEMMELIA_TIER_PRICES : TIER_PRICES;
 }
 
 export const PRODUCT_SKUS = {
@@ -127,7 +124,7 @@ export const PRODUCTS: Product[] = [
     mechanismTitle: "شنو كيقع للبقعة؟",
     mechanismBody:
       "نياسيناميد كيهدي الإحمرار ويدعم الحاجز. أربوتين كيستهدف التصبغ الظاهر. فيتامين C كيعاون على تجانس الضوء مع الوقت. طبقة رقيقة: الصباح قبل الواقي، والليل على بشرة نظيفة. بلا واقي، الكلف كيرجع أسرع من أي كريم.",
-    unitPriceMad: CLARELIA_LUMINORA_TIER_PRICES[1],
+    unitPriceMad: TIER_PRICES[1],
     crossSellSlugs: ["luminora", "capilys", "femmelia"],
     upsellAffinity: "luminora",
     image: "/products/clarelia.png",
@@ -405,7 +402,7 @@ export const PRODUCTS: Product[] = [
     mechanismTitle: "من الداخل كيوصل لفين الطبقة ما كتوصلش",
     mechanismBody:
       "الكولاجين البحري كيدعم مظهر النعومة والتماسك. فيتامين C للضوء الظاهر. الزنك للبشرة اللي تحت السهر والإيقاع. كبسولة مع الفطور، كل يوم. العلبة 30 كبسولة.",
-    unitPriceMad: CLARELIA_LUMINORA_TIER_PRICES[1],
+    unitPriceMad: TIER_PRICES[1],
     crossSellSlugs: ["clarelia", "capilys", "femmelia"],
     upsellAffinity: "clarelia",
     image: "/products/luminora.png",
