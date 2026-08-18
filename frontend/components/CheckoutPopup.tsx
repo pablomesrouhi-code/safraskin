@@ -50,7 +50,7 @@ export default function CheckoutPopup() {
     <>
       <div className="fixed inset-0 z-[60] bg-black/50" onClick={closeCheckout} />
       <div
-        className="fixed inset-x-0 bottom-0 z-[60] max-h-[calc(100dvh-0.75rem)] overflow-y-auto rounded-t-3xl bg-white shadow-2xl md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl"
+        className="fixed inset-x-3 top-1/2 z-[60] max-h-[calc(100dvh-1.5rem)] -translate-y-1/2 overflow-y-auto rounded-3xl bg-white shadow-2xl sm:inset-x-auto sm:left-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2"
         role="dialog"
         aria-labelledby="checkout-title"
       >

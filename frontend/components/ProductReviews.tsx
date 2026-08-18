@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import type { Product } from "@/data/products";
+import ProductImage from "@/components/ProductImage";
 
 export default function ProductReviews({ product }: { product: Product }) {
   return (
@@ -15,15 +16,28 @@ export default function ProductReviews({ product }: { product: Product }) {
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {product.reviews.map((review) => (
             <article key={review.name + review.city} className="rounded-2xl border border-border bg-cream p-5">
-              <div className="flex items-center gap-2 text-saffron">
-                {Array.from({ length: review.stars }).map((_, i) => (
-                  <Star key={i} size={14} className="fill-saffron" />
-                ))}
+              <div className="flex items-center gap-3">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border bg-white">
+                  <ProductImage
+                    src={review.photo}
+                    alt={`صورة ${review.name}`}
+                    fill
+                    compact
+                    emptyLabel="صورة"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold">
+                    {review.name} · {review.city}
+                  </p>
+                  <div className="mt-1 flex items-center gap-1 text-saffron">
+                    {Array.from({ length: review.stars }).map((_, i) => (
+                      <Star key={i} size={14} className="fill-saffron" />
+                    ))}
+                  </div>
+                </div>
               </div>
               <p className="mt-3 text-sm leading-7 text-muted">{review.text}</p>
-              <p className="mt-3 text-sm font-semibold">
-                {review.name} · {review.city}
-              </p>
             </article>
           ))}
         </div>

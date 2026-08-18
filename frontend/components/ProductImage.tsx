@@ -3,18 +3,25 @@ import { ASSETS_READY } from "@/data/brand";
 type FrameProps = {
   label?: string;
   className?: string;
+  compact?: boolean;
 };
 
-export function EmptyFrame({ label, className = "" }: FrameProps) {
+export function EmptyFrame({ label, className = "", compact = false }: FrameProps) {
   return (
     <div
       className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#F3EBE0] via-cream to-[#EAD9C4] text-center px-3 ${className}`}
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rose text-sm font-semibold text-white">
+      <span
+        className={`flex items-center justify-center rounded-full bg-rose font-semibold text-white ${
+          compact ? "h-8 w-8 text-xs" : "h-10 w-10 text-sm"
+        }`}
+      >
         S
       </span>
       {label ? (
-        <span className="mt-3 text-[11px] font-semibold leading-5 text-saffron-dark">{label}</span>
+        <span className={compact ? "mt-1 text-[9px] font-semibold text-saffron-dark" : "mt-3 text-[11px] font-semibold leading-5 text-saffron-dark"}>
+          {label}
+        </span>
       ) : null}
     </div>
   );
@@ -27,6 +34,7 @@ type ImageProps = {
   priority?: boolean;
   fill?: boolean;
   emptyLabel?: string;
+  compact?: boolean;
 };
 
 export default function ProductImage({
@@ -35,12 +43,13 @@ export default function ProductImage({
   className = "",
   fill,
   emptyLabel,
+  compact,
 }: ImageProps) {
   const showEmpty = !ASSETS_READY || !src;
   const frameClass = fill ? `absolute inset-0 h-full w-full ${className}` : className;
 
   if (showEmpty) {
-    return <EmptyFrame label={emptyLabel || alt} className={frameClass} />;
+    return <EmptyFrame label={emptyLabel || alt} className={frameClass} compact={compact} />;
   }
 
   return (
