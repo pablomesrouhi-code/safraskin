@@ -1,5 +1,6 @@
 TIER_PRICES = {1: 219, 2: 279, 3: 319}
-UPSELL_PRICE_MAD = 120
+FEMMELIA_TIER_PRICES = {1: 279, 2: 349, 3: 419}
+UPSELL_PRICE_MAD = 150
 
 SKU_TO_SLUG = {
     "SK482917CL": "clarelia",
@@ -42,14 +43,15 @@ PACK_PRICES = {
 }
 
 
-def offer_price(qty: int) -> int:
+def offer_price(slug: str, qty: int) -> int:
+    prices = FEMMELIA_TIER_PRICES if slug == "femmelia" else TIER_PRICES
     if qty <= 0:
         return 0
     if qty == 1:
-        return TIER_PRICES[1]
+        return prices[1]
     if qty == 2:
-        return TIER_PRICES[2]
-    return TIER_PRICES[3]
+        return prices[2]
+    return prices[3]
 
 
 class PricingError(ValueError):
@@ -74,7 +76,7 @@ def validate_and_price(items: list[dict], upsell_sku: str | None, upsell_price: 
             raise PricingError("الكمية غير صالحة", "INVALID_QTY")
         canonical = SLUG_TO_SKU[slug]
         line_items.append({"sku": canonical, "product_slug": slug, "quantity": qty})
-        merchandise += PACK_PRICES.get(sku) or offer_price(qty)
+        merchandise += PACK_PRICES.get(sku) or offer_price(slug, qty)
 
     upsell_accepted = False
     normalized_upsell = None

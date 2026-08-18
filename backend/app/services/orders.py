@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.models.order import Order
 from app.services.phone import is_valid_ma_phone, to_e164
-from app.services.pricing import PricingError, validate_and_price
+from app.services.pricing import UPSELL_PRICE_MAD, PricingError, validate_and_price
 from app.services.sheets import build_sheets_payload, sync_order_to_sheets
 
 
@@ -77,7 +77,7 @@ def create_order(db: Session, body, geo: dict | None = None) -> dict:
         "order_id": order_id,
         "grand_total_mad": priced["grand_total_mad"],
         "grand_total_sar": priced["grand_total_mad"],
-        "upsell_total_mad": 120 if priced["upsell_accepted"] else 0,
+        "upsell_total_mad": UPSELL_PRICE_MAD if priced["upsell_accepted"] else 0,
         "status": "pending_confirmation",
         "thank_you_path": f"/thank-you/{order_id}",
         "sheets_synced": bool(synced),

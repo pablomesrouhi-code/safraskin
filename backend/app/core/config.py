@@ -38,7 +38,7 @@ class Settings(BaseSettings):
         ),
     )
     order_number_prefix: str = "nama"
-    upsell_price_mad: int = 120
+    upsell_price_mad: int = 150
 
     meta_pixel_id: str = ""
     meta_access_token: str = Field(

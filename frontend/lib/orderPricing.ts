@@ -95,7 +95,7 @@ export function validateAndPrice(body: CreateOrderBody): {
     }
     const pack = getPack(slug);
     line_items.push({ sku: SLUG_TO_SKU[slug] || sku, product_slug: slug, quantity: item.qty });
-    merchandise += pack ? pack.price : getOfferPrice(item.qty);
+    merchandise += pack ? pack.price : getOfferPrice(slug as ProductSlug, item.qty);
   }
 
   let upsell_accepted = false;

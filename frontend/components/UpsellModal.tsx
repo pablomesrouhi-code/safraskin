@@ -2,17 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Loader2 } from "lucide-react";
+import { Clock, Flame, Loader2 } from "lucide-react";
 import ProductImage from "@/components/ProductImage";
 import { useCart } from "@/context/CartContext";
-import { getProductOrThrow, TIER_PRICES, UPSELL_PRICE_MAD } from "@/data/products";
+import { getProductOrThrow, getTierPrices, UPSELL_PRICE_MAD } from "@/data/products";
 import { getUpsellSlug } from "@/lib/upsell";
 import { encodeOrderItems } from "@/lib/orderConfirmation";
 import { toE164 } from "@/lib/phone";
 import { submitOrder, OrderSubmitError } from "@/lib/submitOrder";
 import { formatPrice } from "@/lib/money";
 
-const TIMER = Number(process.env.NEXT_PUBLIC_UPSELL_TIMER_SECONDS) || 12;
+const TIMER = 5;
 
 export default function UpsellModal() {
   const router = useRouter();
@@ -167,7 +167,10 @@ export default function UpsellModal() {
       <div className="fixed inset-0 z-[70] bg-black/65" />
       <div className="fixed inset-x-3 bottom-3 z-[70] overflow-hidden rounded-3xl bg-white shadow-2xl md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:w-full md:max-w-sm md:-translate-x-1/2 md:-translate-y-1/2">
         <div className="flex items-center justify-between bg-rose px-4 py-3 text-white">
-          <span className="text-sm font-bold">عرض خاص قبل التأكيد</span>
+          <span className="flex items-center gap-1.5 text-sm font-bold">
+            <Flame size={17} className="fill-saffron text-saffron" aria-hidden />
+            عرض فاير · غير دابا
+          </span>
           <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-sm font-bold tabular-nums">
             <Clock size={14} aria-hidden />
             {seconds} ث
@@ -189,7 +192,9 @@ export default function UpsellModal() {
             <div className="min-w-0 flex-1 text-right">
               <h3 className="font-bold leading-snug text-ink">{upsellProduct.feelingTitle}</h3>
               <p className="mt-1 flex items-baseline gap-2">
-                <span className="text-sm text-muted line-through">{formatPrice(TIER_PRICES[1])}</span>
+                <span className="text-sm text-muted line-through">
+                  {formatPrice(getTierPrices(upsellProduct.slug)[1])}
+                </span>
                 <span className="text-xl font-extrabold text-rose">{formatPrice(UPSELL_PRICE_MAD)}</span>
               </p>
             </div>

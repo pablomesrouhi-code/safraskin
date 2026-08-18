@@ -1,9 +1,15 @@
 export const TIER_PRICES = { 1: 219, 2: 279, 3: 319 } as const;
-export const UPSELL_PRICE_MAD = 120;
+export const FEMMELIA_TIER_PRICES = { 1: 279, 2: 349, 3: 419 } as const;
+export const UPSELL_PRICE_MAD = 150;
 export const CROSSSELL_PRICE_MAD = TIER_PRICES[1];
 
 export type ProductSlug = "clarelia" | "femmelia" | "capilys" | "luminora";
 export type OfferQty = 1 | 2 | 3;
+export type TierPrices = Record<OfferQty, number>;
+
+export function getTierPrices(slug: ProductSlug): TierPrices {
+  return slug === "femmelia" ? FEMMELIA_TIER_PRICES : TIER_PRICES;
+}
 
 export const PRODUCT_SKUS = {
   clarelia: "SK482917CL",
@@ -211,7 +217,7 @@ export const PRODUCTS: Product[] = [
     mechanismTitle: "عناية من الداخل للمظهر",
     mechanismBody:
       "الصيغة كتجمع الحلبة، الماكا وزهرة الربيع فمكمل يومي للمظهر الأنثوي والحيوية. خدي الجرعة المكتوبة على العلبة مع الأكل وكاس ماء.",
-    unitPriceMad: TIER_PRICES[1],
+    unitPriceMad: FEMMELIA_TIER_PRICES[1],
     crossSellSlugs: ["clarelia", "luminora", "capilys"],
     upsellAffinity: "clarelia",
     image: "/products/femmelia.png",

@@ -1,42 +1,41 @@
 "use client";
 
-import { ProductSlug, TIER_PRICES } from "@/data/products";
+import { getTierPrices, ProductSlug } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { trackEvent } from "@/lib/track";
 import clsx from "clsx";
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 
-const UNIT = TIER_PRICES[1];
-
-const OFFERS = [
-  {
-    qty: 1 as const,
-    price: TIER_PRICES[1],
-    label: "علبة واحدة",
-    hint: "شهر للبداية",
-    save: 0,
-  },
-  {
-    qty: 2 as const,
-    price: TIER_PRICES[2],
-    label: "علبتين",
-    hint: "روتين شهرين",
-    save: UNIT * 2 - TIER_PRICES[2],
-  },
-  {
-    qty: 3 as const,
-    price: TIER_PRICES[3],
-    label: "3 علب",
-    hint: "وقت كافي للنتيجة",
-    save: UNIT * 3 - TIER_PRICES[3],
-  },
-] as const;
-
 export default function OfferSelector({ slug }: { slug: ProductSlug }) {
+  const prices = getTierPrices(slug);
+  const unit = prices[1];
+  const offers = [
+    {
+      qty: 1 as const,
+      price: prices[1],
+      label: "علبة واحدة",
+      hint: "شهر للبداية",
+      save: 0,
+    },
+    {
+      qty: 2 as const,
+      price: prices[2],
+      label: "علبتين",
+      hint: "روتين شهرين",
+      save: unit * 2 - prices[2],
+    },
+    {
+      qty: 3 as const,
+      price: prices[3],
+      label: "3 علب",
+      hint: "وقت كافي للنتيجة",
+      save: unit * 3 - prices[3],
+    },
+  ] as const;
   const [selected, setSelected] = useState<1 | 2 | 3>(1);
   const { addToCart, buyNow } = useCart();
-  const active = OFFERS.find((offer) => offer.qty === selected)!;
+  const active = offers.find((offer) => offer.qty === selected)!;
 
   return (
     <div id="offer-selector" className="scroll-mt-header">
@@ -47,9 +46,9 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
         </div>
 
         <div className="grid gap-2 p-3 lg:grid-cols-3 lg:gap-3 lg:p-4" role="radiogroup" aria-label="اختيار العرض">
-          {OFFERS.map((offer) => {
+          {offers.map((offer) => {
             const isSelected = selected === offer.qty;
-            const fullPrice = UNIT * offer.qty;
+            const fullPrice = unit * offer.qty;
             return (
               <button
                 key={offer.qty}
