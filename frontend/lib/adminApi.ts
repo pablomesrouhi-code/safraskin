@@ -163,85 +163,98 @@ export function emptyEconomicsInput(): EconomicsInput {
   };
 }
 
-export function computeOkDaba(
+export type ProfitCalc = {
+  leads: number;
+  confirmed: number;
+  delivered: number;
+  returned: number;
+  aov: number;
+  avgPieces: number;
+  sellingPrice: number;
+  productCost: number;
+  marginPerPiece: number;
+  grossMarginPct: number;
+  revenue: number;
+  adSpend: number;
+  feeLeads: number;
+  feeSpace: number;
+  feeUpsell: number;
+  ops: number;
+  cogs: number;
+  totalCost: number;
+  profit: number;
+  maxCpl: number;
+  cpl: number;
+  profitPerLead: number;
+  profitPerDelivered: number;
+  netMarginPct: number;
+  roas: number | null;
+  costPerDelivered: number;
+};
+
+export function calcProfit(
   form: EconomicsInput,
   kpis: DashboardMetrics["kpis"] | null,
-  scaleLeads?: number
-): DashboardMetrics["economics"] {
+  leads: number
+): ProfitCalc {
   const actualLeads = kpis?.orders || 0;
-  const scaling = typeof scaleLeads === "number" && scaleLeads >= 0;
-  const leads = scaling ? scaleLeads : actualLeads;
-  const clicks = kpis?.clicks || 0;
   const avgPieces = actualLeads > 0 && kpis?.units ? kpis.units / actualLeads : 1;
   const upsellRate = actualLeads > 0 ? (kpis?.upsell_count || 0) / actualLeads : 0;
   const aov = form.selling_price_mad || kpis?.aov || 0;
-  const conf =
-    actualLeads > 0 && (kpis?.confirmation_rate || 0) > 0
-      ? kpis!.confirmation_rate / 100
-      : form.assumed_confirmation_rate / 100;
-  const deliv =
-    (kpis?.delivery_rate || 0) > 0 ? kpis!.delivery_rate / 100 : form.assumed_delivery_rate / 100;
-  const leadFee = form.lead_cost_mad;
-  const spaceFee = form.space_seller_fee_mad;
-  const upsellFee = form.upsell_cost_mad;
-  const product = form.product_cost_mad;
+  const rConf = Math.min(1, Math.max(0, form.assumed_confirmation_rate / 100));
+  const rDel = Math.min(1, Math.max(0, form.assumed_delivery_rate / 100));
+  const L = Math.max(0, leads);
   const cpl = form.cpl_mad || 0;
+  const productCost = form.product_cost_mad;
+  const sellingPrice = aov / (avgPieces || 1);
 
-  const confirmed = leads * conf;
-  const deliveredEst = confirmed * deliv;
-  const upsells = leads * upsellRate;
-  const revenue = deliveredEst * aov;
-  const adSpend = leads * cpl;
-  const leadSpend = leads * leadFee;
-  const spaceSpend = deliveredEst * spaceFee;
-  const upsellSpend = upsells * upsellFee;
-  const spaceOps = leadSpend + spaceSpend + upsellSpend;
-  const productSpend = confirmed * avgPieces * product;
-  const totalCost = adSpend + spaceOps + productSpend;
-  const profit = Math.round((revenue - totalCost) * 100) / 100;
+  const confirmed = L * rConf;
+  const delivered = confirmed * rDel;
+  const returned = confirmed - delivered;
+  const revenue = delivered * aov;
+  const adSpend = L * cpl;
+  const feeLeads = L * form.lead_cost_mad;
+  const feeSpace = delivered * form.space_seller_fee_mad;
+  const feeUpsell = L * upsellRate * form.upsell_cost_mad;
+  const ops = feeLeads + feeSpace + feeUpsell;
+  const cogs = confirmed * avgPieces * productCost;
+  const totalCost = adSpend + ops + cogs;
+  const profit = revenue - totalCost;
   const maxCpl =
-    Math.round(
-      (conf * deliv * aov - leadFee - conf * deliv * spaceFee - upsellRate * upsellFee - conf * avgPieces * product) *
-        100
-    ) / 100;
-  const costPerDelivered = deliveredEst > 0 ? Math.round((totalCost / deliveredEst) * 100) / 100 : 0;
-  const cvr = clicks > 0 ? actualLeads / clicks : 0;
-
-  let verdict: DashboardMetrics["economics"]["verdict"] = "fill_costs";
-  let verdict_ar = "حط سعر البيع وتكلفة المنتج والتأكيد والتسليم باش نحسبو شحال OK دابا.";
-  if (aov > 0) {
-    if (cpl <= maxCpl) {
-      verdict = "ok";
-      verdict_ar = `راك OK دابا. أقصى CPL مسموح ${maxCpl.toFixed(2)} درهم بعد Space Seller وتكلفة المنتج. دابا CPL ${cpl.toFixed(2)} درهم.`;
-    } else {
-      verdict = "losing";
-      verdict_ar = `ماشي OK دابا. CPL ${cpl.toFixed(2)} فوق الـ break-even ${maxCpl.toFixed(2)} درهم.`;
-    }
-  }
+    rConf * rDel * aov -
+    form.lead_cost_mad -
+    rConf * rDel * form.space_seller_fee_mad -
+    upsellRate * form.upsell_cost_mad -
+    rConf * avgPieces * productCost;
+  const marginPerPiece = sellingPrice - productCost;
 
   return {
-    ...form,
-    selling_used: aov,
-    confirmation_used: Math.round(conf * 10000) / 100,
-    delivery_used: Math.round(deliv * 10000) / 100,
-    net_per_delivered: Math.round((aov - product * avgPieces - spaceFee) * 100) / 100,
-    expected_per_lead: maxCpl,
-    break_even_cpa: maxCpl,
-    break_even_cpc: Math.round(maxCpl * cvr * 100) / 100,
-    current_cpa: Math.round(cpl * 100) / 100,
-    current_cpc: 0,
+    leads: L,
+    confirmed,
+    delivered,
+    returned,
+    aov,
+    avgPieces,
+    sellingPrice,
+    productCost,
+    marginPerPiece,
+    grossMarginPct: sellingPrice > 0 ? (marginPerPiece / sellingPrice) * 100 : 0,
+    revenue,
+    adSpend,
+    feeLeads,
+    feeSpace,
+    feeUpsell,
+    ops,
+    cogs,
+    totalCost,
     profit,
-    margin_per_order: deliveredEst ? Math.round((profit / deliveredEst) * 100) / 100 : null,
-    lead_spend: Math.round(leadSpend * 100) / 100,
-    space_spend: Math.round(spaceSpend * 100) / 100,
-    upsell_spend: Math.round(upsellSpend * 100) / 100,
-    product_spend: Math.round(productSpend * 100) / 100,
-    revenue: Math.round(revenue * 100) / 100,
-    cost_per_delivered: costPerDelivered,
-    break_even_lead_cost: maxCpl,
-    delivered_est: Math.round(deliveredEst * 100) / 100,
-    verdict,
-    verdict_ar,
+    maxCpl,
+    cpl,
+    profitPerLead: L > 0 ? profit / L : profit,
+    profitPerDelivered: delivered > 0 ? profit / delivered : 0,
+    netMarginPct: revenue > 0 ? (profit / revenue) * 100 : 0,
+    roas: adSpend > 0 ? revenue / adSpend : null,
+    costPerDelivered: delivered > 0 ? totalCost / delivered : 0,
   };
 }
 
