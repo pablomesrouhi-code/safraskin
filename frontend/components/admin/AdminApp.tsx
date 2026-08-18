@@ -38,7 +38,7 @@ import {
 } from "@/lib/adminApi";
 import { formatPhoneDisplay } from "@/lib/phone";
 
-type Tab = "overview" | "orders";
+type Tab = "leads" | "breakeven" | "orders";
 
 const PRESETS = [
   { id: "today", label: "اليوم", span: 0 },
@@ -54,7 +54,7 @@ function monthStart(iso: string): string {
 export default function AdminApp() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
-  const [tab, setTab] = useState<Tab>("overview");
+  const [tab, setTab] = useState<Tab>("leads");
   const [from, setFrom] = useState(() => shiftDate(todayMA(), -6));
   const [to, setTo] = useState(() => todayMA());
   const [preset, setPreset] = useState("7");
@@ -248,7 +248,8 @@ export default function AdminApp() {
         <nav className="mt-4 flex gap-1 rounded-2xl bg-white p-1 shadow-sm ring-1 ring-border">
           {(
             [
-              ["overview", "اللوحة", BarChart3],
+              ["leads", "Leads", BarChart3],
+              ["breakeven", "الحساب", Calculator],
               ["orders", "الطلبات", Package],
             ] as const
           ).map(([id, label, Icon]) => (
@@ -262,7 +263,7 @@ export default function AdminApp() {
               )}
             >
               <Icon size={16} />
-              <span className="hidden sm:inline">{label}</span>
+              <span>{label}</span>
             </button>
           ))}
         </nav>
@@ -270,7 +271,7 @@ export default function AdminApp() {
         {error ? <p className="mt-3 rounded-xl bg-rose/10 px-3 py-2 text-sm text-rose">{error}</p> : null}
         {loading && !metrics ? <p className="mt-8 text-center text-muted">كنحسبو الأرقام…</p> : null}
 
-        {tab === "overview" ? (
+        {tab === "leads" ? (
           <div className="mt-5 space-y-5">
             {k && k.pending > 0 ? (
               <button
@@ -289,173 +290,52 @@ export default function AdminApp() {
               </button>
             ) : null}
 
-            <div className="grid items-start gap-4 lg:grid-cols-2">
-              <section className="rounded-3xl border border-border bg-white p-4 md:p-5">
-                <p className="text-[10px] font-bold tracking-[0.16em] text-saffron-dark">الأرقام</p>
-                <h2 className="mt-1 text-xl font-extrabold">الطلبات فهاد الفترة</h2>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <Kpi
-                    label="Leads"
-                    value={(k?.orders || 0).toLocaleString("fr-MA")}
-                    hint={`${formatPct(k?.cvr || 0)} تحويل من ${(k?.clicks || 0).toLocaleString("fr-MA")} زيارة`}
-                  />
-                  <Kpi
-                    label="AOV"
-                    value={formatMad(k?.aov || 0)}
-                    hint={`${formatMad(k?.gross_value || 0)} إجمالي`}
-                  />
-                  <Kpi
-                    label="Upsell"
-                    value={(k?.upsell_count || 0).toLocaleString("fr-MA")}
-                    hint={`${formatPct(k?.upsell_rate || 0)} من الـ leads`}
-                  />
-                  <Kpi
-                    label="Cross-sell"
-                    value={(k?.crosssell_count || 0).toLocaleString("fr-MA")}
-                    hint={`${formatPct(k?.crosssell_rate || 0)} طلبات فيها أكثر من منتج`}
-                  />
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-3">
-                  <Kpi
-                    label="تأكيد"
-                    value={formatPct(k?.confirmation_rate || 0)}
-                    hint={`${k?.confirmed || 0} مؤكد`}
-                  />
-                  <Kpi
-                    label="تسليم"
-                    value={formatPct(k?.delivery_rate || 0)}
-                    hint={`${k?.delivered || 0} تسلّم`}
-                  />
-                  <Kpi
-                    label="إلغاء / مرجع"
-                    value={`${formatPct(k?.cancel_rate || 0)} / ${formatPct(k?.return_rate || 0)}`}
-                    hint={`${k?.cancelled || 0} ملغي · ${k?.returned || 0} مرجع`}
-                  />
-                  <Kpi
-                    label="كليك"
-                    value={(k?.clicks || 0).toLocaleString("fr-MA")}
-                    hint={`${k?.page_views || 0} مشاهدة صفحة`}
-                  />
-                </div>
-              </section>
-
-              <section className="rounded-3xl border border-border bg-white p-4 md:p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[10px] font-bold tracking-[0.16em] text-saffron-dark">الحساب</p>
-                    <h2 className="mt-1 flex items-center gap-2 text-xl font-extrabold">
-                      <Calculator size={18} /> Break-even
-                    </h2>
-                  </div>
-                  <span
-                    className={clsx(
-                      "rounded-full px-2.5 py-1 text-[11px] font-bold",
-                      live.verdict === "ok" && "bg-emerald-100 text-emerald-800",
-                      live.verdict === "losing" && "bg-rose/15 text-rose",
-                      live.verdict !== "ok" && live.verdict !== "losing" && "bg-cream text-muted"
-                    )}
-                  >
-                    {live.verdict === "ok" ? "OK دابا" : live.verdict === "losing" ? "ماشي OK" : "كمّل الحساب"}
-                  </span>
-                </div>
-
-                <p className="mt-3 text-xs leading-6 text-muted">
-                  حط أسعار الخدمة. الحساب كيتضرب فعدد الـ leads / المسلّمين / الـ upsells ديال الفترة.
-                </p>
-
-                <div className="mt-4 space-y-2">
-                  <CalcLine
-                    label="Leads entered"
-                    hint={`${(k?.orders || 0).toLocaleString("fr-MA")} lead`}
-                    value={econForm.lead_cost_mad}
-                    total={live.lead_spend - econForm.ad_spend_mad}
-                    onChange={(v) => setEconForm({ ...econForm, lead_cost_mad: v })}
-                  />
-                  <CalcLine
-                    label="Space Seller Fees"
-                    hint={`${Number(live.delivered_est).toLocaleString("fr-MA")} مسلّم`}
-                    value={econForm.space_seller_fee_mad}
-                    total={live.space_spend}
-                    onChange={(v) => setEconForm({ ...econForm, space_seller_fee_mad: v })}
-                  />
-                  <CalcLine
-                    label="Upsell"
-                    hint={`${(k?.upsell_count || 0).toLocaleString("fr-MA")} إضافة`}
-                    value={econForm.upsell_cost_mad}
-                    total={live.upsell_spend}
-                    onChange={(v) => setEconForm({ ...econForm, upsell_cost_mad: v })}
-                  />
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-2">
-                  <Field
-                    label="تكلفة المنتج"
-                    value={econForm.product_cost_mad}
-                    onChange={(v) => setEconForm({ ...econForm, product_cost_mad: v })}
-                  />
-                  <Field
-                    label="سعر البيع / AOV"
-                    value={econForm.selling_price_mad}
-                    onChange={(v) => setEconForm({ ...econForm, selling_price_mad: v })}
-                  />
-                  <Field
-                    label="تغليف"
-                    value={econForm.packaging_mad}
-                    onChange={(v) => setEconForm({ ...econForm, packaging_mad: v })}
-                  />
-                  <Field
-                    label="تكلفة التوصيل"
-                    value={econForm.delivery_cost_mad}
-                    onChange={(v) => setEconForm({ ...econForm, delivery_cost_mad: v })}
-                  />
-                  <Field
-                    label="تأكيد %"
-                    value={econForm.assumed_confirmation_rate}
-                    onChange={(v) => setEconForm({ ...econForm, assumed_confirmation_rate: v })}
-                  />
-                  <Field
-                    label="تسليم %"
-                    value={econForm.assumed_delivery_rate}
-                    onChange={(v) => setEconForm({ ...econForm, assumed_delivery_rate: v })}
-                  />
-                </div>
-
-                <ul className="mt-4 space-y-1.5 rounded-2xl bg-cream px-3 py-3 text-sm">
-                  <SumRow label="المدخول (مسلّم)" value={formatDh(live.revenue)} />
-                  <SumRow label="Leads entered" value={`− ${formatDh(live.lead_spend)}`} />
-                  <SumRow label="Space Seller" value={`− ${formatDh(live.space_spend)}`} />
-                  <SumRow label="Upsell" value={`− ${formatDh(live.upsell_spend)}`} />
-                  <SumRow label="منتج / تغليف / توصيل" value={`− ${formatDh(live.product_spend)}`} />
-                  <li className="flex items-center justify-between border-t border-border pt-2 font-extrabold text-ink">
-                    <span>الربح</span>
-                    <span className={clsx("tabular-nums", live.profit >= 0 ? "text-emerald-700" : "text-rose")}>
-                      {formatDh(live.profit)}
-                    </span>
-                  </li>
-                  <SumRow label="أقصى Lead entered" value={formatDh(live.break_even_lead_cost)} />
-                </ul>
-
-                <p
-                  className={clsx(
-                    "mt-3 rounded-2xl px-3 py-3 text-sm font-bold leading-6",
-                    live.verdict === "ok" && "bg-emerald-700 text-white",
-                    live.verdict === "losing" && "bg-rose text-white",
-                    live.verdict !== "ok" && live.verdict !== "losing" && "bg-ink text-white"
-                  )}
-                >
-                  {live.verdict_ar}
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() => void persistEconomics()}
-                  disabled={saving}
-                  className="mt-3 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
-                >
-                  {saving ? "كنحفظو…" : "حفظ الحساب"}
-                </button>
-              </section>
-            </div>
+            <section className="rounded-3xl border border-border bg-white p-4 md:p-5">
+              <p className="text-[10px] font-bold tracking-[0.16em] text-saffron-dark">الأرقام</p>
+              <h2 className="mt-1 text-xl font-extrabold">Leads فهاد الفترة</h2>
+              <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <Kpi
+                  label="Leads"
+                  value={(k?.orders || 0).toLocaleString("fr-MA")}
+                  hint={`${formatPct(k?.cvr || 0)} تحويل من ${(k?.clicks || 0).toLocaleString("fr-MA")} زيارة`}
+                />
+                <Kpi
+                  label="AOV"
+                  value={formatMad(k?.aov || 0)}
+                  hint={`${formatMad(k?.gross_value || 0)} إجمالي`}
+                />
+                <Kpi
+                  label="Upsell"
+                  value={(k?.upsell_count || 0).toLocaleString("fr-MA")}
+                  hint={`${formatPct(k?.upsell_rate || 0)} من الـ leads`}
+                />
+                <Kpi
+                  label="Cross-sell"
+                  value={(k?.crosssell_count || 0).toLocaleString("fr-MA")}
+                  hint={`${formatPct(k?.crosssell_rate || 0)} طلبات فيها أكثر من منتج`}
+                />
+                <Kpi
+                  label="تأكيد"
+                  value={formatPct(k?.confirmation_rate || 0)}
+                  hint={`${k?.confirmed || 0} مؤكد`}
+                />
+                <Kpi
+                  label="تسليم"
+                  value={formatPct(k?.delivery_rate || 0)}
+                  hint={`${k?.delivered || 0} تسلّم`}
+                />
+                <Kpi
+                  label="إلغاء / مرجع"
+                  value={`${formatPct(k?.cancel_rate || 0)} / ${formatPct(k?.return_rate || 0)}`}
+                  hint={`${k?.cancelled || 0} ملغي · ${k?.returned || 0} مرجع`}
+                />
+                <Kpi
+                  label="كليك"
+                  value={(k?.clicks || 0).toLocaleString("fr-MA")}
+                  hint={`${k?.page_views || 0} مشاهدة صفحة`}
+                />
+              </div>
+            </section>
 
             {metrics ? (
               <>
@@ -547,6 +427,127 @@ export default function AdminApp() {
                 </div>
               </>
             ) : null}
+          </div>
+        ) : null}
+
+        {tab === "breakeven" ? (
+          <div className="mt-5">
+            <section className="mx-auto max-w-2xl rounded-3xl border border-border bg-white p-4 md:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold tracking-[0.16em] text-saffron-dark">الحساب</p>
+                  <h2 className="mt-1 flex items-center gap-2 text-xl font-extrabold">
+                    <Calculator size={18} /> Break-even
+                  </h2>
+                </div>
+                <span
+                  className={clsx(
+                    "rounded-full px-2.5 py-1 text-[11px] font-bold",
+                    live.verdict === "ok" && "bg-emerald-100 text-emerald-800",
+                    live.verdict === "losing" && "bg-rose/15 text-rose",
+                    live.verdict !== "ok" && live.verdict !== "losing" && "bg-cream text-muted"
+                  )}
+                >
+                  {live.verdict === "ok" ? "OK دابا" : live.verdict === "losing" ? "ماشي OK" : "كمّل الحساب"}
+                </span>
+              </div>
+
+              <p className="mt-3 text-xs leading-6 text-muted">
+                حط أسعار الخدمة. الحساب كيتضرب فعدد الـ leads / المسلّمين / الـ upsells ديال الفترة.
+              </p>
+
+              <div className="mt-4 space-y-2">
+                <CalcLine
+                  label="Leads entered"
+                  hint={`${(k?.orders || 0).toLocaleString("fr-MA")} lead`}
+                  value={econForm.lead_cost_mad}
+                  total={live.lead_spend - econForm.ad_spend_mad}
+                  onChange={(v) => setEconForm({ ...econForm, lead_cost_mad: v })}
+                />
+                <CalcLine
+                  label="Space Seller Fees"
+                  hint={`${Number(live.delivered_est).toLocaleString("fr-MA")} مسلّم`}
+                  value={econForm.space_seller_fee_mad}
+                  total={live.space_spend}
+                  onChange={(v) => setEconForm({ ...econForm, space_seller_fee_mad: v })}
+                />
+                <CalcLine
+                  label="Upsell"
+                  hint={`${(k?.upsell_count || 0).toLocaleString("fr-MA")} إضافة`}
+                  value={econForm.upsell_cost_mad}
+                  total={live.upsell_spend}
+                  onChange={(v) => setEconForm({ ...econForm, upsell_cost_mad: v })}
+                />
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <Field
+                  label="تكلفة المنتج"
+                  value={econForm.product_cost_mad}
+                  onChange={(v) => setEconForm({ ...econForm, product_cost_mad: v })}
+                />
+                <Field
+                  label="سعر البيع / AOV"
+                  value={econForm.selling_price_mad}
+                  onChange={(v) => setEconForm({ ...econForm, selling_price_mad: v })}
+                />
+                <Field
+                  label="تغليف"
+                  value={econForm.packaging_mad}
+                  onChange={(v) => setEconForm({ ...econForm, packaging_mad: v })}
+                />
+                <Field
+                  label="تكلفة التوصيل"
+                  value={econForm.delivery_cost_mad}
+                  onChange={(v) => setEconForm({ ...econForm, delivery_cost_mad: v })}
+                />
+                <Field
+                  label="تأكيد %"
+                  value={econForm.assumed_confirmation_rate}
+                  onChange={(v) => setEconForm({ ...econForm, assumed_confirmation_rate: v })}
+                />
+                <Field
+                  label="تسليم %"
+                  value={econForm.assumed_delivery_rate}
+                  onChange={(v) => setEconForm({ ...econForm, assumed_delivery_rate: v })}
+                />
+              </div>
+
+              <ul className="mt-4 space-y-1.5 rounded-2xl bg-cream px-3 py-3 text-sm">
+                <SumRow label="المدخول (مسلّم)" value={formatDh(live.revenue)} />
+                <SumRow label="Leads entered" value={`− ${formatDh(live.lead_spend)}`} />
+                <SumRow label="Space Seller" value={`− ${formatDh(live.space_spend)}`} />
+                <SumRow label="Upsell" value={`− ${formatDh(live.upsell_spend)}`} />
+                <SumRow label="منتج / تغليف / توصيل" value={`− ${formatDh(live.product_spend)}`} />
+                <li className="flex items-center justify-between border-t border-border pt-2 font-extrabold text-ink">
+                  <span>الربح</span>
+                  <span className={clsx("tabular-nums", live.profit >= 0 ? "text-emerald-700" : "text-rose")}>
+                    {formatDh(live.profit)}
+                  </span>
+                </li>
+                <SumRow label="أقصى Lead entered" value={formatDh(live.break_even_lead_cost)} />
+              </ul>
+
+              <p
+                className={clsx(
+                  "mt-3 rounded-2xl px-3 py-3 text-sm font-bold leading-6",
+                  live.verdict === "ok" && "bg-emerald-700 text-white",
+                  live.verdict === "losing" && "bg-rose text-white",
+                  live.verdict !== "ok" && live.verdict !== "losing" && "bg-ink text-white"
+                )}
+              >
+                {live.verdict_ar}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => void persistEconomics()}
+                disabled={saving}
+                className="mt-3 w-full rounded-xl bg-ink px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
+              >
+                {saving ? "كنحفظو…" : "حفظ الحساب"}
+              </button>
+            </section>
           </div>
         ) : null}
 
