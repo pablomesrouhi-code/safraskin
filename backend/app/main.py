@@ -4,14 +4,19 @@ import time
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
+from app.api.routes.admin import router as admin_router
+from app.api.routes.events import router as events_router
 from app.api.routes.health import router as health_router
 from app.api.routes.orders import router as orders_router
 from app.api.routes.products import router as products_router
 from app.core.config import settings
 from app.core.database import Base, engine
+from app.core.migrate import migrate
+from app.models import event as _event_model  # noqa: F401
 from app.models import order as _order_model  # noqa: F401
+from app.models import settings as _settings_model  # noqa: F401
 from app.services.pricing import PricingError
 
 
@@ -21,10 +26,12 @@ logger = logging.getLogger("app.main")
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     logger.info("SAFRASKIN MOROCCO API starting")
+    logger.info("Admin routes: /api/v1/admin/login")
     if settings.database_url_valid:
         for _ in range(20):
             try:
                 Base.metadata.create_all(bind=engine)
+                migrate()
                 break
             except Exception:
                 time.sleep(2)
@@ -50,6 +57,8 @@ async def pricing_handler(_request: Request, exc: PricingError):
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(orders_router, prefix="/api/v1")
 app.include_router(products_router, prefix="/api/v1")
+app.include_router(events_router, prefix="/api/v1")
+app.include_router(admin_router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -71,7 +80,13 @@ def easypanel_health():
         if settings.google_sheets_webhook_url.strip()
         else "Set GOOGLE_SHEETS_WEBHOOK_URL",
         "order_number_prefix": settings.order_number_prefix,
+        "admin": True,
     }
+
+
+@app.get("/robots.txt")
+def robots():
+    return PlainTextResponse("User-agent: *\nDisallow: /\n")
 
 
 @app.get("/ready")

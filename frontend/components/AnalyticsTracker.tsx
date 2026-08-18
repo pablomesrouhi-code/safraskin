@@ -8,7 +8,7 @@ export default function AnalyticsTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname?.startsWith("/thank-you")) return;
+    if (pathname?.startsWith("/thank-you") || pathname?.startsWith("/admin")) return;
     trackEvent("page_view", { path: pathname });
 
     const slugMatch = pathname?.match(/^\/products\/([^/]+)/);

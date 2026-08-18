@@ -17,10 +17,17 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("CORS_ORIGINS", "cors_origins"),
     )
 
-    admin_username: str = "admin"
-    admin_password: str = "change_me_strong_password"
-    admin_jwt_secret: str = ""
-    admin_jwt_expire_hours: int = 24
+    admin_username: str = Field(default="admin", validation_alias=AliasChoices("ADMIN_USERNAME", "admin_username"))
+    admin_password: str = Field(
+        default="change_me_strong_password",
+        validation_alias=AliasChoices("ADMIN_PASSWORD", "admin_password"),
+    )
+    admin_jwt_secret: str = Field(default="", validation_alias=AliasChoices("ADMIN_JWT_SECRET", "admin_jwt_secret"))
+    admin_jwt_expire_hours: int = Field(default=24, validation_alias=AliasChoices("ADMIN_JWT_EXPIRE_HOURS", "admin_jwt_expire_hours"))
+    geoip_treat_private_as_ma: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("GEOIP_TREAT_PRIVATE_AS_MA", "geoip_treat_private_as_ma"),
+    )
 
     google_sheets_webhook_url: str = Field(
         default="",

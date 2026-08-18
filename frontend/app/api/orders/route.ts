@@ -9,16 +9,9 @@ import {
 import { isValidMaPhone, toE164 } from "@/lib/phone";
 import { syncOrderToSheets } from "@/lib/sheetsWebhook";
 import { UPSELL_PRICE_MAD } from "@/data/products";
+import { apiBase, forwardingHeaders } from "@/lib/backend";
 
-function apiBase(): string {
-  return (
-    process.env.API_URL?.replace(/\/$/, "") ||
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-    ""
-  );
-}
-
-async function proxyToBackend(body: unknown): Promise<NextResponse | null> {
+async function proxyToBackend(request: NextRequest, body: unknown): Promise<NextResponse | null> {
   const base = apiBase();
   if (!base) return null;
 
@@ -27,7 +20,7 @@ async function proxyToBackend(body: unknown): Promise<NextResponse | null> {
     const timeout = setTimeout(() => controller.abort(), 12000);
     const res = await fetch(`${base}/api/v1/orders`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: forwardingHeaders(request),
       body: JSON.stringify(body),
       signal: controller.signal,
     });
@@ -139,7 +132,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ detail: "طلب غير صالح", code: "INVALID_JSON" }, { status: 400 });
   }
 
-  const backendRes = await proxyToBackend(body);
+  const backendRes = await proxyToBackend(request, body);
   if (backendRes) return backendRes;
 
   return handleSheetsOrder(body);

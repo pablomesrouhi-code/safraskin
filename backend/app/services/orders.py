@@ -17,7 +17,7 @@ def generate_order_id() -> str:
     return f"{prefix}{suffix}"
 
 
-def create_order(db: Session, body) -> dict:
+def create_order(db: Session, body, geo: dict | None = None) -> dict:
     name = (body.customer_name or "").strip()
     if len(name) < 2:
         raise PricingError("السمية مطلوبة", "VALIDATION_ERROR")
@@ -32,6 +32,7 @@ def create_order(db: Session, body) -> dict:
     order_id = generate_order_id()
     phone = to_e164(body.customer_phone)
 
+    geo = geo or {}
     row = Order(
         order_id=order_id,
         customer_name=name,
@@ -44,6 +45,11 @@ def create_order(db: Session, body) -> dict:
         utm_medium=body.utm_medium,
         utm_campaign=body.utm_campaign,
         session_id=body.session_id,
+        ip_address=geo.get("ip_address"),
+        ip_country=geo.get("ip_country"),
+        ip_city=geo.get("ip_city"),
+        is_morocco=bool(geo.get("is_morocco")),
+        user_agent=geo.get("user_agent"),
         sheets_synced=False,
     )
     db.add(row)

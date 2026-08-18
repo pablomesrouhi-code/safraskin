@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import DeferredPixels from "@/components/DeferredPixels";
-import AnalyticsTracker from "@/components/AnalyticsTracker";
+import StoreShell from "@/components/StoreShell";
 import { BRAND_NAME_AR, SITE_URL } from "@/data/brand";
 
 const arabic = IBM_Plex_Sans_Arabic({
@@ -40,13 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl">
       <body className={`${arabic.variable} ${english.variable}`}>
-        <CartProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <AnalyticsTracker />
-          <DeferredPixels />
-        </CartProvider>
+        <StoreShell>{children}</StoreShell>
       </body>
     </html>
   );

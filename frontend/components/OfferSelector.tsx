@@ -2,6 +2,7 @@
 
 import { ProductSlug, TIER_PRICES } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { trackEvent } from "@/lib/track";
 import clsx from "clsx";
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
@@ -45,7 +46,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
           <p className="mt-0.5 text-xs text-muted">الثمن واضح · الدفع عند الاستلام</p>
         </div>
 
-        <div className="grid gap-2 p-3 sm:grid-cols-3 sm:gap-3 sm:p-4" role="radiogroup" aria-label="اختيار العرض">
+        <div className="grid gap-2 p-3 lg:grid-cols-3 lg:gap-3 lg:p-4" role="radiogroup" aria-label="اختيار العرض">
           {OFFERS.map((offer) => {
             const isSelected = selected === offer.qty;
             const fullPrice = UNIT * offer.qty;
@@ -55,9 +56,12 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
                 type="button"
                 role="radio"
                 aria-checked={isSelected}
-                onClick={() => setSelected(offer.qty)}
+                onClick={() => {
+                  setSelected(offer.qty);
+                  trackEvent("offer_click", { product_slug: slug });
+                }}
                 className={clsx(
-                  "flex min-h-[4.75rem] w-full items-center gap-3 rounded-xl border-2 p-3 text-right transition-all sm:min-h-[9rem] sm:flex-col sm:items-stretch sm:justify-between sm:p-4",
+                  "flex min-h-[5rem] w-full items-center gap-3 rounded-xl border-2 p-3 text-right transition-all lg:min-h-[9rem] lg:flex-col lg:items-stretch lg:justify-between lg:p-4",
                   isSelected
                     ? "border-rose bg-rose/10 shadow-sm"
                     : "border-border bg-white hover:border-rose/40"
@@ -77,7 +81,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
                     <span className="block text-xs text-muted">{offer.hint}</span>
                   </span>
                 </span>
-                <span className="mr-auto shrink-0 text-left sm:mr-0 sm:text-right">
+                <span className="mr-auto shrink-0 whitespace-nowrap text-left lg:mr-0 lg:text-right">
                   {offer.save > 0 && (
                     <span className="block text-xs text-muted line-through tabular-nums">{fullPrice}</span>
                   )}
