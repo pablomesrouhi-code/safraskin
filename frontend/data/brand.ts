@@ -3,8 +3,8 @@ export const BRAND_NAME_EN = "Safraskin";
 export const BRAND_TAGLINE = "عناية أنثوية · صيغ محدودة";
 export const BRAND_SLOGAN = "أربع مشاكل واضحة. أربع صيغ. والدفع عند الباب.";
 
-/** Flip to true after dropping real product photos in /public */
-export const ASSETS_READY = false;
+/** Real product photos are available in /public. */
+export const ASSETS_READY = true;
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://safraskin.online";
