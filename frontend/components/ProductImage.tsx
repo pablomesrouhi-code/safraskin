@@ -41,6 +41,7 @@ export default function ProductImage({
   src,
   alt,
   className = "",
+  priority = false,
   fill,
   emptyLabel,
   compact,
@@ -57,6 +58,9 @@ export default function ProductImage({
     <img
       src={src}
       alt={alt}
+      loading={priority ? "eager" : "lazy"}
+      decoding="async"
+      fetchPriority={priority ? "high" : "auto"}
       className={fill ? `absolute inset-0 h-full w-full object-cover ${className}` : className}
     />
   );
