@@ -95,6 +95,37 @@ export default function HomePage() {
       </section>
 
       <HomePacks />
+
+      <section className="bg-ink text-cream">
+        <div className="mx-auto max-w-container px-4 py-14 md:py-20">
+          <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-end">
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.18em] text-saffron">شكون حنا؟</p>
+              <h2 className="mt-3 max-w-2xl text-2xl font-bold leading-[1.5] md:text-3xl">
+                سفراسكين عناية أنثوية كتبدأ من مشكل واضح، ماشي من وعود كثيرة.
+              </h2>
+              <p className="mt-4 max-w-2xl text-sm leading-8 text-cream/70 md:text-[15px]">
+                كنختارو صيغ محدودة للمرأة فالمغرب: للكلف، تساقط الشعر، البهتان والمظهر الأنثوي.
+                كنوضحو المكونات وطريقة الاستعمال، وكنخليو الطلب بسيط ومحترم من الاختيار حتى الدفع عند الباب.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/15 bg-white/5 p-5 md:p-6">
+              <p className="text-sm font-bold">شنو كيوجّهنا؟</p>
+              <ul className="mt-4 space-y-3 text-sm leading-7 text-cream/75">
+                <li>صيغة واضحة لكل إحساس</li>
+                <li>روتين واقعي تقدري تواصلي عليه</li>
+                <li>خصوصية وتأكيد قبل الإرسال</li>
+              </ul>
+              <Link
+                href="/about"
+                className="mt-6 inline-flex rounded-xl bg-saffron px-5 py-3 text-sm font-bold text-ink transition hover:bg-saffron/90"
+              >
+                عرفي علينا أكثر
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

@@ -30,7 +30,7 @@ export function AuthorityGrid() {
   return (
     <section id="lab" className="mx-auto max-w-container scroll-mt-header px-4 py-12 md:py-16">
       <p className="text-[11px] font-semibold tracking-[0.18em] text-saffron-dark">
-        المختبر · {LAB_INTRO.kicker}
+        علاش حنا؟
       </p>
       <h2 className="mt-3 max-w-2xl text-2xl font-bold leading-[1.45] md:text-3xl">{LAB_INTRO.title}</h2>
       <p className="mt-4 max-w-2xl text-[15px] leading-8 text-muted">{LAB_INTRO.body}</p>
