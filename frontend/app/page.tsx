@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EmptyFrame } from "@/components/ProductImage";
+import ProductImage from "@/components/ProductImage";
 import CollectionProductCard from "@/components/CollectionProductCard";
 import HomePacks from "@/components/HomePacks";
 import LogoMarquee from "@/components/LogoMarquee";
@@ -13,8 +13,13 @@ export default function HomePage() {
     <>
       <section className="hero-glow">
         <div className="mx-auto max-w-container px-4 pt-6 md:pt-12">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border md:aspect-[16/10]">
-            <EmptyFrame className="h-full w-full rounded-3xl" />
+          <div className="relative aspect-square overflow-hidden rounded-3xl border border-border">
+            <ProductImage
+              src="/home/hero.png"
+              alt="سفراسكين · أربع نساء، أربع صيغ"
+              fill
+              priority
+            />
           </div>
         </div>
       </section>
