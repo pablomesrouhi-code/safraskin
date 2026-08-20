@@ -9,6 +9,7 @@ export type Pack = {
   subtitle: string;
   slugs: ProductSlug[];
   price: number;
+  image: string;
 };
 
 export const PACKS: Record<PackId, Pack> = {
@@ -19,6 +20,7 @@ export const PACKS: Record<PackId, Pack> = {
     subtitle: "لللي كتقلّقها أكثر من حاجة: الوجه، الشعر، الكولاجين، والمناطق الأنثوية.",
     slugs: ["clarelia", "femmelia", "capilys", "luminora"],
     price: 699,
+    image: "/products/packs/pack-4.webp",
   },
   "pack-3": {
     id: "pack-3",
@@ -27,6 +29,7 @@ export const PACKS: Record<PackId, Pack> = {
     subtitle: "تفتيح + تساقط + كولاجين بحري — بلا كبسول المناطق الأنثوية.",
     slugs: ["clarelia", "capilys", "luminora"],
     price: 549,
+    image: "/products/packs/pack-3.webp",
   },
 };
 

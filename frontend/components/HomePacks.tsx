@@ -4,7 +4,7 @@ import { PACK_LIST } from "@/data/packs";
 import { PRODUCTS } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/money";
-import { EmptyFrame } from "@/components/ProductImage";
+import ProductImage from "@/components/ProductImage";
 import { ShoppingBag } from "lucide-react";
 
 export default function HomePacks() {
@@ -26,8 +26,8 @@ export default function HomePacks() {
               key={pack.id}
               className="flex flex-col overflow-hidden rounded-3xl border border-border bg-cream"
             >
-              <div className="relative aspect-[16/9]">
-                <EmptyFrame label="صورة الروتين" className="absolute inset-0 h-full w-full" />
+              <div className="relative aspect-[16/9] overflow-hidden bg-[#8f7364]">
+                <ProductImage src={pack.image} alt={pack.title} fill emptyLabel="صورة الروتين" />
               </div>
               <div className="flex flex-1 flex-col p-5 md:p-7">
                 <h3 className="text-xl font-bold leading-[1.45] md:text-2xl">{pack.title}</h3>
