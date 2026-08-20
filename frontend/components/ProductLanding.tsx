@@ -2,23 +2,29 @@ import ProductImage from "@/components/ProductImage";
 import type { Product } from "@/data/products";
 
 export default function ProductLanding({ product }: { product: Product }) {
+  const stories = [
+    { section: product.sections[0], image: product.gallery[1], kicker: "المشكلة" },
+    { section: product.sections[3], image: product.gallery[2], kicker: "النتيجة" },
+    { section: product.sections[2], image: product.gallery[3], kicker: "المنتج والروتين" },
+  ].filter((story) => story.section && story.image);
+
   return (
     <div>
-      {product.sections.map((section, index) => {
+      {stories.map(({ section, image: storyImage, kicker }, index) => {
         const image = (
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-white shadow-sm">
+          <div className="relative aspect-square overflow-hidden rounded-3xl bg-white shadow-sm">
             <ProductImage
-              src={section.image}
+              src={storyImage.src}
               alt={section.title}
               fill
-              emptyLabel={section.imageLabel}
+              emptyLabel={storyImage.label}
             />
           </div>
         );
         const text = (
           <div className="min-w-0">
             <p className="text-[11px] font-semibold tracking-[0.18em] text-saffron-dark">
-              {index === 0 ? "الإحساس" : index === 1 ? "التركيبة" : index === 2 ? "الروتين" : "النتيجة"}
+              {kicker}
             </p>
             <h2 className="mt-3 text-xl font-bold leading-[1.45] text-ink md:text-[1.75rem]">
               {section.title}
