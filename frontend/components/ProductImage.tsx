@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { ASSETS_READY } from "@/data/brand";
 
 type FrameProps = {
@@ -27,6 +30,20 @@ export function EmptyFrame({ label, className = "", compact = false }: FrameProp
   );
 }
 
+function ImageSpinner({ compact }: { compact?: boolean }) {
+  return (
+    <div className="absolute inset-0 z-[1] flex items-center justify-center bg-[#F3EBE0]">
+      <span
+        className={`animate-spin rounded-full border-rose/25 border-t-rose ${
+          compact ? "h-7 w-7 border-2" : "h-11 w-11 border-[3px]"
+        }`}
+        aria-hidden
+      />
+      <span className="sr-only">كاتحمّل الصورة</span>
+    </div>
+  );
+}
+
 type ImageProps = {
   src?: string;
   alt: string;
@@ -48,20 +65,39 @@ export default function ProductImage({
 }: ImageProps) {
   const showEmpty = !ASSETS_READY || !src;
   const frameClass = fill ? `absolute inset-0 h-full w-full ${className}` : className;
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(false);
+    const image = imageRef.current;
+    if (image?.complete && image.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, [src]);
 
   if (showEmpty) {
     return <EmptyFrame label={emptyLabel || alt} className={frameClass} compact={compact} />;
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      loading={priority ? "eager" : "lazy"}
-      decoding="async"
-      fetchPriority={priority ? "high" : "auto"}
-      className={fill ? `absolute inset-0 h-full w-full object-cover ${className}` : className}
-    />
+    <div className={fill ? `absolute inset-0 h-full w-full ${className}` : `relative ${className}`}>
+      {loaded ? null : <ImageSpinner compact={compact} />}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={imageRef}
+        src={src}
+        alt={alt}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        fetchPriority={priority ? "high" : "low"}
+        onLoad={() => setLoaded(true)}
+        className={
+          fill
+            ? `absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`
+            : `h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`
+        }
+      />
+    </div>
   );
 }

@@ -13,8 +13,10 @@ export default function LogoMarquee() {
           <img
             src="/brand/logo.png"
             alt={index === 0 ? BRAND_NAME_AR : ""}
-            width={713}
-            height={428}
+            width={190}
+            height={114}
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
             className="h-9 w-auto max-w-[160px] object-contain md:h-11 md:max-w-[190px]"
           />
           <Star size={15} className="fill-saffron text-saffron" aria-hidden />

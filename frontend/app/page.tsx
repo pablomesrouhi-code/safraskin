@@ -15,7 +15,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-container px-4 pt-6 md:pt-12">
           <div className="relative aspect-square overflow-hidden rounded-3xl border border-border">
             <ProductImage
-              src="/home/hero.png"
+              src="/home/hero.webp"
               alt="سفراسكين · أربع نساء، أربع صيغ"
               fill
               priority
