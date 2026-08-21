@@ -6,7 +6,7 @@ import httpx
 
 from app.core.config import settings
 from app.services.phone import to_local_ma
-from app.services.pricing import SLUG_TO_NAME_AR, SLUG_TO_SKU
+from app.services.pricing import PACK_PRODUCT_SLUGS, SHEET_SKUS, SLUG_TO_NAME_AR, SLUG_TO_SKU
 
 
 CASABLANCA = timezone(timedelta(hours=1))
@@ -30,16 +30,27 @@ def build_sheets_payload(
             lines.append({"sku": upsell_sku, "product_slug": slug, "quantity": 1})
 
     now = datetime.now(CASABLANCA)
-    names = "/".join(SLUG_TO_NAME_AR.get(l["product_slug"], l["product_slug"]) for l in lines)
+    sheet_lines: list[dict] = []
+    for line in lines:
+        slug = line["product_slug"]
+        slugs = PACK_PRODUCT_SLUGS.get(slug, [slug])
+        for product_slug in slugs:
+            sheet_lines.append(
+                {
+                    "sku": SHEET_SKUS.get(product_slug) or SLUG_TO_SKU.get(product_slug, line["sku"]),
+                    "qte": line["quantity"],
+                    "note": SLUG_TO_NAME_AR.get(product_slug, product_slug),
+                }
+            )
     return {
         "date_order": now.strftime("%d/%m/%Y"),
         "full_name": name.strip(),
         "phone": to_local_ma(phone_e164),
         "address": (address or "").strip(),
-        "sku": "/".join(SLUG_TO_SKU.get(l["product_slug"], l["sku"]) for l in lines),
-        "qte": "/".join(str(l["quantity"]) for l in lines),
+        "sku": "/".join(l["sku"] for l in sheet_lines),
+        "qte": "/".join(str(l["qte"]) for l in sheet_lines),
         "price": total,
-        "note": names,
+        "note": " / ".join(l["note"] for l in sheet_lines),
         "delivery_note": "الدفع عند الاستلام",
     }
 

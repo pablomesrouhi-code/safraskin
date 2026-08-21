@@ -18,6 +18,14 @@ export const PRODUCT_SKUS = {
   luminora: "SK904371LM",
 } as const satisfies Record<ProductSlug, string>;
 
+/** Warehouse SKUs written to the Google Sheet. */
+export const SHEET_SKUS = {
+  clarelia: "agr-zone-f",
+  femmelia: "creme-visage-blanche",
+  capilys: "huil-anti-chute",
+  luminora: "collagen-marin",
+} as const satisfies Record<ProductSlug, string>;
+
 export type ProductSection = {
   title: string;
   body: string;

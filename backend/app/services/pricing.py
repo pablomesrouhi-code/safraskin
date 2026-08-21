@@ -26,6 +26,18 @@ SLUG_TO_SKU = {
     "pack-3": "SK275839P3",
 }
 
+SHEET_SKUS = {
+    "clarelia": "agr-zone-f",
+    "femmelia": "creme-visage-blanche",
+    "capilys": "huil-anti-chute",
+    "luminora": "collagen-marin",
+}
+
+PACK_PRODUCT_SLUGS = {
+    "pack-4": ["clarelia", "femmelia", "capilys", "luminora"],
+    "pack-3": ["clarelia", "capilys", "luminora"],
+}
+
 SLUG_TO_NAME_AR = {
     "clarelia": "كريم تفتيح الوجه",
     "femmelia": "زيادة المناطق الأنثوية · 60 كبسولة",

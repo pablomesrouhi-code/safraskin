@@ -1,6 +1,7 @@
 import {
   PRODUCTS,
   PRODUCT_SKUS,
+  SHEET_SKUS,
   TIER_PRICES,
   UPSELL_PRICE_MAD,
   type ProductSlug,
@@ -152,15 +153,28 @@ export function buildSheetsPayload(
     year: "numeric",
   }).format(new Date());
 
+  const sheetLines: { sku: string; qte: number; note: string }[] = [];
+  for (const line of lines) {
+    const pack = getPack(line.product_slug);
+    const slugs = pack ? pack.slugs : [line.product_slug];
+    for (const slug of slugs) {
+      sheetLines.push({
+        sku: SHEET_SKUS[slug as ProductSlug] || SLUG_TO_SKU[slug] || line.sku,
+        qte: line.quantity,
+        note: SLUG_TO_NAME_AR[slug] || slug,
+      });
+    }
+  }
+
   return {
     date_order: date,
     full_name: customerName.trim(),
     phone: formatPhoneDisplay(phoneE164),
     address: customerAddress.trim(),
-    sku: lines.map((l) => SLUG_TO_SKU[l.product_slug] || l.sku).join("/"),
-    qte: lines.map((l) => String(l.quantity)).join("/"),
+    sku: sheetLines.map((l) => l.sku).join("/"),
+    qte: sheetLines.map((l) => String(l.qte)).join("/"),
     price: grand_total_mad,
-    note: lines.map((l) => SLUG_TO_NAME_AR[l.product_slug] || l.product_slug).join(" / "),
+    note: sheetLines.map((l) => l.note).join(" / "),
     delivery_note: "الدفع عند الاستلام",
   };
 }
