@@ -229,7 +229,7 @@ export const PRODUCTS: Product[] = [
     gallery: [
       { src: "/products/femmelia/hero.webp", label: "1 · قبل وبعد" },
       { src: "/products/femmelia/1.webp", label: "2 · المشكلة" },
-      { src: "/products/femmelia/2.webp", label: "3 · النتيجة" },
+      { src: "/products/femmelia/2b.webp", label: "3 · النتيجة" },
       { src: "/products/femmelia/3.webp", label: "4 · المنتج" },
     ],
     ingredients: [
@@ -283,7 +283,7 @@ export const PRODUCTS: Product[] = [
         title: "الثقة اللي كترجع ليكِ",
         body: "الهدف تحسي براسكِ مرتاحة قدام راسك. هاد الإحساس كيبني بالأسابيع، ماشي بتصويرة.",
         imageLabel: "صورة الإحساس",
-        image: "/products/femmelia/2.webp",
+        image: "/products/femmelia/2b.webp",
       },
     ],
   },
