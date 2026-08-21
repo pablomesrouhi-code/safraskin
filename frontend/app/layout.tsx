@@ -35,6 +35,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        <link rel="preload" as="image" href="/home/hero.webp" fetchPriority="high" />
+        <link rel="preload" as="image" href="/brand/logo.webp" />
+      </head>
       <body className={`${arabic.variable} ${english.variable}`}>
         <StoreShell>{children}</StoreShell>
       </body>

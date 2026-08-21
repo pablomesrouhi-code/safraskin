@@ -82,7 +82,7 @@ export default function ProductImage({
 
   return (
     <div className={fill ? `absolute inset-0 h-full w-full ${className}` : `relative ${className}`}>
-      {loaded ? null : <ImageSpinner compact={compact} />}
+      {loaded || priority ? null : <ImageSpinner compact={compact} />}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imageRef}
@@ -94,8 +94,8 @@ export default function ProductImage({
         onLoad={() => setLoaded(true)}
         className={
           fill
-            ? `absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`
-            : `h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`
+            ? `absolute inset-0 h-full w-full object-cover ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
+            : `h-full w-full object-cover ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
         }
       />
     </div>

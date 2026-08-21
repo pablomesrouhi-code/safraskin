@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 import { BRAND_NAME_AR } from "@/data/brand";
 import Marquee from "@/components/Marquee";
 
-const REPEAT = 12;
+const REPEAT = 6;
 
 export default function LogoMarquee() {
   const row = (
@@ -11,7 +11,7 @@ export default function LogoMarquee() {
         <span key={index} className="flex items-center gap-6 px-6">
           {/* native img: public files work in Docker without the optimizer */}
           <img
-            src="/brand/logo.png"
+            src="/brand/logo.webp"
             alt={index === 0 ? BRAND_NAME_AR : ""}
             width={190}
             height={114}

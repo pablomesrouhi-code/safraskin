@@ -29,7 +29,7 @@ export default function AdminLoginForm({ onSuccess }: { onSuccess: () => void })
         <div className="panel login-box">
           <a className="brand-lockup" href="/" target="_blank" rel="noopener noreferrer">
             <span className="brand-logo-shell">
-              <img className="brand-logo" src="/brand/logo.png" alt="سفراسكين · Safraskin" width="320" height="140" />
+              <img className="brand-logo" src="/brand/logo.webp" alt="سفراسكين · Safraskin" width="320" height="140" />
             </span>
             <span className="brand-text">
               <span className="brand-name-ar">سفراسكين</span>

@@ -55,8 +55,8 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            {PRODUCTS.map((product) => (
-              <CollectionProductCard key={product.slug} product={product} />
+            {PRODUCTS.map((product, index) => (
+              <CollectionProductCard key={product.slug} product={product} priority={index < 2} />
             ))}
           </div>
         </div>
