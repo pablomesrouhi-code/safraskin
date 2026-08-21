@@ -19,7 +19,7 @@ import UpsellModal from "@/components/UpsellModal";
 export type CartSlug = ProductSlug | PackId;
 export type CartItem = { slug: CartSlug; qty: number; sku: string };
 
-type CheckoutData = { name: string; phone: string };
+type CheckoutData = { name: string; phone: string; address: string };
 
 type State = {
   items: CartItem[];
@@ -39,7 +39,7 @@ type Action =
   | { type: "CLOSE_DRAWER" }
   | { type: "OPEN_CHECKOUT" }
   | { type: "CLOSE_CHECKOUT" }
-  | { type: "OPEN_UPSELL"; name: string; phone: string }
+  | { type: "OPEN_UPSELL"; name: string; phone: string; address: string }
   | { type: "CLOSE_UPSELL" }
   | { type: "CLOSE_ALL" }
   | { type: "CLEAR" };
@@ -131,7 +131,7 @@ function cartReducer(state: State, action: Action): State {
         ...state,
         isCheckoutOpen: false,
         isUpsellOpen: true,
-        checkoutData: { name: action.name, phone: action.phone },
+        checkoutData: { name: action.name, phone: action.phone, address: action.address },
       };
     case "CLOSE_UPSELL":
       return { ...state, isUpsellOpen: false };
@@ -162,7 +162,7 @@ type CartContextValue = {
   openDrawer: () => void;
   closeDrawer: () => void;
   openCheckout: () => void;
-  openUpsell: (name: string, phone: string) => void;
+  openUpsell: (name: string, phone: string, address: string) => void;
   closeCheckout: () => void;
   closeAll: () => void;
   clearCart: () => void;
@@ -238,7 +238,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     openDrawer: () => dispatch({ type: "OPEN_DRAWER" }),
     closeDrawer: () => dispatch({ type: "CLOSE_DRAWER" }),
     openCheckout: () => dispatch({ type: "OPEN_CHECKOUT" }),
-    openUpsell: (name, phone) => dispatch({ type: "OPEN_UPSELL", name, phone }),
+    openUpsell: (name, phone, address) => dispatch({ type: "OPEN_UPSELL", name, phone, address }),
     closeCheckout: () => dispatch({ type: "CLOSE_CHECKOUT" }),
     closeAll: () => dispatch({ type: "CLOSE_ALL" }),
     clearCart: () => dispatch({ type: "CLEAR" }),

@@ -12,28 +12,35 @@ from app.services.pricing import SLUG_TO_NAME_AR, SLUG_TO_SKU
 CASABLANCA = timezone(timedelta(hours=1))
 
 
-def build_sheets_payload(order_id: str, name: str, phone_e164: str, line_items: list[dict], total: int, upsell_accepted: bool, upsell_sku: str | None) -> dict:
+def build_sheets_payload(
+    order_id: str,
+    name: str,
+    phone_e164: str,
+    line_items: list[dict],
+    total: int,
+    upsell_accepted: bool,
+    upsell_sku: str | None,
+    address: str = "",
+) -> dict:
     lines = list(line_items)
     if upsell_accepted and upsell_sku:
-        slug = None
         from app.services.pricing import SKU_TO_SLUG
         slug = SKU_TO_SLUG.get(upsell_sku)
         if slug:
             lines.append({"sku": upsell_sku, "product_slug": slug, "quantity": 1})
 
     now = datetime.now(CASABLANCA)
+    names = "/".join(SLUG_TO_NAME_AR.get(l["product_slug"], l["product_slug"]) for l in lines)
     return {
-        "date": now.strftime("%d/%m/%Y"),
-        "orderid": order_id,
-        "country": "MAROC",
-        "name": name.strip(),
+        "date_order": now.strftime("%d/%m/%Y"),
+        "full_name": name.strip(),
         "phone": to_local_ma(phone_e164),
-        "product": "/".join(SLUG_TO_NAME_AR.get(l["product_slug"], l["product_slug"]) for l in lines),
+        "address": (address or "").strip(),
         "sku": "/".join(SLUG_TO_SKU.get(l["product_slug"], l["sku"]) for l in lines),
-        "quantity": "/".join(str(l["quantity"]) for l in lines),
-        "total_price": total,
-        "currency": "DH",
-        "status": "",
+        "qte": "/".join(str(l["quantity"]) for l in lines),
+        "price": total,
+        "note": names,
+        "delivery_note": "الدفع عند الاستلام",
     }
 
 

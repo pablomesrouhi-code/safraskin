@@ -5,6 +5,7 @@ type OrderItem = { sku: string; qty: number };
 export type CreateOrderPayload = {
   customer_name: string;
   customer_phone: string;
+  customer_address?: string;
   items: OrderItem[];
   upsell_sku?: string;
   upsell_price_mad?: number;

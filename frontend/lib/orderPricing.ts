@@ -14,6 +14,7 @@ export type OrderItemInput = { sku: string; qty: number };
 export type CreateOrderBody = {
   customer_name: string;
   customer_phone: string;
+  customer_address?: string;
   items: OrderItemInput[];
   upsell_sku?: string;
   upsell_price_mad?: number;
@@ -133,7 +134,8 @@ export function buildSheetsPayload(
   line_items: PricedLine[],
   grand_total_mad: number,
   upsell_accepted: boolean,
-  upsell_sku: string | null
+  upsell_sku: string | null,
+  customerAddress = ""
 ): Record<string, string | number> {
   const lines = [...line_items];
   if (upsell_accepted && upsell_sku) {
@@ -151,17 +153,15 @@ export function buildSheetsPayload(
   }).format(new Date());
 
   return {
-    date,
-    orderid: orderId,
-    country: "MAROC",
-    name: customerName.trim(),
+    date_order: date,
+    full_name: customerName.trim(),
     phone: formatPhoneDisplay(phoneE164),
-    product: lines.map((l) => SLUG_TO_NAME_AR[l.product_slug] || l.product_slug).join("/"),
+    address: customerAddress.trim(),
     sku: lines.map((l) => SLUG_TO_SKU[l.product_slug] || l.sku).join("/"),
-    quantity: lines.map((l) => String(l.quantity)).join("/"),
-    total_price: grand_total_mad,
-    currency: "DH",
-    status: "",
+    qte: lines.map((l) => String(l.quantity)).join("/"),
+    price: grand_total_mad,
+    note: lines.map((l) => SLUG_TO_NAME_AR[l.product_slug] || l.product_slug).join(" / "),
+    delivery_note: "الدفع عند الاستلام",
   };
 }
 

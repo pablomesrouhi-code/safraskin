@@ -14,6 +14,7 @@ import { trackEvent } from "@/lib/track";
 const schema = z.object({
   name: z.string().min(2, "كتبي سميتك كاملة (حرفين على الأقل)"),
   phone: z.string().refine(isValidMaPhone, "دخّلي رقم صحيح: 06 أو 07"),
+  address: z.string().min(6, "كتبي المدينة والعنوان باش يوصّل الطلب"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -37,7 +38,7 @@ export default function CheckoutPopup() {
 
   const onSubmit = (data: FormData) => {
     trackEvent("checkout_start");
-    openUpsell(data.name, data.phone);
+    openUpsell(data.name, data.phone, data.address);
   };
 
   const titles = state.items.map((item) => {
@@ -99,6 +100,17 @@ export default function CheckoutPopup() {
             ) : (
               <p className="mt-1 text-xs text-muted">06 أو 07 — باش نعيّطو ليكِ</p>
             )}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">العنوان</label>
+            <textarea
+              {...register("address")}
+              rows={2}
+              autoComplete="street-address"
+              className="w-full touch-manipulation rounded-xl border border-border px-4 py-3 text-[16px] leading-6 focus:border-rose focus:outline-none"
+              placeholder="المدينة، الحي، رقم الدار"
+            />
+            {errors.address && <p className="mt-1 text-xs text-scarcity">{errors.address.message}</p>}
           </div>
 
           <button

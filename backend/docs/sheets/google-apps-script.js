@@ -14,23 +14,21 @@
  * 8. Redeploy the backend
  *
  * Sheet columns (row 1):
- * DATE | ORDERID | COUNTRY | NAME | PHONE | PRODUCT | SKU | QUANTITY | TOTAL PRICE | CURRENCE | STATUS
+ * date_order | full_name | phone | address | sku | qte | price | note | delivery_note
  */
 
 var SHEET_NAME = "Orders";
 
 var HEADERS = [
-  "DATE",
-  "ORDERID",
-  "COUNTRY",
-  "NAME",
-  "PHONE",
-  "PRODUCT",
-  "SKU",
-  "QUANTITY",
-  "TOTAL PRICE",
-  "CURRENCE",
-  "STATUS",
+  "date_order",
+  "full_name",
+  "phone",
+  "address",
+  "sku",
+  "qte",
+  "price",
+  "note",
+  "delivery_note",
 ];
 
 function getSheet_() {
@@ -47,38 +45,27 @@ function getSheet_() {
 }
 
 function ensureHeaders_(sheet) {
-  var first = sheet.getRange(1, 1, 1, HEADERS.length).getDisplayValues()[0];
-  var empty = first.every(function (cell) {
-    return String(cell || "").trim() === "";
-  });
-  if (empty) {
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-    sheet.setFrozenRows(1);
-  }
+  sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  sheet.setFrozenRows(1);
 }
 
 function processOrder_(data) {
   var sheet = getSheet_();
-  var totalPrice = "";
-  if (data.total_price !== undefined && data.total_price !== null && data.total_price !== "") {
-    totalPrice = data.total_price;
-  }
-
   sheet.appendRow([
-    data.date || "",
-    data.orderid || "",
-    data.country || "MAROC",
-    data.name || "",
+    data.date_order || data.date || "",
+    data.full_name || data.name || "",
     data.phone || "",
-    data.product || "",
+    data.address || "",
     data.sku || "",
-    data.quantity || "",
-    totalPrice,
-    data.currency || "DH",
-    "",
+    data.qte || data.quantity || "",
+    data.price !== undefined && data.price !== null && data.price !== ""
+      ? data.price
+      : data.total_price || "",
+    data.note || data.product || "",
+    data.delivery_note || "",
   ]);
 
-  return data.orderid || "";
+  return data.full_name || data.name || data.orderid || "";
 }
 
 function readPayload_(e) {
@@ -108,17 +95,15 @@ function jsonOut_(obj) {
 
 function testAppendRow() {
   processOrder_({
-    date: "01/05/2026",
-    orderid: "nama7k2m9q1x",
-    country: "MAROC",
-    name: "سارة بنعلي",
+    date_order: "22/08/2026",
+    full_name: "سارة بنعلي",
     phone: "0682767535",
-    product: "كريم تفتيح الوجه/زيت تساقط الشعر · 60 مل",
+    address: "الدار البيضاء، الحي الحسني",
     sku: "SK482917CL/SK156820CP",
-    quantity: "2/2",
-    total_price: 438,
-    currency: "DH",
-    status: "",
+    qte: "2/2",
+    price: 438,
+    note: "كريم تفتيح الوجه / زيت تساقط الشعر · 60 مل",
+    delivery_note: "الدفع عند الاستلام",
   });
 }
 

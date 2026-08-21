@@ -19,6 +19,7 @@ def generate_order_id() -> str:
 
 def create_order(db: Session, body, geo: dict | None = None) -> dict:
     name = (body.customer_name or "").strip()
+    address = (getattr(body, "customer_address", None) or "").strip()
     if len(name) < 2:
         raise PricingError("السمية مطلوبة", "VALIDATION_ERROR")
     if not is_valid_ma_phone(body.customer_phone):
@@ -50,7 +51,7 @@ def create_order(db: Session, body, geo: dict | None = None) -> dict:
         ip_city=geo.get("ip_city"),
         is_morocco=bool(geo.get("is_morocco")),
         user_agent=geo.get("user_agent"),
-        sheets_synced=False,
+        notes=address or None,
     )
     db.add(row)
     db.commit()
@@ -65,6 +66,7 @@ def create_order(db: Session, body, geo: dict | None = None) -> dict:
             priced["grand_total_mad"],
             priced["upsell_accepted"],
             priced["upsell_sku"],
+            address,
         )
         synced, sync_error = sync_order_to_sheets(payload)
         if synced:

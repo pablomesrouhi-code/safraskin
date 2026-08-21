@@ -9,6 +9,7 @@ class OrderItemIn(BaseModel):
 class CreateOrderIn(BaseModel):
     customer_name: str = Field(min_length=2)
     customer_phone: str
+    customer_address: str | None = None
     items: list[OrderItemIn]
     upsell_sku: str | None = None
     upsell_price_mad: int | None = None

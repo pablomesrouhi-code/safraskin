@@ -56,6 +56,7 @@ export default function UpsellModal() {
       const payload = {
         customer_name: state.checkoutData.name,
         customer_phone: toE164(state.checkoutData.phone),
+        customer_address: state.checkoutData.address,
         items: state.items.map((i) => ({ sku: i.sku, qty: i.qty })),
         ...(withUpsell && upsellProduct
           ? { upsell_sku: upsellProduct.sku, upsell_price_mad: UPSELL_PRICE_MAD }

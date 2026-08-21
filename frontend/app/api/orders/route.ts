@@ -88,7 +88,8 @@ async function handleSheetsOrder(body: CreateOrderBody): Promise<NextResponse> {
     priced.line_items,
     priced.grand_total_mad,
     priced.upsell_accepted,
-    priced.upsell_sku
+    priced.upsell_sku,
+    body.customer_address
   );
 
   const sheetsUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL?.trim();
