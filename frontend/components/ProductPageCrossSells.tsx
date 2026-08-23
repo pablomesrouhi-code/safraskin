@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ProductImage from "@/components/ProductImage";
-import { getTierPrices, PRODUCTS, type ProductSlug } from "@/data/products";
+import { getTierPrices, productCutout, PRODUCTS, type ProductSlug } from "@/data/products";
 import { formatPrice } from "@/lib/money";
 
 export default function ProductPageCrossSells({ currentSlug }: { currentSlug: ProductSlug }) {
@@ -18,8 +18,15 @@ export default function ProductPageCrossSells({ currentSlug }: { currentSlug: Pr
               href={`/products/${p.slug}`}
               className="overflow-hidden rounded-2xl border border-border bg-cream hover:border-rose/30"
             >
-              <div className="relative aspect-[4/3]">
-                <ProductImage src={p.image} alt={p.feelingTitle} fill emptyLabel={p.headlineAr} />
+              <div className="relative aspect-[4/3] bg-cream p-6">
+                <ProductImage
+                  src={productCutout(p.slug)}
+                  alt={p.feelingTitle}
+                  fill
+                  fit="contain"
+                  outlineShape
+                  emptyLabel={p.headlineAr}
+                />
               </div>
               <div className="p-4">
                 <p className="text-xs text-saffron-dark">{p.problemTitle}</p>

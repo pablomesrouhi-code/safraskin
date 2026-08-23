@@ -1,24 +1,37 @@
 import ProductImage from "@/components/ProductImage";
-import type { Product } from "@/data/products";
+import { productCutout, type Product } from "@/data/products";
 
 export default function ProductLanding({ product }: { product: Product }) {
   const stories = [
-    { section: product.sections[0], image: product.gallery[1], kicker: "المشكلة" },
-    { section: product.sections[3], image: product.gallery[2], kicker: "النتيجة" },
-    { section: product.sections[2], image: product.gallery[3], kicker: "المنتج والروتين" },
+    { section: product.sections[0], image: product.gallery[1], kicker: "المشكلة", showForm: false },
+    { section: product.sections[3], image: product.gallery[2], kicker: "النتيجة", showForm: false },
+    { section: product.sections[2], image: product.gallery[3], kicker: "المنتج والروتين", showForm: true },
   ].filter((story) => story.section && story.image);
 
   return (
     <div>
-      {stories.map(({ section, image: storyImage, kicker }, index) => {
+      {stories.map(({ section, image: storyImage, kicker, showForm }, index) => {
         const image = (
-          <div className="relative aspect-square overflow-hidden rounded-3xl bg-white shadow-sm">
-            <ProductImage
-              src={storyImage.src}
-              alt={section.title}
-              fill
-              emptyLabel={storyImage.label}
-            />
+          <div className="relative aspect-square overflow-hidden rounded-3xl border border-ink/15 bg-white shadow-sm">
+            {showForm ? (
+              <div className="absolute inset-0 bg-cream p-8 md:p-12">
+                <ProductImage
+                  src={productCutout(product.slug)}
+                  alt={product.nameAr}
+                  fill
+                  fit="contain"
+                  outlineShape
+                  emptyLabel={product.nameAr}
+                />
+              </div>
+            ) : (
+              <ProductImage
+                src={storyImage.src}
+                alt={section.title}
+                fill
+                emptyLabel={storyImage.label}
+              />
+            )}
           </div>
         );
         const text = (

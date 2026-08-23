@@ -26,6 +26,19 @@ main {
       radial-gradient(ellipse 80% 60% at 80% 10%, rgba(212, 175, 55, 0.22), transparent),
       radial-gradient(ellipse 50% 40% at 10% 90%, rgba(178, 58, 75, 0.10), transparent);
   }
+
+  /* Stroke follows the PNG silhouette so white bottles/jars stay readable. */
+  .product-form-outline {
+    filter:
+      drop-shadow(1.5px 0 0 #1c1612)
+      drop-shadow(-1.5px 0 0 #1c1612)
+      drop-shadow(0 1.5px 0 #1c1612)
+      drop-shadow(0 -1.5px 0 #1c1612)
+      drop-shadow(1px 1px 0 #1c1612)
+      drop-shadow(-1px 1px 0 #1c1612)
+      drop-shadow(1px -1px 0 #1c1612)
+      drop-shadow(-1px -1px 0 #1c1612);
+  }
 }
 
 @keyframes fade-up {
