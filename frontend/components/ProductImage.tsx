@@ -52,8 +52,6 @@ type ImageProps = {
   fill?: boolean;
   emptyLabel?: string;
   compact?: boolean;
-  fit?: "cover" | "contain";
-  outlineShape?: boolean;
 };
 
 export default function ProductImage({
@@ -64,8 +62,6 @@ export default function ProductImage({
   fill,
   emptyLabel,
   compact,
-  fit = "cover",
-  outlineShape = false,
 }: ImageProps) {
   const showEmpty = !ASSETS_READY || !src;
   const frameClass = fill ? `absolute inset-0 h-full w-full ${className}` : className;
@@ -98,8 +94,8 @@ export default function ProductImage({
         onLoad={() => setLoaded(true)}
         className={
           fill
-            ? `absolute inset-0 h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"} ${outlineShape ? "product-form-outline" : ""} ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
-            : `h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"} ${outlineShape ? "product-form-outline" : ""} ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
+            ? `absolute inset-0 h-full w-full object-cover ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
+            : `h-full w-full object-cover ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
         }
       />
     </div>

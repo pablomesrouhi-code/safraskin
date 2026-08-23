@@ -39,7 +39,7 @@ export default function OfferSelector({ slug }: { slug: ProductSlug }) {
 
   return (
     <div id="offer-selector" className="scroll-mt-header">
-      <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-white to-cream shadow-lg shadow-rose/5">
+      <div className="product-form-outline overflow-hidden rounded-2xl bg-gradient-to-b from-white to-cream shadow-lg shadow-rose/5">
         <div className="border-b border-border/60 bg-white/70 px-4 pb-3 pt-4">
           <p className="font-bold text-ink">اختاري العرض</p>
           <p className="mt-0.5 text-xs text-muted">الثمن واضح · الدفع عند الاستلام</p>

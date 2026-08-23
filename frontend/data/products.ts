@@ -4,10 +4,6 @@ export const UPSELL_PRICE_MAD = 150;
 export const CROSSSELL_PRICE_MAD = TIER_PRICES[1];
 
 export type ProductSlug = "clarelia" | "femmelia" | "capilys" | "luminora";
-
-export function productCutout(slug: ProductSlug) {
-  return `/products/_cutouts/${slug}.png`;
-}
 export type OfferQty = 1 | 2 | 3;
 export type TierPrices = Record<OfferQty, number>;
 
