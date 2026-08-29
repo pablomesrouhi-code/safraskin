@@ -54,6 +54,10 @@ type ImageProps = {
   compact?: boolean;
 };
 
+function mobileSrc(src: string) {
+  return src.endsWith("-1600.webp") ? src.replace(/-1600\.webp$/, "-800.webp") : null;
+}
+
 export default function ProductImage({
   src,
   alt,
@@ -67,6 +71,7 @@ export default function ProductImage({
   const frameClass = fill ? `absolute inset-0 h-full w-full ${className}` : className;
   const imageRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
+  const src800 = src ? mobileSrc(src) : null;
 
   useEffect(() => {
     setLoaded(false);
@@ -86,16 +91,18 @@ export default function ProductImage({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imageRef}
-        src={src}
+        src={src800 ?? src}
+        srcSet={src800 ? `${src800} 800w, ${src} 1600w` : undefined}
         alt={alt}
+        sizes={fill ? "(max-width: 768px) 100vw, 50vw" : undefined}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
         fetchPriority={priority ? "high" : "low"}
         onLoad={() => setLoaded(true)}
         className={
           fill
-            ? `absolute inset-0 h-full w-full object-cover ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
-            : `h-full w-full object-cover ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
+            ? `absolute inset-0 h-full w-full object-cover [transform:translateZ(0)] ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
+            : `h-full w-full object-cover [transform:translateZ(0)] ${priority ? "" : "transition-opacity duration-200"} ${loaded || priority ? "opacity-100" : "opacity-0"}`
         }
       />
     </div>
