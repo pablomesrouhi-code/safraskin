@@ -28,7 +28,8 @@ main {
   }
 
   .product-form-outline {
-    border: 2px solid #1c1612;
+    border: 2px solid #B23A4B;
+    box-shadow: 0 0 0 3px rgba(178, 58, 75, 0.12);
   }
 }
 

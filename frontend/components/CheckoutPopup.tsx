@@ -14,10 +14,12 @@ import { trackEvent } from "@/lib/track";
 const schema = z.object({
   name: z.string().min(2, "كتبي سميتك كاملة (حرفين على الأقل)"),
   phone: z.string().refine(isValidMaPhone, "دخّلي رقم صحيح: 06 أو 07"),
-  address: z.string().min(6, "كتبي المدينة والعنوان باش يوصّل الطلب"),
 });
 
 type FormData = z.infer<typeof schema>;
+
+const fieldClass =
+  "w-full touch-manipulation rounded-xl border-2 border-rose/25 bg-white px-4 py-3 text-[16px] leading-6 outline-none transition focus:border-rose focus:shadow-[0_0_0_3px_rgba(178,58,75,0.15)]";
 
 export default function CheckoutPopup() {
   const { state, closeCheckout, openUpsell, total } = useCart();
@@ -38,7 +40,7 @@ export default function CheckoutPopup() {
 
   const onSubmit = (data: FormData) => {
     trackEvent("checkout_start");
-    openUpsell(data.name, data.phone, data.address);
+    openUpsell(data.name, data.phone, "");
   };
 
   const titles = state.items.map((item) => {
@@ -51,12 +53,12 @@ export default function CheckoutPopup() {
     <>
       <div className="fixed inset-0 z-[60] bg-black/50" onClick={closeCheckout} />
       <div
-        className="fixed inset-x-3 top-1/2 z-[60] max-h-[calc(100dvh-1.5rem)] -translate-y-1/2 overflow-y-auto rounded-3xl bg-white shadow-2xl sm:inset-x-auto sm:left-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2"
+        className="fixed inset-x-3 top-1/2 z-[60] max-h-[calc(100dvh-1.5rem)] -translate-y-1/2 overflow-y-auto rounded-3xl border-2 border-rose bg-white shadow-2xl shadow-rose/15 sm:inset-x-auto sm:left-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2"
         role="dialog"
         aria-labelledby="checkout-title"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-white px-5 py-4">
-          <button onClick={closeCheckout} className="rounded-full p-1.5 text-muted hover:bg-cream" aria-label="إغلاق">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-rose/15 bg-white px-5 py-4">
+          <button onClick={closeCheckout} className="rounded-full p-1.5 text-muted hover:bg-rose/5" aria-label="إغلاق">
             <X size={20} />
           </button>
           <h2 id="checkout-title" className="text-base font-bold">
@@ -66,7 +68,7 @@ export default function CheckoutPopup() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4">
           {titles.length > 0 && (
-            <p className="rounded-xl bg-cream px-3 py-2 text-center text-xs leading-6 text-muted">
+            <p className="rounded-xl bg-rose/5 px-3 py-2 text-center text-xs leading-6 text-muted">
               {titles.join(" · ")}
               <span className="mt-0.5 block font-bold text-rose">{formatPrice(total)} · عند الاستلام</span>
             </p>
@@ -77,7 +79,7 @@ export default function CheckoutPopup() {
             <input
               {...register("name")}
               autoComplete="name"
-              className="w-full touch-manipulation rounded-xl border border-border px-4 py-3 text-[16px] leading-6 focus:border-rose focus:outline-none"
+              className={fieldClass}
               placeholder="مثال: سارة بنعلي"
             />
             {errors.name && <p className="mt-1 text-xs text-scarcity">{errors.name.message}</p>}
@@ -89,7 +91,7 @@ export default function CheckoutPopup() {
               type="tel"
               inputMode="numeric"
               autoComplete="tel"
-              className="w-full touch-manipulation rounded-xl border border-border px-4 py-3 text-left text-[16px] leading-6 focus:border-rose focus:outline-none"
+              className={`${fieldClass} text-left`}
               placeholder="06xxxxxxxx"
               dir="ltr"
             />
@@ -98,19 +100,8 @@ export default function CheckoutPopup() {
             ) : phoneValue && isValidMaPhone(phoneValue) ? (
               <p className="mt-1 text-xs text-rose">✓ رقم صالح</p>
             ) : (
-              <p className="mt-1 text-xs text-muted">06 أو 07 — باش نعيّطو ليكِ</p>
+              <p className="mt-1 text-xs text-muted">06 أو 07 — باش نعيّطو ليكِ ونأكدو العنوان</p>
             )}
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">العنوان</label>
-            <textarea
-              {...register("address")}
-              rows={2}
-              autoComplete="street-address"
-              className="w-full touch-manipulation rounded-xl border border-border px-4 py-3 text-[16px] leading-6 focus:border-rose focus:outline-none"
-              placeholder="المدينة، الحي، رقم الدار"
-            />
-            {errors.address && <p className="mt-1 text-xs text-scarcity">{errors.address.message}</p>}
           </div>
 
           <button
