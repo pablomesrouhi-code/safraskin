@@ -12,14 +12,14 @@ export default function HomePage() {
   return (
     <>
       <section className="hero-glow">
-        <div className="mx-auto max-w-container px-0 pt-0 md:px-4 md:pt-10">
-          <div className="relative aspect-[5/4] overflow-hidden border-border bg-[#8f7364] shadow-sm sm:aspect-[16/11] md:aspect-[21/10] md:rounded-3xl md:border lg:aspect-[2.2/1]">
+        <div className="mx-auto max-w-container px-4 pt-6 md:pt-10">
+          <div className="relative mx-auto aspect-square w-full max-w-[22rem] overflow-hidden rounded-3xl border border-border bg-[#8f7364] shadow-sm sm:max-w-[26rem] md:max-w-[32rem] lg:max-w-[36rem]">
             <ProductImage
               src="/home/hero-1600.webp"
               alt="سفراسكين · أربع نساء، أربع صيغ"
               fill
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1120px) 100vw, 1120px"
+              sizes="(max-width: 640px) 88vw, (max-width: 1024px) 32rem, 36rem"
             />
           </div>
         </div>
