@@ -83,9 +83,10 @@ export default function CartDrawer() {
                     <button
                       type="button"
                       onClick={() => addSlug(p.slug)}
-                      className="shrink-0 rounded-xl bg-rose px-3 py-2 text-xs font-bold text-white hover:bg-rose-dark"
+                      aria-label={`زيدي ${p.headlineAr}`}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose text-lg font-bold text-white hover:bg-rose-dark"
                     >
-                      أضيفي
+                      +
                     </button>
                   </div>
                 ))}

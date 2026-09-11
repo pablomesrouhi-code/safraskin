@@ -25,17 +25,17 @@ export default function QtyStepper({
   const canIncrease = increaseDisabled ?? qty >= max;
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-3">
       <button
         type="button"
         onClick={onDecrease}
         disabled={canDecrease}
         aria-label="نقّصي"
         className={clsx(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-xl font-bold leading-none transition",
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 text-xl font-bold leading-none transition",
           canDecrease
             ? "cursor-not-allowed border-border text-gray-300"
-            : "border-border text-ink hover:border-rose hover:text-rose"
+            : "border-rose/40 text-rose hover:border-rose hover:bg-rose/5"
         )}
       >
         −
@@ -45,14 +45,15 @@ export default function QtyStepper({
         type="button"
         onClick={onIncrease}
         disabled={canIncrease}
+        aria-label="زيدي"
         className={clsx(
-          "h-9 min-w-[4.5rem] rounded-lg px-3 text-xs font-bold transition",
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 text-xl font-bold leading-none transition",
           canIncrease
-            ? "cursor-not-allowed bg-rose/30 text-white"
-            : "bg-rose text-white hover:bg-rose-dark"
+            ? "cursor-not-allowed border-border bg-rose/20 text-white"
+            : "border-rose bg-rose text-white hover:bg-rose-dark"
         )}
       >
-        أضيفي
+        +
       </button>
     </div>
   );
