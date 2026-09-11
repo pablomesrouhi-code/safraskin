@@ -12,7 +12,7 @@ export default function Marquee({
   return (
     <div className={`w-full overflow-hidden ${className}`} dir="ltr">
       <div
-        className="flex w-max animate-marquee"
+        className="flex w-max animate-marquee hover:[animation-play-state:running]"
         style={{ animationDuration: `${duration}s` }}
       >
         <div className="flex shrink-0 items-center">{children}</div>

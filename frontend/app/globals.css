@@ -50,10 +50,10 @@ main {
 
 @keyframes marquee {
   from {
-    transform: translate3d(-25%, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-75%, 0, 0);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -63,8 +63,12 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-up,
-  .animate-marquee {
+  .animate-fade-up {
     animation: none;
+  }
+
+  /* Keep trust/logo tickers moving on desktop and phone */
+  .animate-marquee {
+    animation: marquee 120s linear infinite;
   }
 }
