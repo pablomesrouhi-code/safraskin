@@ -52,6 +52,7 @@ type ImageProps = {
   fill?: boolean;
   emptyLabel?: string;
   compact?: boolean;
+  sizes?: string;
 };
 
 function mobileSrc(src: string) {
@@ -66,12 +67,15 @@ export default function ProductImage({
   fill,
   emptyLabel,
   compact,
+  sizes,
 }: ImageProps) {
   const showEmpty = !ASSETS_READY || !src;
   const frameClass = fill ? `absolute inset-0 h-full w-full ${className}` : className;
   const imageRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const src800 = src ? mobileSrc(src) : null;
+  const resolvedSizes =
+    sizes ?? (fill ? "(max-width: 768px) 100vw, (max-width: 1120px) 50vw, 560px" : undefined);
 
   useEffect(() => {
     setLoaded(false);
@@ -94,10 +98,10 @@ export default function ProductImage({
         src={src800 ?? src}
         srcSet={src800 ? `${src800} 800w, ${src} 1600w` : undefined}
         alt={alt}
-        sizes={fill ? "(max-width: 768px) 100vw, 50vw" : undefined}
+        sizes={resolvedSizes}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
-        fetchPriority={priority ? "high" : "low"}
+        fetchPriority={priority ? "high" : "auto"}
         onLoad={() => setLoaded(true)}
         className={
           fill

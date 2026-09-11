@@ -12,13 +12,14 @@ export default function HomePage() {
   return (
     <>
       <section className="hero-glow">
-        <div className="mx-auto max-w-container px-4 pt-6 md:pt-12">
-          <div className="relative aspect-square overflow-hidden rounded-3xl border border-border">
+        <div className="mx-auto max-w-container px-0 pt-0 md:px-4 md:pt-10">
+          <div className="relative aspect-[5/4] overflow-hidden border-border bg-[#8f7364] shadow-sm sm:aspect-[16/11] md:aspect-[21/10] md:rounded-3xl md:border lg:aspect-[2.2/1]">
             <ProductImage
               src="/home/hero-1600.webp"
               alt="سفراسكين · أربع نساء، أربع صيغ"
               fill
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1120px) 100vw, 1120px"
             />
           </div>
         </div>
@@ -54,7 +55,7 @@ export default function HomePage() {
               الكل
             </Link>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
             {PRODUCTS.map((product, index) => (
               <CollectionProductCard key={product.slug} product={product} priority={index < 2} />
             ))}
@@ -70,7 +71,7 @@ export default function HomePage() {
           الإحساس بعد الالتزام
         </p>
         <h2 className="mt-3 text-2xl font-bold leading-[1.45] md:text-3xl">كلام الزبونات</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
+        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {HOME_REVIEWS.map((review) => (
             <article key={review.name + review.product} className="min-w-0 rounded-2xl border border-border bg-white p-5 md:p-6">
               <div className="flex items-center gap-2 text-saffron">

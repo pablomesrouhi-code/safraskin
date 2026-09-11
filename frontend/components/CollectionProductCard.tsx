@@ -17,13 +17,14 @@ export default function CollectionProductCard({
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-3xl border border-border bg-white shadow-sm">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-[#8f7364]">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#8f7364] sm:aspect-square lg:aspect-[4/5]">
           <ProductImage
             src={product.image}
             alt={product.feelingTitle}
             fill
             priority={priority}
             emptyLabel={product.headlineAr}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 260px"
           />
         </div>
         <div className="p-4 pb-0 md:p-6 md:pb-0">
