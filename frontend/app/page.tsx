@@ -13,13 +13,13 @@ export default function HomePage() {
     <>
       <section className="hero-glow">
         <div className="mx-auto max-w-container px-4 pt-6 md:pt-10">
-          <div className="relative mx-auto aspect-square w-full max-w-[22rem] overflow-hidden rounded-3xl border border-border bg-[#8f7364] shadow-sm sm:max-w-[26rem] md:max-w-[32rem] lg:max-w-[36rem]">
+          <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-3xl border border-border bg-[#8f7364] shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
             <ProductImage
               src="/home/hero-1600.webp"
               alt="سفراسكين · أربع نساء، أربع صيغ"
               fill
               priority
-              sizes="(max-width: 640px) 88vw, (max-width: 1024px) 32rem, 36rem"
+              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 42rem, 48rem"
             />
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function HomePage() {
               الكل
             </Link>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2">
             {PRODUCTS.map((product, index) => (
               <CollectionProductCard key={product.slug} product={product} priority={index < 2} />
             ))}
