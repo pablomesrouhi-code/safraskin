@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F6EFEA"/>
+      <stop offset="100%" stop-color="#E8D9D0"/>
+    </linearGradient>
+    <linearGradient id="bottle" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F7C9B4"/>
+      <stop offset="100%" stop-color="#E7A3A7"/>
+    </linearGradient>
+    <linearGradient id="label" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#FDF5F1"/>
+      <stop offset="100%" stop-color="#F3E6DE"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <circle cx="915" cy="180" r="130" fill="#E9D8CE" opacity="0.8"/>
+  <circle cx="180" cy="1010" r="170" fill="#F3D1B1" opacity="0.35"/>
+
+  <g transform="translate(300 70)">
+    <path d="M280 60 h200 c30 0 54 24 54 54 v760 c0 30 -24 54 -54 54 H280 c-30 0 -54 -24 -54 -54V114 c0 -30 24 -54 54 -54Z" fill="url(#bottle)"/>
+    <path d="M330 0 h120 c18 0 32 14 32 32 v44 h-184V32 c0 -18 14 -32 32 -32Z" fill="#E9B49A"/>
+    <rect x="250" y="170" width="260" height="540" rx="28" fill="url(#label)" opacity="0.96"/>
+    <text x="380" y="235" text-anchor="middle" font-size="43" font-weight="700" fill="#E8605A" font-family="Arial, sans-serif">Hormonal</text>
+    <text x="380" y="290" text-anchor="middle" font-size="50" font-weight="700" fill="#D06662" font-family="Arial, sans-serif">Balance</text>
+    <text x="380" y="340" text-anchor="middle" font-size="18" fill="#8A4E4F" font-family="Arial, sans-serif">&amp; Metabolic Support</text>
+    <path d="M330 420 C370 380, 390 420, 430 380 S490 420, 520 390" stroke="#CC7A56" stroke-width="9" fill="none"/>
+    <circle cx="318" cy="512" r="38" fill="#E55C5C"/>
+    <circle cx="420" cy="515" r="45" fill="#5B64C8"/>
+    <circle cx="495" cy="578" r="45" fill="#E9B74D"/>
+    <rect x="280" y="605" width="200" height="15" rx="7.5" fill="#E7A684"/>
+    <rect x="492" y="605" width="40" height="15" rx="7.5" fill="#E7A684"/>
+    <text x="385" y="698" text-anchor="middle" font-size="22" font-weight="700" fill="#7F483E" font-family="Arial, sans-serif">Strawberry Acai</text>
+  </g>
+</svg>

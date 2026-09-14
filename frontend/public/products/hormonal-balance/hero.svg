@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F7F0EB"/>
+      <stop offset="100%" stop-color="#E9D5C8"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#F6F5F5" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <g transform="translate(0 30)">
+    <path d="M310 190 L830 190 L830 915 Q830 1040 710 1040 L430 1040 Q310 1040 310 915 Z" fill="url(#glass)" stroke="#DAD3D0" stroke-width="8"/>
+    <path d="M320 230 L820 230 L820 900 Q820 980 760 980 L380 980 Q320 980 320 900 Z" fill="#F7C4C7" opacity="0.58"/>
+    <circle cx="875" cy="220" r="120" fill="#F0D5CC" opacity="0.8"/>
+    <circle cx="290" cy="915" r="120" fill="#EBD7C7" opacity="0.8"/>
+    <g transform="translate(590 100)">
+      <path d="M130 30 h180 c25 0 45 20 45 45 v610 c0 25 -20 45 -45 45 H130 c-25 0 -45 -20 -45 -45V75 c0 -25 20 -45 45 -45Z" fill="#F3C0AE"/>
+      <path d="M160 0 h120 c18 0 32 14 32 32 v46 H128V32 c0 -18 14 -32 32 -32Z" fill="#EBAA95"/>
+      <rect x="120" y="123" width="220" height="400" rx="26" fill="#F9F4EF" opacity="0.9"/>
+      <text x="230" y="185" text-anchor="middle" font-size="29" font-weight="700" fill="#E05E62" font-family="Arial, sans-serif">Hormonal</text>
+      <text x="230" y="228" text-anchor="middle" font-size="34" font-weight="700" fill="#D87670" font-family="Arial, sans-serif">Balance</text>
+      <text x="230" y="270" text-anchor="middle" font-size="18" fill="#8F5A57" font-family="Arial, sans-serif">&amp; Metabolic Support</text>
+      <path d="M170 335 C205 310, 215 330, 250 315 S300 335, 330 312" stroke="#CA7E68" stroke-width="8" fill="none"/>
+      <circle cx="170" cy="395" r="30" fill="#E7615E"/>
+      <circle cx="250" cy="405" r="35" fill="#5B5DC6"/>
+      <circle cx="300" cy="470" r="30" fill="#F1C44F"/>
+      <text x="230" y="575" text-anchor="middle" font-size="18" fill="#7A4C43" font-family="Arial, sans-serif">Strawberry Acai</text>
+    </g>
+    <g opacity="0.9">
+      <circle cx="450" cy="870" r="46" fill="#F7D4C8"/>
+      <circle cx="520" cy="910" r="38" fill="#F4CAB5"/>
+      <circle cx="610" cy="900" r="42" fill="#E79B9B"/>
+      <circle cx="680" cy="874" r="40" fill="#E5B9A1"/>
+      <circle cx="390" cy="912" r="25" fill="#F5A1A2"/>
+    </g>
+  </g>
+</svg>

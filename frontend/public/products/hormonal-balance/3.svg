@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F7F0EB"/>
+      <stop offset="100%" stop-color="#EADACE"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <circle cx="920" cy="190" r="120" fill="#F5D9C8" opacity="0.7"/>
+  <g transform="translate(180 150)">
+    <rect x="0" y="0" width="840" height="820" rx="44" fill="#FFF8F4" opacity="0.82"/>
+    <g transform="translate(80 110)">
+      <path d="M80 180 h180 c33 0 60 27 60 60 v360 c0 33 -27 60 -60 60 H80 c-33 0 -60 -27 -60 -60V240 c0 -33 27 -60 60 -60Z" fill="#F2C0A9"/>
+      <path d="M110 60 h120 c20 0 36 16 36 36 v46 H74V96 c0 -20 16 -36 36 -36Z" fill="#E2A694"/>
+      <rect x="78" y="138" width="184" height="330" rx="22" fill="#F8F2EE"/>
+      <text x="170" y="198" text-anchor="middle" font-size="24" font-weight="700" fill="#DE6967" font-family="Arial, sans-serif">Hormonal</text>
+      <text x="170" y="238" text-anchor="middle" font-size="30" font-weight="700" fill="#D86366" font-family="Arial, sans-serif">Balance</text>
+      <text x="170" y="278" text-anchor="middle" font-size="15" fill="#7D4F4D" font-family="Arial, sans-serif">&amp; Metabolic Support</text>
+      <circle cx="128" cy="330" r="18" fill="#E7605E"/>
+      <circle cx="210" cy="347" r="27" fill="#5F65C8"/>
+      <circle cx="170" cy="400" r="24" fill="#EDBA54"/>
+    </g>
+    <g transform="translate(420 60)">
+      <text x="180" y="120" text-anchor="middle" font-size="52" font-weight="700" fill="#D75D60" font-family="Arial, sans-serif">ابدأي رحلتك</text>
+      <text x="180" y="180" text-anchor="middle" font-size="52" font-weight="700" fill="#D75D60" font-family="Arial, sans-serif">نحو التوازن اليوم</text>
+      <rect x="0" y="260" width="360" height="90" rx="22" fill="#E5635C"/>
+      <text x="180" y="318" text-anchor="middle" font-size="32" font-weight="700" fill="#FFFFFF" font-family="Arial, sans-serif">اطلبي الآن</text>
+      <text x="180" y="420" text-anchor="middle" font-size="24" fill="#775A58" font-family="Arial, sans-serif">توصيل سريع · الدفع عند الاستلام</text>
+      <text x="180" y="470" text-anchor="middle" font-size="24" fill="#775A58" font-family="Arial, sans-serif">عرض خاص</text>
+    </g>
+  </g>
+</svg>

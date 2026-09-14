@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F5ECE6"/>
+      <stop offset="100%" stop-color="#E5D9D0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <circle cx="920" cy="190" r="120" fill="#F2D2BD" opacity="0.7"/>
+  <circle cx="240" cy="980" r="160" fill="#F5C9C9" opacity="0.48"/>
+  <g transform="translate(170 200)">
+    <rect x="0" y="100" width="280" height="540" rx="40" fill="#F7F3F0" opacity="0.7"/>
+    <circle cx="150" cy="210" r="90" fill="#F9D7D5"/>
+    <path d="M70 318 Q150 255 230 318" stroke="#C0656A" stroke-width="16" fill="none"/>
+    <circle cx="110" cy="270" r="18" fill="#D48C89"/>
+    <circle cx="190" cy="280" r="21" fill="#D48C89"/>
+    <path d="M115 350 Q150 410 185 350" stroke="#B76467" stroke-width="16" fill="none"/>
+    <path d="M120 486 H180" stroke="#E07A6E" stroke-width="16" stroke-linecap="round"/>
+    <path d="M78 530 H220" stroke="#E07A6E" stroke-width="16" stroke-linecap="round"/>
+    <g transform="translate(360 30)">
+      <path d="M140 0 h160 c26 0 48 21 48 48 v615 c0 26 -22 48 -48 48 H140 c-26 0 -48 -22 -48 -48V48 c0 -27 22 -48 48 -48Z" fill="#F4C6B0"/>
+      <path d="M170 0 h100 c20 0 36 16 36 36 v28 H134V36 c0 -20 16 -36 36 -36Z" fill="#E9A98F"/>
+      <rect x="118" y="116" width="204" height="360" rx="28" fill="#F9F7F4"/>
+      <text x="220" y="182" text-anchor="middle" font-size="25" font-weight="700" fill="#E06362" font-family="Arial, sans-serif">Hormonal</text>
+      <text x="220" y="226" text-anchor="middle" font-size="30" font-weight="700" fill="#D87272" font-family="Arial, sans-serif">Balance</text>
+      <text x="220" y="272" text-anchor="middle" font-size="16" fill="#935D5A" font-family="Arial, sans-serif">&amp; Metabolic Support</text>
+      <circle cx="188" cy="355" r="28" fill="#EA6A67"/>
+      <circle cx="257" cy="375" r="32" fill="#5C60C8"/>
+      <circle cx="215" cy="430" r="30" fill="#F0B84A"/>
+    </g>
+  </g>
+</svg>
