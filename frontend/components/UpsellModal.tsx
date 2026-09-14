@@ -12,7 +12,7 @@ import { toE164 } from "@/lib/phone";
 import { submitOrder, OrderSubmitError } from "@/lib/submitOrder";
 import { formatPrice } from "@/lib/money";
 
-const TIMER = 5;
+const TIMER = 12;
 
 export default function UpsellModal() {
   const router = useRouter();
@@ -22,6 +22,7 @@ export default function UpsellModal() {
   const [error, setError] = useState<string | null>(null);
   const submittedRef = useRef(false);
   const autoStartedRef = useRef(false);
+  const submittedOrderKeys = useRef<Set<string>>(new Set());
 
   const upsellSlug = getUpsellSlug(cartSlugs);
   const upsellProduct = upsellSlug ? getProductOrThrow(upsellSlug) : null;
@@ -48,6 +49,16 @@ export default function UpsellModal() {
 
   const placeOrder = async (withUpsell: boolean) => {
     if (!state.checkoutData || submittedRef.current) return;
+
+    const fingerprint = JSON.stringify({
+      phone: toE164(state.checkoutData.phone),
+      name: state.checkoutData.name.trim(),
+      items: state.items.map((i) => ({ sku: i.sku, qty: i.qty })),
+      withUpsell,
+    });
+
+    if (submittedOrderKeys.current.has(fingerprint)) return;
+    submittedOrderKeys.current.add(fingerprint);
     submittedRef.current = true;
     setSubmitting(true);
     setError(null);
@@ -68,6 +79,7 @@ export default function UpsellModal() {
       closeAll();
       router.push(buildThankYouUrl(orderId, withUpsell));
     } catch (err) {
+      submittedOrderKeys.current.delete(fingerprint);
       submittedRef.current = false;
       setSubmitting(false);
       setError(
