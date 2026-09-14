@@ -99,10 +99,10 @@ function testAppendRow() {
     full_name: "سارة بنعلي",
     phone: "0682767535",
     address: "الدار البيضاء، الحي الحسني",
-    sku: "agr-zone-f/huil-anti-chute",
-    qte: "2/2",
+    sku: "agr-zone-f",
+    qte: "2",
     price: 438,
-    note: "كريم تفتيح الوجه / زيت تساقط الشعر · 60 مل",
+    note: "كلاريليا · كريم تفتيح الوجه",
     delivery_note: "الدفع عند الاستلام",
   });
 }
