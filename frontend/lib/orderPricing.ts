@@ -33,6 +33,10 @@ const SKU_ALIASES: Record<string, ProductSlug | PackId> = {
   "SK-LUMI-04": "luminora",
   "SK-PACK-04": "pack-4",
   "SK-PACK-03": "pack-3",
+  "AGR-ZONE-F": "clarelia",
+  "CREME-VISAGE-BLANCHE": "femmelia",
+  "HUIL-ANTI-CHUTE": "capilys",
+  "COLLAGEN-MARIN": "luminora",
 };
 
 const SKU_TO_SLUG: Record<string, ProductSlug | PackId> = {

@@ -39,8 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           rel="preload"
           as="image"
-          href="/home/hero-800.webp"
-          imageSrcSet="/home/hero-800.webp 800w, /home/hero-1600.webp 1600w"
+          href="/home/hero.webp"
+          imageSrcSet="/home/hero.webp 1600w"
           imageSizes="(max-width: 640px) 90vw, 48rem"
           fetchPriority="high"
         />
