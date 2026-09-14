@@ -3,7 +3,7 @@ export const FEMMELIA_TIER_PRICES = { 1: 299, 2: 379, 3: 449 } as const;
 export const UPSELL_PRICE_MAD = 150;
 export const CROSSSELL_PRICE_MAD = TIER_PRICES[1];
 
-export type ProductSlug = "clarelia" | "femmelia" | "capilys" | "luminora" | "hormonal-balance";
+export type ProductSlug = "clarelia" | "femmelia" | "capilys" | "luminora";
 export type OfferQty = 1 | 2 | 3;
 export type TierPrices = Record<OfferQty, number>;
 
@@ -16,7 +16,6 @@ export const PRODUCT_SKUS = {
   femmelia: "SK739405FM",
   capilys: "SK156820CP",
   luminora: "SK904371LM",
-  "hormonal-balance": "SK917402HB",
 } as const satisfies Record<ProductSlug, string>;
 
 /** Warehouse SKUs written to the Google Sheet. */
@@ -25,7 +24,6 @@ export const SHEET_SKUS = {
   femmelia: "creme-visage-blanche",
   capilys: "huil-anti-chute",
   luminora: "collagen-marin",
-  "hormonal-balance": "hormonal-balance",
 } as const satisfies Record<ProductSlug, string>;
 
 export type ProductSection = {
@@ -294,98 +292,6 @@ export const PRODUCTS: Product[] = [
         body: "الهدف تحسي براسكِ مرتاحة قدام راسك. هاد الإحساس كيبني بالأسابيع، ماشي بتصويرة.",
         imageLabel: "صورة الإحساس",
         image: "/products/femmelia/2-v4.webp",
-      },
-    ],
-  },
-  {
-    slug: "hormonal-balance",
-    sku: PRODUCT_SKUS["hormonal-balance"],
-    nameAr: "Hormonal Balance",
-    nameEn: "Hormonal Balance",
-    headlineAr: "مكمل هرموني · دعم أيض · طاقة وحيوية",
-    feelingTitle: "التوازن الهرموني ينعكس في كل يومك",
-    formulaLine: "Strawberry Acai · Chromium · Magnesium · Adaptogenic botanicals",
-    labNote:
-      "مكمل يومي موجه لدعم التوازن الهرموني، الطاقة، والراحة النفسية. مناسب للنساء اللاتي يحاولن العودة إلى توازن يومي مستقر.",
-    problemTitle: "التوازن الهرموني",
-    taglineAr: "صيغة يومية تدعم التوازن الهرموني، الطاقة، والتمثيل الغذائي بطريقة سهلة ومريحة لجميع أيامك.",
-    shortDescriptionAr: "مكمل يوازن الهرمونات · دعم أيض · Strawberry Acai",
-    heroQuote: "المرأة لا تحتاج إلى التوتر أكثر؛ تحتاج إلى توازن يليق بحياتها.",
-    problemHook: "تعانين من تقلبات المزاج، تعب مستمر، أو قلة حيوية؟ قد يكون التوازن الهرموني هو السبب.",
-    problemBody:
-      "التوازن الهرموني يؤثر مباشرة على الطاقة، المزاج، النوم، الدورة، والقدرة على التكيف يومياً. Hormonal Balance صمم ليكون روتينًا بسيطًا ومريحًا يساند التوازن اليومي بدون تعقيد، مع تركيبة مناسبة للمرأة المزدحمة والمدينة التي تحتاج إلى إحساس أفضل في كل يومها.",
-    mechanismTitle: "دعم طبيعي للتوازن اليومي",
-    mechanismBody:
-      "التركيبة تجمع بين مزيج الفراولة والـ Acai مع عناصر تدعم الطاقة، التمثيل الغذائي، والاستقرار اليومي. الهدف ليس وعداً سحرياً، بل روتين منتظم يساهم في إحساس أفضل بالهدوء، الحيوية، والتوازن خلال الأسبوع.",
-    unitPriceMad: TIER_PRICES[1],
-    crossSellSlugs: ["clarelia", "luminora", "femmelia", "capilys"],
-    upsellAffinity: "luminora",
-    image: "/products/home/hormonal-balance.svg",
-    heroImage: "/products/hormonal-balance/hero.svg",
-    heroLabel: "Hormonal Balance",
-    rating: 4.8,
-    reviewCount: 218,
-    problemTag: "توازن",
-    dailyOrders: 21,
-    gallery: [
-      { src: "/products/hormonal-balance/hero.svg", label: "1 · المنتج" },
-      { src: "/products/hormonal-balance/1.svg", label: "2 · التوازن" },
-      { src: "/products/hormonal-balance/2.svg", label: "3 · الطاقة" },
-      { src: "/products/hormonal-balance/3.svg", label: "4 · الفوائد" },
-    ],
-    ingredients: [
-      { name: "Strawberry Acai blend", nameAr: "مزيج الفراولة وAcai", benefit: "تجربة نكهات طبيعية من الفواكه، مع لمسة عصرية وقابلة للاستعمال اليومي." },
-      { name: "Chromium", nameAr: "كروميوم", benefit: "يدعم التمثيل الغذائي والطاقة اليومية ويعزز إحساس التوازن." },
-      { name: "Magnesium", nameAr: "مغنيسيوم", benefit: "يساهم في الراحة اليومية واستقرار الطاقة في أوقات الإجهاد." },
-      { name: "Adaptogenic botanicals", nameAr: "نباتات متوازنة", benefit: "تدعّم الاستقرار الذهني والهدوء مع الروتين المنتظم." },
-    ],
-    howToUse: [
-      { step: 1, title: "في الصباح", body: "أضيفي كمية مناسبة إلى كوب ماء أو مشروبك المفضل، وابدئي اليوم بهدوء وبحيوية." },
-      { step: 2, title: "يومياً", body: "استعملي المنتج بانتظام، خصوصاً في أوقات الازدحام أو عند الشعور بانخفاض الطاقة." },
-      { step: 3, title: "بعد 3 إلى 6 أسابيع", body: "حاولي الالتزام لعدة أسابيع لتلاحظين الفرق في الطاقة، المزاج، والراحة العامة." },
-    ],
-    faqs: [
-      { q: "واش المنتج مناسب لكل النساء؟", a: "موجه بشكل عام للنساء اللواتي يلاحظن تقلبات في الطاقة أو التوازن الهرموني، لكن من الأفضل مراجعة الطبيب في الحالات الخاصة." },
-      { q: "كيفاش نستخدم المنتج؟", a: "يتم استخدامه يومياً، مضافاً إلى الماء أو المشروب المفضل، حسب التعليمات الموجودة على العلبة." },
-      { q: "متى سينفع الشعور بالفرق؟", a: "مع الاستمرار، غالباً يشعرن بالفرق في الطاقة والراحة خلال 3 إلى 6 أسابيع." },
-      { q: "هل المنتج آمن؟", a: "المنتج مناسب للروتين اليومي، لكن راجعي الطبيب إذا كنتِ حامل، مرضعة، أو تعانين من حالات صحية خاصة." },
-    ],
-    reviews: [
-      { name: "رنا", city: "الرياض", text: "حسيت أني أقل تعباً، وبدأت أستمتع بيومي أكثر. المنتج سهل ومرن في الاستخدام.", stars: 5, photo: "/products/hormonal-balance/3.svg" },
-      { name: "سارة", city: "جدة", text: "الطاقة ودت وبدأت ألاحظ هدوء أكبر في مزاجي. المنتج سهل ومريح وبنيته أنيقة.", stars: 5, photo: "/products/hormonal-balance/2.svg" },
-      { name: "أمينة", city: "الدمام", text: "ماتوقعتش أن تكون النتيجة بهذا الشكل في الهدوء اليومي. حلو ومناسب للروتين المتنوع.", stars: 5, photo: "/products/hormonal-balance/1.svg" },
-      { name: "حلا", city: "أبها", text: "توازن الطاقة واضح، والروتين عميل في البيت. ريحني من الإرهاق اليومي.", stars: 5, photo: "/products/hormonal-balance/hero.svg" },
-      { name: "ليلى", city: "المدينة", text: "في البداية كان مجرد تجربة، لكن مع الاستمرار لاحظت فرق في الحيوية والراحة النفسية.", stars: 5, photo: "/products/hormonal-balance/3.svg" },
-    ],
-    comparison: [
-      { title: "الإحساس", generic: "تعب ومزاج متقلب", ours: "حيوية وهدوء ملموس" },
-      { title: "الروتين", generic: "تعقيد وصعوبة الالتزام", ours: "يومياً وبدون تعقيد" },
-      { title: "التركيبة", generic: "مكونات غير واضحة", ours: "مزيج واضح يدعم التوازن" },
-    ],
-    sections: [
-      {
-        title: "التعب لا يعني أنكِ فقط متعبة",
-        body: "الحياة اليومية، التوتر، وقلة النوم قد تؤثر على التوازن الهرموني. أحياناً الجسم يطلب تعويضاً أكثر من مجرد قهوة أو راحة قصيرة.",
-        imageLabel: "مشكل التوازن",
-        image: "/products/hormonal-balance/1.svg",
-      },
-      {
-        title: "دعم طبيعي للتوازن اليومي",
-        body: "المزيج مصمم لتدعم الطاقة، التمثيل الغذائي، والراحة النفسية، بطريقة مناسبة للروتين اليومي للمرأة العاملة أو العاملة داخل البيت.",
-        imageLabel: "التركيبة",
-        image: "/products/hormonal-balance/2.svg",
-      },
-      {
-        title: "سهولة في الاستخدام",
-        body: "يستعمل في الصباح، ويعطي إحساساً بالانتظام في كل يومك. لا حاجة لروتين طويل أو تعقيدات. فقط روتين يومي سهل.",
-        imageLabel: "الروتين",
-        image: "/products/hormonal-balance/3.svg",
-      },
-      {
-        title: "حيوية أقرب إلى استقرارك اليومي",
-        body: "الهدف ليس مجرد اصطناع الطاقة، بل بناء إحساس ثابت بالراحة، القبول، والتوازن داخل جسمك الواحد.",
-        imageLabel: "النتيجة",
-        image: "/products/hormonal-balance/hero.svg",
       },
     ],
   },
