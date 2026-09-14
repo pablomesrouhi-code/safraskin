@@ -12,7 +12,7 @@ import { toE164 } from "@/lib/phone";
 import { submitOrder, OrderSubmitError } from "@/lib/submitOrder";
 import { formatPrice } from "@/lib/money";
 
-const TIMER = 12;
+const TIMER = 0;
 
 export default function UpsellModal() {
   const router = useRouter();
@@ -91,37 +91,16 @@ export default function UpsellModal() {
   };
 
   useEffect(() => {
-    if (!state.isUpsellOpen || upsellProduct) {
+    if (!state.isUpsellOpen) {
       autoStartedRef.current = false;
       return;
     }
-    if (autoStartedRef.current) return;
-    autoStartedRef.current = true;
-    placeOrder(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.isUpsellOpen, upsellProduct]);
-
-  useEffect(() => {
-    if (!state.isUpsellOpen || !upsellProduct) return;
 
     setSeconds(TIMER);
     submittedRef.current = false;
     setError(null);
-
-    const interval = setInterval(() => {
-      setSeconds((s) => {
-        if (s <= 1) {
-          clearInterval(interval);
-          placeOrder(false);
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.isUpsellOpen, upsellProduct?.slug]);
+    autoStartedRef.current = false;
+  }, [state.isUpsellOpen]);
 
   useEffect(() => {
     if (!state.isUpsellOpen) {
@@ -182,12 +161,14 @@ export default function UpsellModal() {
         <div className="flex items-center justify-between bg-rose px-4 py-3 text-white">
           <span className="flex items-center gap-1.5 text-sm font-bold">
             <Flame size={17} className="fill-saffron text-saffron" aria-hidden />
-            عرض فاير · غير دابا
+            عرض مناسب
           </span>
-          <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-sm font-bold tabular-nums">
-            <Clock size={14} aria-hidden />
-            {seconds} ث
-          </div>
+          {seconds > 0 && (
+            <div className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-sm font-bold tabular-nums">
+              <Clock size={14} aria-hidden />
+              {seconds} ث
+            </div>
+          )}
         </div>
 
         <div className="p-4">
