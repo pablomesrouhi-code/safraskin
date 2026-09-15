@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     `
     : "";
 
-  const tiktokBaseSnippet = tiktokPixelId ? tiktokPixelId : "";
+  
 
   return (
     <html lang="ar" dir="rtl">
