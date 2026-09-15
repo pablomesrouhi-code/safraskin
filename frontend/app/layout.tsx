@@ -33,6 +33,28 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+  const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+
+  const metaScript = metaPixelId
+    ? `
+      !function(f,b,e,v,n,t,s){
+        if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;
+        s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)
+      }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '${metaPixelId}');
+      fbq('track', 'PageView');
+    `
+    : "";
+
+  const tiktokScript = tiktokPixelId
+    ? `
+      !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie'];ttq.setAndDequeue=function(t,e){t=Array.prototype.slice.call(t);ttq.push(['set',e||{}]);if(!this._d)this._d=t};ttq._i=Date.now();ttq._d=ttq._d||[];(function(){var tt=d.createElement('script');tt.type='text/javascript';tt.async=true;tt.src='https://analytics.tiktok.com/i18n/pixel/sdk.js';var s=d.getElementsByTagName('script')[0];s.parentNode.insertBefore(tt,s)})();}(window,document,'ttq');ttq.load('${tiktokPixelId}');ttq.page();
+    `
+    : "";
+
   return (
     <html lang="ar" dir="rtl">
       <head>
@@ -43,6 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           fetchPriority="high"
         />
         <link rel="preload" as="image" href="/brand/logo.webp" />
+        {metaScript ? <script dangerouslySetInnerHTML={{ __html: metaScript }} /> : null}
+        {tiktokScript ? <script dangerouslySetInnerHTML={{ __html: tiktokScript }} /> : null}
       </head>
       <body className={`${arabic.variable} ${english.variable}`}>
         <StoreShell>{children}</StoreShell>
