@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Phone } from "lucide-react";
 import { firstNameFrom, getCallWindow, parseOrderItems } from "@/lib/orderConfirmation";
+import { trackTikTokPurchase } from "@/lib/track";
 import { getProduct, PRODUCTS, UPSELL_PRICE_MAD, type ProductSlug } from "@/data/products";
 import { getPack } from "@/data/packs";
 import { getLinePrice } from "@/lib/pricing";
@@ -34,6 +35,14 @@ export default function ThankYouView({ orderId }: { orderId: string }) {
     0,
     3
   );
+
+  useEffect(() => {
+    try {
+      const slug = items && items.length > 0 ? items[0].slug : undefined;
+      trackTikTokPurchase({ value: Number(total || 0), currency: "MAD", product_slug: slug, phone: phone || undefined });
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderId]);
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6 md:py-10">
@@ -142,3 +151,5 @@ export default function ThankYouView({ orderId }: { orderId: string }) {
     </div>
   );
 }
+
+// purchase tracking fired on mount inside the component

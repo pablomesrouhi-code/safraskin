@@ -148,3 +148,36 @@ export async function trackEvent(
       break;
   }
 }
+
+export async function trackTikTokPurchase(options: {
+  value?: number;
+  currency?: string;
+  product_slug?: string;
+  phone?: string;
+  email?: string;
+}) {
+  const { value = 0, currency = "MAD", product_slug, phone, email } = options || {};
+  if (phone || email) {
+    // ensure identify is sent with hashed PII
+    await trackTikTokIdentify({ phone_number: phone, email });
+  }
+
+  const content = product_slug
+    ? {
+        contents: [
+          {
+            content_id: product_slug,
+            content_type: "product",
+            content_name: product_slug,
+          },
+        ],
+      }
+    : {};
+
+  trackTikTokEvent("Purchase", {
+    ...content,
+    value,
+    currency,
+    content_type: "product",
+  });
+}
