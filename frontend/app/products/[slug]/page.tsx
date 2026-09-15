@@ -11,6 +11,7 @@ import ProductReviews from "@/components/ProductReviews";
 import ProductFAQ from "@/components/ProductFAQ";
 import ProductPageCrossSells from "@/components/ProductPageCrossSells";
 import ScrollToOrderCTA from "@/components/ScrollToOrderCTA";
+import ProductViewTracker from "@/components/ProductViewTracker";
 
 type Props = { params: { slug: string } };
 
@@ -33,6 +34,7 @@ export default function ProductPage({ params }: Props) {
 
   return (
     <div className="pb-24">
+      <ProductViewTracker slug={product.slug} price={product.priceMad} />
       <ProductHero product={product} />
       <div id="details" className="scroll-mt-header">
         <ProductProblem product={product} />
