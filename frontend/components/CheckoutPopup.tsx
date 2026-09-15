@@ -38,7 +38,10 @@ export default function CheckoutPopup() {
 
   if (!state.isCheckoutOpen) return null;
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    await import("@/lib/track").then(({ trackTikTokIdentify }) =>
+      trackTikTokIdentify({ phone_number: data.phone })
+    );
     trackEvent("checkout_start");
     openUpsell(data.name, data.phone, "");
   };
