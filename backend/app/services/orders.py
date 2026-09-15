@@ -9,6 +9,8 @@ from app.models.order import Order
 from app.services.phone import is_valid_ma_phone, to_e164
 from app.services.pricing import UPSELL_PRICE_MAD, PricingError, validate_and_price
 from app.services.sheets import build_sheets_payload, sync_order_to_sheets
+from app.services.tiktok import send_purchase_event
+from threading import Thread
 
 
 def generate_order_id() -> str:
@@ -74,6 +76,25 @@ def create_order(db: Session, body, geo: dict | None = None) -> dict:
             db.commit()
         else:
             raise PricingError("ما قدرناش نسجلو الطلب. عاودي من بعد.", "SHEETS_SYNC_FAILED")
+    # Fire-and-forget server-side TikTok Purchase event for better attribution
+    try:
+        def _send():
+            try:
+                send_purchase_event(
+                    pixel_id=settings.tiktok_pixel_id,
+                    access_token=settings.tiktok_access_token,
+                    event_id=order_id,
+                    value=priced["grand_total_mad"],
+                    currency="MAD",
+                    phone=phone,
+                    items=priced.get("line_items"),
+                )
+            except Exception:
+                pass
+
+        Thread(target=_send, daemon=True).start()
+    except Exception:
+        pass
 
     return {
         "order_id": order_id,
