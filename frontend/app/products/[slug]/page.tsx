@@ -34,7 +34,7 @@ export default function ProductPage({ params }: Props) {
 
   return (
     <div className="pb-24">
-      <ProductViewTracker slug={product.slug} price={product.priceMad} />
+      <ProductViewTracker slug={product.slug} price={product.unitPriceMad} />
       <ProductHero product={product} />
       <div id="details" className="scroll-mt-header">
         <ProductProblem product={product} />
