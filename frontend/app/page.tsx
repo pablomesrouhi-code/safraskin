@@ -15,8 +15,8 @@ export default function HomePage() {
         <div className="mx-auto max-w-container px-4 pt-6 md:pt-10">
           <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-3xl border border-border bg-[#8f7364] shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
             <ProductImage
-              src="/home/hero-1600.webp"
-              alt="سفراسكين · عناية أنثوية"
+              src="/home/hero-saudi.png"
+              alt="سفراسكين · أربع نساء، أربع صيغ"
               fill
               priority
               sizes="(max-width: 640px) 90vw, (max-width: 1024px) 42rem, 48rem"
